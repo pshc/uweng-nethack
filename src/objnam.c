@@ -47,7 +47,7 @@ STATIC_OVL struct Jitem Japanese_items[] = {
 	{ HELMET, "kabuto" },
 	{ LEATHER_GLOVES, "yugake" },
 	{ FOOD_RATION, "gunyoki" },
-	{ POT_BOOZE, "sake" },
+	{ POT_VODKA, "sake" },
 	{0, "" }
 };
 
@@ -151,7 +151,7 @@ register int otyp;
 	/* here for ring/scroll/potion/wand */
 	if(nn) {
 	    if (ocl->oc_unique)
-		Strcpy(buf, actualn); /* avoid spellbook of Book of the Dead */
+		Strcpy(buf, actualn); /* avoid spellbook of Book of the DESU */
 	    else
 		Sprintf(eos(buf), " of %s", actualn);
 	}
@@ -306,7 +306,7 @@ register struct obj *obj;
 		}
 		if(is_boots(obj) || is_gloves(obj)) Strcpy(buf,"pair of ");
 
-		if(obj->otyp >= ELVEN_SHIELD && obj->otyp <= ORCISH_SHIELD
+		if(obj->otyp >= ELVEN_SHIELD && obj->otyp <= CECS_SHIELD
 				&& !obj->dknown) {
 			Strcpy(buf, "shield");
 			break;
@@ -433,7 +433,7 @@ register struct obj *obj;
 		if (!obj->dknown) {
 			Strcpy(buf, "spellbook");
 		} else if (nn) {
-			if (typ != SPE_BOOK_OF_THE_DEAD)
+			if (typ != SPE_BOOK_OF_THE_DESU)
 			    Strcpy(buf, "spellbook of ");
 			Strcat(buf, actualn);
 		} else if (un) {
@@ -990,9 +990,10 @@ const char *str;
 		if (tmp && (!named || tmp < named))	/* found an "of" */
 		    insert_the = TRUE;
 		/* stupid special case: lacks "of" but needs "the" */
-		else if (!named && (l = strlen(str)) >= 31 &&
-		      !strcmp(&str[l - 31], "Platinum Yendorian Express Card"))
-		    insert_the = TRUE;
+		/* PAU EDIT: IT DOES NOW! */
+		/*else if (!named && (l = strlen(str)) >= 31 &&
+		      !strcmp(&str[l - 31], "University of Waterloo Student "))
+		    insert_the = TRUE;*/
 	    }
 	}
 	if (insert_the)
@@ -1727,7 +1728,7 @@ struct alt_spellings {
 	{ "amulet of poison resistance", AMULET_VERSUS_POISON },
 	{ "stone", ROCK },
 #ifdef TOURIST
-	{ "camera", EXPENSIVE_CAMERA },
+	{ "camera", PR_N_CAMERA },
 	{ "tee shirt", T_SHIRT },
 #endif
 	{ "can", TIN },
@@ -1735,6 +1736,7 @@ struct alt_spellings {
 	{ "kelp", KELP_FROND },
 	{ "eucalyptus", EUCALYPTUS_LEAF },
 	{ "grapple", GRAPPLING_HOOK },
+	{ "scroll of genocide", SCR_ELIMINATE },
 	{ (const char *)0, 0 },
 };
 
@@ -2235,7 +2237,7 @@ srch:
 			j++;
 		}
 	}
-	if (!strcmpi(bp, "spinach")) {
+	if (!strcmpi(bp, "spinach") || !strcmpi(bp, "inflatable banana")) {
 		contents = SPINACH;
 		typ = TIN;
 		goto typfnd;
@@ -2431,7 +2433,7 @@ typfnd:
 		case BELL_OF_OPENING:
 		    typ = BELL;
 		    break;
-		case SPE_BOOK_OF_THE_DEAD:
+		case SPE_BOOK_OF_THE_DESU:
 		    typ = SPE_BLANK_PAPER;
 		    break;
 	    }

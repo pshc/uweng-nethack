@@ -27,7 +27,7 @@ dowatersnakes() /* Fountain of snakes! */
 
     if (!(mvitals[PM_WATER_MOCCASIN].mvflags & G_GONE)) {
 	if (!Blind)
-	    pline("An endless stream of %s pours forth!",
+	    pline("A delicious stream of %s pours forth!",
 		  Hallucination ? makeplural(rndmonnam()) : "snakes");
 	else
 	    You_hear("%s hissing!", something);
@@ -340,7 +340,7 @@ drinkfountain()
 
 		default:
 
-			pline("This tepid water is tasteless.");
+			pline("This tepid water needs more cowbell.");
 			break;
 	    }
 	}
@@ -565,8 +565,8 @@ drinksink()
 		case 6: breaksink(u.ux,u.uy);
 			break;
 		case 7: pline_The("water moves as though of its own will!");
-			if ((mvitals[PM_WATER_ELEMENTAL].mvflags & G_GONE)
-			    || !makemon(&mons[PM_WATER_ELEMENTAL],
+			if ((mvitals[PM_PDENG_ELEMENTAL].mvflags & G_GONE)
+			    || !makemon(&mons[PM_PDENG_ELEMENTAL],
 					u.ux, u.uy, NO_MM_FLAGS))
 				pline("But it quiets down.");
 			break;

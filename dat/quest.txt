@@ -280,7 +280,7 @@ regain the Amulet of Yendor for %d?"
 %E
 %Cc Arc 00091
 "Congratulations, %p.  I wondered if anyone could prevail against
-the Wizard and the minions of Moloch.  Now, you must embark on one
+the Wizard and the minions of Jarek.  Now, you must embark on one
 final adventure.
 
 "Take the Amulet, and find your way onto the astral plane.
@@ -1776,7 +1776,7 @@ into a cloud of noxious gas.
 Suddenly, a voice booms out:
 
     Thou hast defeated the least of my minions, %r.
-    Know now that Moloch is aware of thy presence.
+    Know now that Jarek is aware of thy presence.
     As for thee, %n, I shall deal with thy failure
     at my leisure.
 
@@ -3318,14 +3318,243 @@ experienced before, so be prepared!
 "For this you were born, %s!  I am very proud of you."
 %E
 #
+#	Engineer
+#
+%Cc Eng 00001
+You skip merrily towards the familiar hulk of stone and glass that is
+%H.  But wait...!
+
+Something seems wrong. The building is deserted and dark. The infamous
+metal structure, once a proud testament to engineering ingenuity, lies
+twisted, blackened and oranged on the ground. The C&D contains old,
+untouched foodstuffs, and obnoxious banners are nowhere to be seen.
+%E
+%Cp Eng 00002
+You return to %H. There is something strange about the appearance of
+the sky, and the air is thick and tastes of metal.
+%E
+%Cp Eng 00003
+Though you are back at %H, giant fissures are appearing in the building
+and the air groans as though bent by immense stress and strain.
+Complete structural failure is imminent.
+%E
+%Cp Eng 00005
+"I love chicken, I love liver, microwave microwave microwave microwave..."
+%E
+%Cp Eng 00006
+"Does anyone have a stapler they can lend me?"
+%E
+%Cp Eng 00007
+"WHAT."
+%E
+%Cp Eng 00008
+"Oh, hi... damn, that just got homosexual."
+%E
+%Cp Eng 00009
+"!rq"
+%E
+%Cp Eng 00010
+"Why am I so permatired?"
+%E
+%Cp Eng 00011
+"Lala whee!"
+%E
+%Cp Eng 00012
+"Nice work. Too bad I MISSED MY MIDTERM OMIGAWWWWWWD!"
+%E
+%Cp Eng 00013
+"Ooh, can I touch it?"
+%E
+%Cp Eng 00014
+"Rawr!"
+%E
+%Cc Eng 00015
+"HI %p!"
+
+"I'm, uh, here on totally unrelated business. But while you're here,
+perhaps you can lend us a hand. Actually, we desperately need your help.
+My stalking abilities are not what they once were..."
+
+"This won't hurt. Much."
+%E
+%Cp Eng 00016
+"Hihihihi. Not much time left, %p.
+Good to go?"
+%E
+%Cp Eng 00017
+"UHHHHHH.
+No seriously, this is like your last chance. Let's do or die!"
+%E
+%Cc Eng 00018
+"NO YOU!"
+%E
+%Cc Eng 00019
+"Hmm, your skills of stalkery are not sufficient. Grind your way up to
+%R and we'll talk."
+%E
+%Cc Eng 00020
+"Whose side are you on?! You're either with us -- the %a --
+or you're with the terrorists!"
+%E
+%Cc Eng 00021
+"GOOD JOB!
+
+"Okay, so, this is kind of embarrassing, but it's not my problem anyway,
+but, uh, yeah.  We kind of, you know, lost %o...
+
+"Don't give me that look! Okay, okay, so we don't know who took it.
+Your job to figure out who and take it back. All we know is that they've
+fled to %i.
+
+"Go fetch it, and take PIX PLZ."
+%E
+%Cp Eng 00025
+"Stop procrastinating!"
+%E
+%Cp Eng 00026
+"To enter %i you'll have to pass a lot of traps..."
+%E
+%Cp Eng 00027
+"If you do not return with %o, uh, I'll be... mad?"
+%E
+%Cp Eng 00028
+"Don't forget to call upon %d if you truly need your butt saved."
+%E
+%Cp Eng 00029
+"Danger danger, warning warning! You must defeat the thief,
+or they'll just steal it again."
+%E
+%Cp Eng 00030
+"Take %o from the thief
+and you may be able to defeat them."
+%E
+%Cp Eng 00031
+"GL, HF, DD, etc."
+%E
+%Cp Eng 00032
+"HI %p!"
+%E
+%Cp Eng 00033
+"Enjoy Fanta!"
+%E
+%Cp Eng 00034
+"Let all who meet you on your journey know that you are on an quest for
+%l and grant safe passage."
+%E
+%Cc Eng 00035
+DEAR GOD WHAT HAPPENED HERE
+%E
+%Cp Eng 00036
+Take 2.
+%E
+%Cc Eng 00040
+You sense the presence of %o.
+%E
+%Cp Eng 00041
+You gain confidence, knowing that you may soon be united with
+%o.
+%E
+%Cc Eng 00050
+"So, %p, %l thinks that you can wrest
+%o from me!
+
+"It only proves how desperate he has become that he sends %ra to
+try and defeat me.  When this day is over, I will have you enslaved
+in the PDEng offices where you will rue the day that you faced me."
+%E
+%Cp Eng 00051
+"I let you live the last time because you hadn't finished PDEng.
+This time I will destroy you, %p."
+%E
+%Cc Eng 00052
+"You again? Leave me alone with my precious %o."
+
+"If you do not run away now, I will inflict so much suffering on you that
+%l will feel guilty for ever having sent his %S to me!"
+%E
+%Cc Eng 00053
+"You fool.  You do not understand the true power of
+%o.
+
+"Return it to me and I will teach you how to use it, and together we
+will rule UW.  But do so now, as my patience
+grows thin."
+%E
+%Cp Eng 00060
+"%l isn't even a UW student! Where do your loyalties lie?"
+%E
+%Cp Eng 00061
+"Where is your %d now?!"
+%E
+%Cp Eng 00062
+"Beg for mercy now and I may be lenient on you."
+%E
+%Cp Eng 00063
+"If you were not so %a, you might have stood a chance."
+%E
+%Cp Eng 00064
+<%n> %p: MWAR HAR HAR HAR
+%E
+%Cp Eng 00065
+"You call yourself an engineer?!"
+%E
+%Cp Eng 00066
+"Can't touch this."
+%E
+%Cp Eng 00067
+"%nC has never been defeated, NEVER!"
+%E
+%Cp Eng 00068
+"Are you truly the best %H has to send against me?
+I pity da foo."
+%E
+%Cp Eng 00069
+"kban kban kban kban"
+%E
+%Cc Eng 00070
+As you pick up %o, you realise that IT'S FRIGGIN' HEAVY!
+Better take it back to %H and find %l quick.
+%E
+%Cc Eng 00080
+You turn in the direction of %n.
+As she flies off into the sky, you hear her curse:
+
+    I'll get you next time, %p!
+    NEXT TIME!
+
+She vanishes with an omnious *ting!*
+%E
+%Cc Eng 00081
+As %l detects the presence of %o,
+he almost smiles for the first time in many a full moon.
+
+As he looks up from %o he says:
+
+    JUST AS PLANNED!
+%E
+%Cc Eng 00082
+"%oC is yours now.  %Z await your
+return through the magic portal that brought you here."
+%E
+%Cp Eng 00090
+"BAI %p!"
+%E
+%Cc Eng 00091
+"Stand back and let me snap secret pix at you, %p.
+Now that you have recovered the Amulet of Yendor, I'm afraid living
+out your days in %H would seem pretty tame.
+
+"You must pierce the heavens with your drill!"
+%E
+#
 #	General
 #
 %Cc - 00001
 It is written in the Book of %d:
 
-    After the Creation, the cruel god Moloch rebelled
-    against the authority of Marduk the Creator.
-    Moloch stole from Marduk the most powerful of all
+    After the Creation, the cruel god Jarek rebelled
+    against the authority of Guramu the Creator.
+    Jarek stole from Guramu the most powerful of all
     the artifacts of the gods, the Amulet of Yendor,
     and he hid it in the dark cavities of Gehennom, the
     Under World, where he now lurks, and bides his time.

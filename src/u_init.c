@@ -145,8 +145,8 @@ static struct trobj Tourist[] = {
 	{ POT_EXTRA_HEALING, 0, POTION_CLASS, 2, UNDEF_BLESS },
 	{ SCR_MAGIC_MAPPING, 0, SCROLL_CLASS, 4, UNDEF_BLESS },
 	{ HAWAIIAN_SHIRT, 0, ARMOR_CLASS, 1, UNDEF_BLESS },
-	{ EXPENSIVE_CAMERA, UNDEF_SPE, TOOL_CLASS, 1, 0 },
-	{ CREDIT_CARD, 0, TOOL_CLASS, 1, 0 },
+	{ PR_N_CAMERA, UNDEF_SPE, TOOL_CLASS, 1, 0 },
+	{ WATCARD, 0, TOOL_CLASS, 1, 0 },
 	{ 0, 0, 0, 0, 0 }
 };
 #endif
@@ -170,13 +170,28 @@ static struct trobj Wizard[] = {
 	{ UNDEF_TYP, UNDEF_SPE, SPBOOK_CLASS, 1, UNDEF_BLESS },
 	{ 0, 0, 0, 0, 0 }
 };
-
+#ifdef ENGINEER
+static struct trobj Engineer[] = {
+	{ CRESCENT_WRENCH, 1, WEAPON_CLASS, 1, UNDEF_BLESS },
+	{ T_SHIRT, 0, ARMOR_CLASS, 1, UNDEF_BLESS },
+	{ LEATHER_JACKET, 1, ARMOR_CLASS, 1, UNDEF_BLESS },
+	{ UNDEF_TYP, UNDEF_SPE, WAND_CLASS, 3, UNDEF_BLESS },
+	{ UNDEF_TYP, UNDEF_SPE, SCROLL_CLASS, 2, UNDEF_BLESS },
+	{ SPE_CONSTRUCT, 0, SPBOOK_CLASS, 1, 1 },
+	{ UNDEF_TYP, UNDEF_SPE, SPBOOK_CLASS, 1, UNDEF_BLESS },
+	{ 0, 0, 0, 0, 0 }
+};
+#endif
 /*
  *	Optional extra inventory items.
  */
 
 static struct trobj Tinopener[] = {
 	{ TIN_OPENER, 0, TOOL_CLASS, 1, 0 },
+	{ 0, 0, 0, 0, 0 }
+};
+static struct trobj Tinningkit[] = {
+	{ TINNING_KIT, 0, TOOL_CLASS, 1, 0 },
 	{ 0, 0, 0, 0, 0 }
 };
 static struct trobj Magicmarker[] = {
@@ -204,11 +219,13 @@ static struct trobj Leash[] = {
 	{ LEASH, 0, TOOL_CLASS, 1, 0 },
 	{ 0, 0, 0, 0, 0 }
 };
+#endif
+#if defined(TOURIST) || defined(ENGINEER)
 static struct trobj Towel[] = {
 	{ TOWEL, 0, TOOL_CLASS, 1, 0 },
 	{ 0, 0, 0, 0, 0 }
 };
-#endif	/* TOURIST */
+#endif	/* TOURIST || ENGINEER */
 static struct trobj Wishing[] = {
 	{ WAN_WISHING, 3, WAND_CLASS, 1, 0 },
 	{ 0, 0, 0, 0, 0 }
@@ -238,7 +255,7 @@ static struct inv_sub { short race_pm, item_otyp, subs_otyp; } inv_subs[] = {
     { PM_ORC,	BOW,			ORCISH_BOW	      },
     { PM_ORC,	ARROW,			ORCISH_ARROW	      },
     { PM_ORC,	HELMET,			ORCISH_HELM	      },
-    { PM_ORC,	SMALL_SHIELD,		ORCISH_SHIELD	      },
+    { PM_ORC,	SMALL_SHIELD,		CECS_SHIELD	      },
     { PM_ORC,	RING_MAIL,		ORCISH_RING_MAIL      },
     { PM_ORC,	CHAIN_MAIL,		ORCISH_CHAIN_MAIL     },
     { PM_DWARF, SPEAR,			DWARVISH_SPEAR	      },
@@ -491,6 +508,25 @@ static const struct def_skill Skill_W[] = {
     { P_NONE, 0 }
 };
 
+#ifdef ENGINEER
+static const struct def_skill Skill_Eng[] = {
+    { P_DAGGER, P_EXPERT },		{ P_KNIFE,  P_SKILLED },
+    { P_AXE, P_BASIC },			{ P_PICK_AXE, P_SKILLED },
+    { P_QUARTERSTAFF, P_EXPERT },	{ P_SHORT_SWORD, P_BASIC },
+    { P_BOW, P_BASIC },			{ P_CROSSBOW, P_SKILLED },
+    { P_TRIDENT, P_EXPERT },            { P_HAMMER, P_SKILLED },
+    { P_WHIP, P_BASIC },		{ P_UNICORN_HORN, P_SKILLED },
+    { P_ATTACK_SPELL, P_SKILLED },	{ P_HEALING_SPELL, P_BASIC },
+    { P_DIVINATION_SPELL, P_EXPERT },	{ P_ENCHANTMENT_SPELL, P_EXPERT },
+    /*{ P_CLERIC_SPELL, P_BASIC },*/	{ P_ESCAPE_SPELL, P_SKILLED },
+    { P_MATTER_SPELL, P_EXPERT },
+#ifdef STEED
+    { P_RIDING, P_BASIC },
+#endif
+    { P_BARE_HANDED_COMBAT, P_SKILLED },
+    { P_NONE, 0 }
+};
+#endif
 
 STATIC_OVL void
 knows_object(obj)
@@ -729,6 +765,21 @@ u_init()
 		if(!rn2(5)) ini_inv(Blindfold);
 		skill_init(Skill_W);
 		break;
+#ifdef ENGINEER
+	case PM_ENGINEER:
+#ifndef GOLDOBJ
+		u.ugold = u.ugold0 = 404;
+#else
+		u.umoney0 = 404;
+#endif
+		ini_inv(Engineer);
+		ini_inv(Towel);
+		if(!rn2(4)) ini_inv(Blindfold);
+		if(!rn2(4)) ini_inv(Tinningkit);
+		if(!rn2(10)) ini_inv(Magicmarker);
+		skill_init(Skill_Eng);
+		break;
+#endif
 
 	default:	/* impossible */
 		break;
@@ -797,9 +848,9 @@ u_init()
 	    knows_object(ORCISH_CHAIN_MAIL);
 	    knows_object(ORCISH_RING_MAIL);
 	    knows_object(ORCISH_HELM);
-	    knows_object(ORCISH_SHIELD);
+	    knows_object(CECS_SHIELD);
 	    knows_object(URUK_HAI_SHIELD);
-	    knows_object(ORCISH_CLOAK);
+	    knows_object(CECSISH_CLOAK);
 	    break;
 
 	default:	/* impossible */
@@ -869,6 +920,9 @@ int otyp;
 #endif
      case PM_VALKYRIE:		skills = Skill_V; break;
      case PM_WIZARD:		skills = Skill_W; break;
+#ifdef ENGINEER
+     case PM_ENGINEER:          skills = Skill_Eng; break;
+#endif
      default:			skills = 0; break;	/* lint suppression */
     }
 
@@ -925,7 +979,7 @@ register struct trobj *trop;
 				|| otyp == RIN_LEVITATION
 #endif
 				/* 'useless' items */
-				|| otyp == POT_HALLUCINATION
+				|| otyp == POT_LSD
 				|| otyp == POT_ACID
 				|| otyp == SCR_AMNESIA
 				|| otyp == SCR_FIRE
@@ -933,13 +987,17 @@ register struct trobj *trop;
 				|| otyp == SPE_BLANK_PAPER
 				|| otyp == RIN_AGGRAVATE_MONSTER
 				|| otyp == RIN_HUNGER
-				|| otyp == WAN_NOTHING
+				|| otyp == WAN_IDLING
 				/* Monks don't use weapons */
 				|| (otyp == SCR_ENCHANT_WEAPON &&
 				    Role_if(PM_MONK))
 				/* wizard patch -- they already have one */
 				|| (otyp == SPE_FORCE_BOLT &&
 				    Role_if(PM_WIZARD))
+#ifdef ENGINEER
+				|| (otyp == SPE_CONSTRUCT &&
+				    Role_if(PM_ENGINEER))
+#endif
 				/* powerful spells are either useless to
 				   low level players or unbalancing; also
 				   spells in restricted skill categories */
@@ -1023,7 +1081,7 @@ register struct trobj *trop;
 				setworn(obj, W_ARMH);
 			else if (is_gloves(obj) && !uarmg)
 				setworn(obj, W_ARMG);
-#ifdef TOURIST
+#if defined(TOURIST) || defined(ENGINEER)
 			else if (is_shirt(obj) && !uarmu)
 				setworn(obj, W_ARMU);
 #endif

@@ -351,8 +351,8 @@ register int roomno;
 		msg2 = 0;
 		if(sanctum && Is_sanctum(&u.uz)) {
 		    if(priest->mpeaceful) {
-			msg1 = "Infidel, you have entered Moloch's Sanctum!";
-			msg2 = "Be gone!";
+			msg1 = "Infidel, you have entered Jarek's Sanctum!";
+			msg2 = "KBANPLZ!";
 			priest->mpeaceful = 0;
 			set_malign(priest);
 		    } else

@@ -302,6 +302,11 @@ register struct monst *mtmp;
 	case MS_SILENT:
 		ret = "commotion";
 		break;
+#ifdef ENGINEER
+	case MS_HONK:
+		ret = "honk";
+		break;
+#endif
 	default:
 		ret = "scream";
 	}
@@ -347,6 +352,11 @@ register struct monst *mtmp;
 	case MS_MEW:
 	    yelp_verb = "yowl";
 	    break;
+#ifdef ENGINEER
+	case MS_HONK:
+	    yelp_verb = "hiss";
+	    break;
+#endif
 	case MS_BARK:
 	case MS_GROWL:
 	    yelp_verb = "yelp";
@@ -392,6 +402,9 @@ register struct monst *mtmp;
 	case MS_BARK:
 	    whimper_verb = "whine";
 	    break;
+#ifdef ENGINEER
+	case MS_HONK:
+#endif
 	case MS_SQEEK:
 	    whimper_verb = "squeal";
 	    break;
@@ -552,7 +565,7 @@ register struct monst *mtmp;
 			 moves > EDOG(mtmp)->hungrytime || mtmp->mtame < 5))
 		    pline_msg = "whines.";
 		else if (mtmp->mtame && EDOG(mtmp)->hungrytime > moves + 1000)
-		    pline_msg = "yips.";
+		    pline_msg = "humps your leg.";
 		else {
 		    if (mtmp->data != &mons[PM_DINGO])	/* dingos do not actually bark */
 			    pline_msg = "barks.";
@@ -569,7 +582,7 @@ register struct monst *mtmp;
 		else if (moves > EDOG(mtmp)->hungrytime)
 		    pline_msg = "meows.";
 		else if (EDOG(mtmp)->hungrytime > moves + 1000)
-		    pline_msg = "purrs.";
+		    pline_msg = "goes :3.";
 		else
 		    pline_msg = "mews.";
 		break;
@@ -577,6 +590,23 @@ register struct monst *mtmp;
 	case MS_GROWL:
 	    pline_msg = mtmp->mpeaceful ? "snarls." : "growls!";
 	    break;
+#ifdef ENGINEER
+	case MS_HONK:
+	    if (mtmp->mtame) {
+		if (mtmp->mconf || mtmp->mflee || mtmp->mtrapped ||
+			mtmp->mtame < 5)
+		    pline_msg = "hisses.";
+		else if (moves > EDOG(mtmp)->hungrytime)
+		    pline_msg = "honks urgently.";
+		else if (EDOG(mtmp)->hungrytime > moves + 1000)
+		    pline_msg = "poops.";
+		else
+		    pline_msg = "honks.";
+	    }
+	    else
+	    	pline_msg = mtmp->mpeaceful ? "poops!" : "hisses!";
+	    break;
+#endif
 	case MS_ROAR:
 	    pline_msg = mtmp->mpeaceful ? "snarls." : "roars!";
 	    break;
@@ -693,7 +723,7 @@ register struct monst *mtmp;
 		verbl_msg = "I'm hungry.";
 	    /* Specific monsters' interests */
 	    else if (is_elf(ptr))
-		pline_msg = "curses orcs.";
+		pline_msg = "curses CECS.";
 	    else if (is_dwarf(ptr))
 		pline_msg = "talks about mining.";
 	    else if (likes_magic(ptr))
@@ -711,7 +741,7 @@ register struct monst *mtmp;
 		    break;
 #ifdef TOURIST
 		case PM_TOURIST:
-		    verbl_msg = "Aloha.";
+		    verbl_msg = "Aloha Mahalo!";
 		    break;
 #endif
 		default:
@@ -750,7 +780,7 @@ register struct monst *mtmp;
 		static const char * const arrest_msg[3] = {
 		    "Anything you say can be used against you.",
 		    "You're under arrest!",
-		    "Stop in the name of the Law!",
+		    "Stop or I'll expel!",
 		};
 		verbl_msg = arrest_msg[rn2(3)];
 	    }
@@ -800,8 +830,8 @@ register struct monst *mtmp;
 		    "You're dog meat!",
 		    "Surrender!",
 		},		  * const soldier_pax_msg[3] = {
-		    "What lousy pay we're getting here!",
-		    "The food's not fit for Orcs!",
+		    "What lousy pay we're getting here... co-op Shmo-op!",
+		    "The food's not fit for CECS!",
 		    "My feet hurt, I've been on them all day!",
 		};
 		verbl_msg = mtmp->mpeaceful ? soldier_pax_msg[rn2(3)]
@@ -892,7 +922,7 @@ dochat()
 	    return(1);
 	}
 */
-	pline("Talking to yourself is a bad habit for a dungeoneer.");
+	pline("!monologue.");
 	return(0);
     }
 

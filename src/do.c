@@ -295,7 +295,7 @@ giveback:
 	    case RIN_SHOCK_RESISTANCE:
 		pline("Static electricity surrounds the sink.");
 		break;
-	    case RIN_CONFLICT:
+	    case RIN_FLAMEBAIT:
 		You_hear("loud noises coming from the drain.");
 		break;
 	    case RIN_SUSTAIN_ABILITY:	/* KMH */
@@ -343,7 +343,7 @@ giveback:
 	if(!Blind && !ideed && obj->otyp != RIN_HUNGER) {
 	    ideed = TRUE;
 	    switch(obj->otyp) {		/* effects that need eyes */
-		case RIN_ADORNMENT:
+		case RIN_HAWTNESS:
 		    pline_The("faucets flash brightly for a moment.");
 		    break;
 		case RIN_REGENERATION:
@@ -1276,7 +1276,7 @@ boolean at_stairs, falling, portal;
 	/* Check whether we just entered Gehennom. */
 	if (!In_hell(&u.uz0) && Inhell) {
 	    if (Is_valley(&u.uz)) {
-		You("arrive at the Valley of the Dead...");
+		You("arrive at the Valley of the DESU...");
 		pline_The("odor of burnt flesh and decay pervades the air.");
 #ifdef MICRO
 		display_nhwindow(WIN_MESSAGE, FALSE);

@@ -48,7 +48,7 @@ register struct permonst *ptr;
 		case PM_AIR_ELEMENTAL: return Is_airlevel(&u.uz);
 		case PM_FIRE_ELEMENTAL: return Is_firelevel(&u.uz);
 		case PM_EARTH_ELEMENTAL: return Is_earthlevel(&u.uz);
-		case PM_WATER_ELEMENTAL: return Is_waterlevel(&u.uz);
+		case PM_PDENG_ELEMENTAL: return Is_waterlevel(&u.uz);
 	    }
 	return FALSE;
 }
@@ -323,21 +323,21 @@ register struct monst *mtmp;
 				 * throw. As suggested by KAA.	   [MRS]
 				 */
 		if (!rn2(4)) m_initthrow(mtmp, CREAM_PIE, 2);
-		if (!rn2(3)) (void)mongets(mtmp,(rn2(2)) ? CLUB : RUBBER_HOSE);
+		if (!rn2(3)) (void)mongets(mtmp,(rn2(2)) ? CLUB : LETTER_OF_EXPULSION);
 		break;
 # endif
 	    case S_ORC:
 		if(rn2(2)) (void)mongets(mtmp, ORCISH_HELM);
 		switch (mm != PM_ORC_CAPTAIN ? mm :
-			rn2(2) ? PM_MORDOR_ORC : PM_URUK_HAI) {
-		    case PM_MORDOR_ORC:
+			rn2(2) ? PM_CECS_ORC : PM_URUK_HAI) {
+		    case PM_CECS_ORC:
 			if(!rn2(3)) (void)mongets(mtmp, SCIMITAR);
-			if(!rn2(3)) (void)mongets(mtmp, ORCISH_SHIELD);
+			if(!rn2(3)) (void)mongets(mtmp, CECS_SHIELD);
 			if(!rn2(3)) (void)mongets(mtmp, KNIFE);
 			if(!rn2(3)) (void)mongets(mtmp, ORCISH_CHAIN_MAIL);
 			break;
 		    case PM_URUK_HAI:
-			if(!rn2(3)) (void)mongets(mtmp, ORCISH_CLOAK);
+			if(!rn2(3)) (void)mongets(mtmp, CECSISH_CLOAK);
 			if(!rn2(3)) (void)mongets(mtmp, ORCISH_SHORT_SWORD);
 			if(!rn2(3)) (void)mongets(mtmp, IRON_SHOES);
 			if(!rn2(3)) {
@@ -366,7 +366,7 @@ register struct monst *mtmp;
 		    case 3: (void)mongets(mtmp, SPETUM); break;
 		}
 		break;
-	    case S_KOBOLD:
+	    case S_BALKAN:
 		if (!rn2(4)) m_initthrow(mtmp, DART, 12);
 		break;
 
@@ -393,7 +393,11 @@ register struct monst *mtmp;
 	    case S_LIZARD:
 		if (mm == PM_SALAMANDER)
 			(void)mongets(mtmp, (rn2(7) ? SPEAR : rn2(3) ?
+#ifdef ENGINEER
+					     CRESCENT_WRENCH : STILETTO));
+#else
 					     TRIDENT : STILETTO));
+#endif
 		break;
 	    case S_DEMON:
 		switch (mm) {
@@ -402,10 +406,14 @@ register struct monst *mtmp;
 			(void)mongets(mtmp, BROADSWORD);
 			break;
 		    case PM_ORCUS:
-			(void)mongets(mtmp, WAN_DEATH); /* the Wand of Orcus */
+			(void)mongets(mtmp, WAN_DESU); /* the Wand of Orcus */
 			break;
 		    case PM_HORNED_DEVIL:
+#ifdef ENGINEER
+			(void)mongets(mtmp, BULLWHIP);
+#else
 			(void)mongets(mtmp, rn2(4) ? TRIDENT : BULLWHIP);
+#endif
 			break;
 		    case PM_DISPATER:
 			(void)mongets(mtmp, WAN_STRIKING);
@@ -588,7 +596,7 @@ register struct	monst	*mtmp;
 	    case S_GIANT:
 		if (ptr == &mons[PM_MINOTAUR]) {
 		    if (!rn2(3) || (in_mklev && Is_earthlevel(&u.uz)))
-			(void) mongets(mtmp, WAN_DIGGING);
+			(void) mongets(mtmp, WAN_DRILLING);
 		} else if (is_giant(ptr)) {
 		    for (cnt = rn2((int)(mtmp->m_lev / 2)); cnt; cnt--) {
 			otmp = mksobj(rnd_class(DILITHIUM_CRYSTAL,LUCKSTONE-1),
@@ -608,7 +616,7 @@ register struct	monst	*mtmp;
 		break;
 	    case S_LICH:
 		if (ptr == &mons[PM_MASTER_LICH] && !rn2(13))
-			(void)mongets(mtmp, (rn2(7) ? ATHAME : WAN_NOTHING));
+			(void)mongets(mtmp, (rn2(7) ? ATHAME : WAN_IDLING));
 		else if (ptr == &mons[PM_ARCH_LICH] && !rn2(3)) {
 			otmp = mksobj(rn2(3) ? ATHAME : QUARTERSTAFF,
 				      TRUE, rn2(13) ? FALSE : TRUE);
@@ -1014,7 +1022,7 @@ register int	mmflags;
 		mtmp->iswiz = TRUE;
 		flags.no_of_wizards++;
 		if (flags.no_of_wizards == 1 && Is_earthlevel(&u.uz))
-			mitem = SPE_DIG;
+			mitem = SPE_DRILLING;
 	} else if (mndx == PM_DJINNI) {
 		flags.djinni_count++;
 	} else if (mndx == PM_GHOST) {
@@ -1511,7 +1519,7 @@ register int otyp;
 		otmp->blessed = otmp->cursed = FALSE;
 	    } else if (otmp->otyp == BELL_OF_OPENING) {
 		otmp->blessed = otmp->cursed = FALSE;
-	    } else if (otmp->otyp == SPE_BOOK_OF_THE_DEAD) {
+	    } else if (otmp->otyp == SPE_BOOK_OF_THE_DESU) {
 		otmp->blessed = FALSE;
 		otmp->cursed = TRUE;
 	    }

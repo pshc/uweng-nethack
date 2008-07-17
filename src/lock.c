@@ -62,7 +62,7 @@ lock_action()
 	else if (xlock.picktyp == LOCK_PICK)
 		return actions[3];	/* "picking the lock" */
 #ifdef TOURIST
-	else if (xlock.picktyp == CREDIT_CARD)
+	else if (xlock.picktyp == WATCARD)
 		return actions[3];	/* same as lock_pick */
 #endif
 	else if (xlock.door)
@@ -241,7 +241,7 @@ pick_lock(pick) /* pick a lock with a given object */
 	    if (nohands(youmonst.data)) {
 		const char *what = (picktyp == LOCK_PICK) ? "pick" : "key";
 #ifdef TOURIST
-		if (picktyp == CREDIT_CARD) what = "card";
+		if (picktyp == WATCARD) what = "card";
 #endif
 		pline(no_longer, "hold the", what);
 		reset_pick();
@@ -265,7 +265,7 @@ pick_lock(pick) /* pick a lock with a given object */
 
 	if((picktyp != LOCK_PICK &&
 #ifdef TOURIST
-	    picktyp != CREDIT_CARD &&
+	    picktyp != WATCARD &&
 #endif
 	    picktyp != SKELETON_KEY)) {
 		impossible("picking lock with object %d?", picktyp);
@@ -320,7 +320,7 @@ pick_lock(pick) /* pick a lock with a given object */
 			return 0;
 		    }
 #ifdef TOURIST
-		    else if (picktyp == CREDIT_CARD && !otmp->olocked) {
+		    else if (picktyp == WATCARD && !otmp->olocked) {
 			/* credit cards are only good for unlocking */
 			You_cant("do that with %s.", doname(pick));
 			return 0;
@@ -328,7 +328,7 @@ pick_lock(pick) /* pick a lock with a given object */
 #endif
 		    switch(picktyp) {
 #ifdef TOURIST
-			case CREDIT_CARD:
+			case WATCARD:
 			    ch = ACURR(A_DEX) + 20*Role_if(PM_ROGUE);
 			    break;
 #endif
@@ -365,7 +365,7 @@ pick_lock(pick) /* pick a lock with a given object */
 			&& mtmp->m_ap_type != M_AP_FURNITURE
 			&& mtmp->m_ap_type != M_AP_OBJECT) {
 #ifdef TOURIST
-		if (picktyp == CREDIT_CARD &&
+		if (picktyp == WATCARD &&
 		    (mtmp->isshk || mtmp->data == &mons[PM_ORACLE]))
 		    verbalize("No checks, no credit, no problem.");
 		else
@@ -395,7 +395,7 @@ pick_lock(pick) /* pick a lock with a given object */
 		default:
 #ifdef TOURIST
 		    /* credit cards are only good for unlocking */
-		    if(picktyp == CREDIT_CARD && !(door->doormask & D_LOCKED)) {
+		    if(picktyp == WATCARD && !(door->doormask & D_LOCKED)) {
 			You_cant("lock a door with a credit card.");
 			return(0);
 		    }
@@ -409,7 +409,7 @@ pick_lock(pick) /* pick a lock with a given object */
 
 		    switch(picktyp) {
 #ifdef TOURIST
-			case CREDIT_CARD:
+			case WATCARD:
 			    ch = 2*ACURR(A_DEX) + 20*Role_if(PM_ROGUE);
 			    break;
 #endif
@@ -447,7 +447,7 @@ doforce()		/* try to force a chest with your weapon */
 	   (objects[uwep->otyp].oc_skill > P_LANCE) ||
 	   uwep->otyp == FLAIL || uwep->otyp == AKLYS
 #ifdef KOPS
-	   || uwep->otyp == RUBBER_HOSE
+	   || uwep->otyp == LETTER_OF_EXPULSION
 #endif
 	  ) {
 	    You_cant("force anything without a %sweapon.",
@@ -898,15 +898,15 @@ struct obj *otmp;
 	thing = singular(otmp, xname);
 	Blinded = save_Blinded;
 	switch (objects[otmp->otyp].oc_material) {
-	case PAPER:	disposition = "is torn to shreds";
+	case PAPER:	disposition = "is torn to confetti";
 		break;
-	case WAX:	disposition = "is crushed";
+	case WAX:	disposition = "is crunked";
 		break;
-	case VEGGY:	disposition = "is pulped";
+	case VEGGY:	disposition = "is Magic Bullet(TM)ed";
 		break;
 	case FLESH:	disposition = "is mashed";
 		break;
-	case GLASS:	disposition = "shatters";
+	case GLASS:	disposition = "suffers total structural PHAILUR";
 		break;
 	case WOOD:	disposition = "splinters to fragments";
 		break;

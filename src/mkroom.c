@@ -436,7 +436,7 @@ antholemon()
 	/* Same monsters within a level, different ones between levels */
 	switch ((level_difficulty() + ((long)u.ubirthday)) % 3) {
 	default:	mtyp = PM_GIANT_ANT; break;
-	case 0:		mtyp = PM_SOLDIER_ANT; break;
+	case 0:		mtyp = PM_KEKE______ANT; break;
 	case 1:		mtyp = PM_FIRE_ANT; break;
 	}
 	return ((mvitals[mtyp].mvflags & G_GONE) ?
@@ -671,7 +671,7 @@ courtmon()
 	else if (i > 45)	return(&mons[PM_BUGBEAR]);
 	else if (i > 30)	return(&mons[PM_HOBGOBLIN]);
 	else if (i > 15)	return(mkclass(S_GNOME,0));
-	else			return(mkclass(S_KOBOLD,0));
+	else			return(mkclass(S_BALKAN,0));
 }
 
 #define NSTYPES (PM_CAPTAIN - PM_SOLDIER + 1)

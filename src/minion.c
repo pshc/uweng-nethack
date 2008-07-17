@@ -281,8 +281,8 @@ aligntyp atyp;
 int
 llord()
 {
-	if (!(mvitals[PM_ARCHON].mvflags & G_GONE))
-		return(PM_ARCHON);
+	if (!(mvitals[PM_ARCH__].mvflags & G_GONE))
+		return(PM_ARCH__);
 
 	return(lminion());	/* approximate */
 }

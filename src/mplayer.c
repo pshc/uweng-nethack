@@ -325,7 +325,7 @@ register struct monst *mtmp;
 		"Mine should be the honor, not yours!",
 	},		  *other_class_msg[3] = {
 		"The low-life wants to talk, eh?",
-		"Fight, scum!",
+		"Hay there!",
 		"Here is what I have to say!",
 	};
 

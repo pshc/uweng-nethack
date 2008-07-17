@@ -2648,15 +2648,18 @@ do_break_wand(obj)
 
     switch (obj->otyp) {
     case WAN_WISHING:
-    case WAN_NOTHING:
+    case WAN_IDLING:
     case WAN_LOCKING:
-    case WAN_PROBING:
+    case WAN_PROBING___:
     case WAN_ENLIGHTENMENT:
     case WAN_OPENING:
     case WAN_SECRET_DOOR_DETECTION:
+#ifdef ENGINEER
+    case WAN_CONSTRUCT:
+#endif
 	pline(nothing_else_happens);
 	goto discard_broken_wand;
-    case WAN_DEATH:
+    case WAN_DESU:
     case WAN_LIGHTNING:
 	dmg *= 4;
 	goto wanexpl;
@@ -2694,7 +2697,7 @@ do_break_wand(obj)
 	bhitpos.y = y = obj->oy + ydir[i];
 	if (!isok(x,y)) continue;
 
-	if (obj->otyp == WAN_DIGGING) {
+	if (obj->otyp == WAN_DRILLING) {
 	    if(dig_check(BY_OBJECT, FALSE, x, y)) {
 		if (IS_WALL(levl[x][y].typ) || IS_DOOR(levl[x][y].typ)) {
 		    /* normally, pits and holes don't anger guards, but they
@@ -2839,7 +2842,7 @@ doapply()
 		break;
 	case LOCK_PICK:
 #ifdef TOURIST
-	case CREDIT_CARD:
+	case WATCARD:
 #endif
 	case SKELETON_KEY:
 		(void) pick_lock(obj);
@@ -2912,7 +2915,7 @@ doapply()
 		light_cocktail(obj);
 		break;
 #ifdef TOURIST
-	case EXPENSIVE_CAMERA:
+	case PR_N_CAMERA:
 		res = use_camera(obj);
 		break;
 #endif
@@ -2964,7 +2967,7 @@ doapply()
 		    if (!rn2(13)) {
 			otmp = mkobj(POTION_CLASS, FALSE);
 			if (objects[otmp->otyp].oc_magic) do {
-			    otmp->otyp = rnd_class(POT_BOOZE, POT_WATER);
+			    otmp->otyp = rnd_class(POT_VODKA, POT_WATER);
 			} while (otmp->otyp == POT_SICKNESS);
 			what = "A potion";
 		    } else {

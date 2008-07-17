@@ -711,7 +711,7 @@ int thrown;
 			tmp = 1;
 			break;
 #ifdef TOURIST
-		    case EXPENSIVE_CAMERA:
+		    case PR_N_CAMERA:
 			You("succeed in destroying %s camera.  Congratulations!",
 			        shk_your(yourbuf, obj));
 			useup(obj);
@@ -1882,7 +1882,7 @@ register struct attack *mattk;
 		    case AD_FIRE:
 			if (rn2(2)) {
 			    if (resists_fire(mdef)) {
-				pline("%s seems mildly hot.", Monnam(mdef));
+				pline("%s seems mildly hawt.", Monnam(mdef));
 				dam = 0;
 			    } else
 				pline("%s is burning to a crisp!",Monnam(mdef));
@@ -2088,7 +2088,7 @@ use_weapon:
 			/* No check for uwep; if wielding nothing we want to
 			 * do the normal 1-2 points bare hand damage...
 			 */
-			if (i==0 && (youmonst.data->mlet==S_KOBOLD
+			if (i==0 && (youmonst.data->mlet==S_BALKAN
 				|| youmonst.data->mlet==S_ORC
 				|| youmonst.data->mlet==S_GNOME
 				)) goto use_weapon;
@@ -2313,7 +2313,7 @@ uchar aatyp;
 			ugolemeffects(AD_FIRE, tmp);
 			break;
 		    }
-		    You("are suddenly very hot!");
+		    You("are suddenly very hawt!");
 		    mdamageu(mon, tmp);
 		}
 		break;
@@ -2478,6 +2478,7 @@ struct obj *otmp;	/* source of flash */
 		    pline("%s is blinded by the flash!", Monnam(mtmp));
 		    res = 1;
 		}
+#ifndef ENGINEER
 		if (mtmp->data == &mons[PM_GREMLIN]) {
 		    /* Rule #1: Keep them out of the light. */
 		    amt = otmp->otyp == WAN_LIGHT ? d(1 + otmp->spe, 4) :
@@ -2493,6 +2494,7 @@ struct obj *otmp;	/* source of flash */
 			map_invisible(mtmp->mx, mtmp->my);
 		    }
 		}
+#endif
 		if (mtmp->mhp > 0) {
 		    if (!flags.mon_moving) setmangry(mtmp);
 		    if (tmp < 9 && !mtmp->isshk && rn2(4)) {

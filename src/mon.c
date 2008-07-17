@@ -58,8 +58,8 @@ undead_to_corpse(mndx)
 int mndx;
 {
 	switch (mndx) {
-	case PM_KOBOLD_ZOMBIE:
-	case PM_KOBOLD_MUMMY:	mndx = PM_KOBOLD;  break;
+	case PM_BALKAN_ZOMBIE:
+	case PM_BALKAN_MUMMY:	mndx = PM_BALKAN;  break;
 	case PM_DWARF_ZOMBIE:
 	case PM_DWARF_MUMMY:	mndx = PM_DWARF;  break;
 	case PM_GNOME_ZOMBIE:
@@ -218,7 +218,7 @@ register struct monst *mtmp;
 		obj = mkcorpstat(CORPSE, mtmp, &mons[num], x, y, TRUE);
 		obj->age -= 100;		/* this is an *OLD* corpse */
 		break;
-	    case PM_KOBOLD_MUMMY:
+	    case PM_BALKAN_MUMMY:
 	    case PM_DWARF_MUMMY:
 	    case PM_GNOME_MUMMY:
 	    case PM_ORC_MUMMY:
@@ -226,7 +226,7 @@ register struct monst *mtmp;
 	    case PM_HUMAN_MUMMY:
 	    case PM_GIANT_MUMMY:
 	    case PM_ETTIN_MUMMY:
-	    case PM_KOBOLD_ZOMBIE:
+	    case PM_BALKAN_ZOMBIE:
 	    case PM_DWARF_ZOMBIE:
 	    case PM_GNOME_ZOMBIE:
 	    case PM_ORC_ZOMBIE:
@@ -400,12 +400,15 @@ register struct monst *mtmp;
      * keep going down, and when it gets to 1 hit point the clone
      * function will fail.
      */
+#ifndef ENGINEER
     if (mtmp->data == &mons[PM_GREMLIN] && (inpool || infountain) && rn2(3)) {
 	if (split_mon(mtmp, (struct monst *)0))
 	    dryup(mtmp->mx, mtmp->my, FALSE);
 	if (inpool) water_damage(mtmp->minvent, FALSE, FALSE);
 	return (0);
-    } else if (mtmp->data == &mons[PM_IRON_GOLEM] && inpool && !rn2(5)) {
+    } else
+#endif
+	if (mtmp->data == &mons[PM_IRON_GOLEM] && inpool && !rn2(5)) {
 	int dam = d(2,6);
 	if (cansee(mtmp->mx,mtmp->my))
 	    pline("%s rusts.", Monnam(mtmp));
@@ -429,7 +432,7 @@ register struct monst *mtmp;
 	    if (!resists_fire(mtmp)) {
 		if (cansee(mtmp->mx,mtmp->my))
 		    pline("%s %s.", Monnam(mtmp),
-			  mtmp->data == &mons[PM_WATER_ELEMENTAL] ?
+			  mtmp->data == &mons[PM_PDENG_ELEMENTAL] ?
 			  "boils away" : "burns to a crisp");
 		mondead(mtmp);
 	    }
@@ -1016,7 +1019,7 @@ mfndpos(mon, poss, info, flag)
 	y = mon->my;
 	nowtyp = levl[x][y].typ;
 
-	nodiag = (mdat == &mons[PM_GRID_BUG]);
+	nodiag = (mdat == &mons[PM_ZAPADA]);
 	wantpool = mdat->mlet == S_EEL;
 	poolok = is_flyer(mdat) || is_clinger(mdat) ||
 		 (is_swimmer(mdat) && !wantpool);
@@ -1235,7 +1238,7 @@ register int x,y;
 /* Is the square close enough for the monster to move or attack into? */
 {
 	register int distance = dist2(mon->mx, mon->my, x, y);
-	if (distance==2 && mon->data==&mons[PM_GRID_BUG]) return 0;
+	if (distance==2 && mon->data==&mons[PM_ZAPADA]) return 0;
 	return((boolean)(distance < 3));
 }
 
@@ -2591,9 +2594,16 @@ int mnum;
      * Queen bees lay killer bee eggs (usually), but killer bees don't
      * grow into queen bees.  Ditto for [winged-]gargoyles.
      */
-    if (mnum == PM_KILLER_BEE || mnum == PM_GARGOYLE ||
+    if (mnum == PM_KILLER_BEE ||
+#ifndef ENGINEER
+    mnum == PM_GARGOYLE ||
+#endif
 	    (lays_eggs(&mons[mnum]) && (BREEDER_EGG ||
-		(mnum != PM_QUEEN_BEE && mnum != PM_WINGED_GARGOYLE))))
+		(mnum != PM_QUEEN_BEE
+#ifndef ENGINEER
+		&& mnum != PM_WINGED_GARGOYLE
+#endif
+		))))
 	return mnum;
     return NON_PM;
 }
@@ -2606,7 +2616,9 @@ boolean force_ordinary;
 {
     if (force_ordinary || !BREEDER_EGG) {
 	if (mnum == PM_QUEEN_BEE) mnum = PM_KILLER_BEE;
+#ifndef ENGINEER
 	else if (mnum == PM_WINGED_GARGOYLE) mnum = PM_GARGOYLE;
+#endif
     }
     return mnum;
 }

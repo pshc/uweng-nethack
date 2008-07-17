@@ -1802,8 +1802,11 @@ do_objs()
 			objnam += 4;
 #ifdef TOURIST
 		/* fudge _platinum_ YENDORIAN EXPRESS CARD */
+		/* PAU EDIT */
+		/*
 		if (!strncmp(objnam, "PLATINUM_", 9))
 			objnam += 9;
+		*/
 #endif
 		Fprintf(ofp,"#define\tART_%s\t%d\n", limit(objnam, 1), i);
 	}

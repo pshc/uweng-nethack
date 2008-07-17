@@ -290,7 +290,7 @@ struct obj {
 /* misc */
 #ifdef KOPS
 #define is_flimsy(otmp)		(objects[(otmp)->otyp].oc_material <= LEATHER || \
-				 (otmp)->otyp == RUBBER_HOSE)
+				 (otmp)->otyp == LETTER_OF_EXPULSION)
 #else
 #define is_flimsy(otmp)		(objects[(otmp)->otyp].oc_material <= LEATHER)
 #endif

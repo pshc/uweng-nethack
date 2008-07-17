@@ -647,11 +647,11 @@ doengrave()
 			    dengr = TRUE;
 			}
 			break;
-		    case WAN_NOTHING:
+		    case WAN_IDLING:
 		    case WAN_UNDEAD_TURNING:
 		    case WAN_OPENING:
 		    case WAN_LOCKING:
-		    case WAN_PROBING:
+		    case WAN_PROBING___:
 			break;
 
 			/* RAY wands */
@@ -666,7 +666,7 @@ doengrave()
 
 		    /* can't tell sleep from death - Eric Backus */
 		    case WAN_SLEEP:
-		    case WAN_DEATH:
+		    case WAN_DESU:
 			if (!Blind) {
 			   Sprintf(post_engr_text,
 				   "The bugs on the %s stop moving!",
@@ -699,7 +699,7 @@ doengrave()
 			break;
 
 		    /* type = ENGRAVE wands */
-		    case WAN_DIGGING:
+		    case WAN_DRILLING:
 			ptext = TRUE;
 			type  = ENGRAVE;
 			if(!objects[otmp->otyp].oc_name_known) {
@@ -718,7 +718,13 @@ doengrave()
 			else
 			    Strcpy(post_engr_text, "You hear drilling!");
 			break;
-
+#ifdef ENGINEER
+		    case WAN_CONSTRUCT:
+		    	if (!Blind)
+			    pline_The("pebbles on the %s assemble into bricks.",
+					surface(u.ux, u.uy));
+			break;
+#endif
 		    /* type = BURN wands */
 		    case WAN_FIRE:
 			ptext = TRUE;

@@ -287,8 +287,11 @@ breakarm(ptr)	/* creature will break out of armor */
 {
 	return ((bigmonst(ptr) || (ptr->msize > MZ_SMALL && !humanoid(ptr)) ||
 		/* special cases of humanoids that cannot wear body armor */
-		ptr == &mons[PM_MARILITH] || ptr == &mons[PM_WINGED_GARGOYLE])
-	      && !sliparm(ptr));
+		ptr == &mons[PM_MARILITH]
+#ifndef ENGINEER
+		|| ptr == &mons[PM_WINGED_GARGOYLE]
+#endif
+		) && !sliparm(ptr));
 }
 #endif /* OVLB */
 #ifdef OVL1
@@ -468,12 +471,21 @@ const char *in_str;
 		{ "violet fungi",	PM_VIOLET_FUNGUS },
 		{ "homunculi",		PM_HOMUNCULUS },
 		{ "baluchitheria",	PM_BALUCHITHERIUM },
-		{ "lurkers above",	PM_LURKER_ABOVE },
+		{ "idlers above",	PM_IDLER_ABOVE },
 		{ "cavemen",		PM_CAVEMAN },
 		{ "cavewomen",		PM_CAVEWOMAN },
 		{ "djinn",		PM_DJINNI },
-		{ "mumakil",		PM_MUMAK },
+		{ "mumakil",		PM_FRIGGIN__MUMAK },
+		{ "mumak",		PM_FRIGGIN__MUMAK },
 		{ "erinyes",		PM_ERINYS },
+		{ "soldier ant",        PM_KEKE______ANT },
+		{ "army ant",           PM_KEKE______ANT },
+		{ "keke ant",           PM_KEKE______ANT },
+		{ "keke  ant",          PM_KEKE______ANT },
+		{ "keke      ant",      PM_KEKE______ANT },
+		{ "Archon",             PM_ARCH__ },
+		{ "archon",             PM_ARCH__ },
+		{ "arch  ",             PM_ARCH__ },
 	    /* falsely caught by -ves check above */
 		{ "master of thief",	PM_MASTER_OF_THIEVES },
 	    /* end of list */
@@ -559,12 +571,12 @@ static const short grownups[][2] = {
 	{PM_WINTER_WOLF_CUB, PM_WINTER_WOLF},
 	{PM_KITTEN, PM_HOUSECAT}, {PM_HOUSECAT, PM_LARGE_CAT},
 	{PM_PONY, PM_HORSE}, {PM_HORSE, PM_WARHORSE},
-	{PM_KOBOLD, PM_LARGE_KOBOLD}, {PM_LARGE_KOBOLD, PM_KOBOLD_LORD},
+	{PM_BALKAN, PM_LARGE_BALKAN}, {PM_LARGE_BALKAN, PM_BALKAN_LORD},
 	{PM_GNOME, PM_GNOME_LORD}, {PM_GNOME_LORD, PM_GNOME_KING},
 	{PM_DWARF, PM_DWARF_LORD}, {PM_DWARF_LORD, PM_DWARF_KING},
 	{PM_MIND_FLAYER, PM_MASTER_MIND_FLAYER},
 	{PM_ORC, PM_ORC_CAPTAIN}, {PM_HILL_ORC, PM_ORC_CAPTAIN},
-	{PM_MORDOR_ORC, PM_ORC_CAPTAIN}, {PM_URUK_HAI, PM_ORC_CAPTAIN},
+	{PM_CECS_ORC, PM_ORC_CAPTAIN}, {PM_URUK_HAI, PM_ORC_CAPTAIN},
 	{PM_SEWER_RAT, PM_GIANT_RAT},
 	{PM_CAVE_SPIDER, PM_GIANT_SPIDER},
 	{PM_OGRE, PM_OGRE_LORD}, {PM_OGRE_LORD, PM_OGRE_KING},
@@ -606,9 +618,9 @@ static const short grownups[][2] = {
 	{PM_APPRENTICE, PM_WIZARD},
 	{PM_MANES,PM_LEMURE},
 #ifdef KOPS
-	{PM_KEYSTONE_KOP, PM_KOP_SERGEANT},
-	{PM_KOP_SERGEANT, PM_KOP_LIEUTENANT},
-	{PM_KOP_LIEUTENANT, PM_KOP_KAPTAIN},
+	{PM_POLICY____COP, PM_POLICY____SERGEANT},
+	{PM_POLICY____SERGEANT, PM_POLICY____LIEUTENANT},
+	{PM_POLICY____LIEUTENANT, PM_POLICY____KAPTAIN},
 #endif
 	{NON_PM,NON_PM}
 };
@@ -727,7 +739,7 @@ struct attack *mattk;
     case PM_SALAMANDER:
 	what = "already on fire";
 	break;
-    case PM_WATER_ELEMENTAL:
+    case PM_PDENG_ELEMENTAL:
     case PM_FOG_CLOUD:
     case PM_STEAM_VORTEX:
 	what = "boiling";

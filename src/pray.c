@@ -44,7 +44,7 @@ STATIC_DCL boolean FDECL(blocked_boulder,(int,int));
  *	responsible for the theft of the Amulet from Marduk, the Creator.
  *	Moloch is unaligned.
  */
-static const char	*Moloch = "Moloch";
+static const char	*Moloch = "Jarek";
 
 static const char *godvoices[] = {
     "booms out",
@@ -522,7 +522,7 @@ aligntyp resp_god;
 		fry_by_god(resp_god);
 	    else {
 		You("bask in its %s glow for a minute...", NH_BLACK);
-		godvoice(resp_god, "I believe it not!");
+		godvoice(resp_god, "WTF!");
 	    }
 	    if (Is_astralevel(&u.uz) || Is_sanctum(&u.uz)) {
 		/* one more try for high altars */
@@ -580,7 +580,7 @@ aligntyp resp_god;
 				? "hast strayed from the path" :
 						"art arrogant",
 			      youmonst.data->mlet == S_HUMAN ? "mortal" : "creature");
-			verbalize("Thou must relearn thy lessons!");
+			verbalize("kbanplz!");
 			(void) adjattrib(A_WIS, -1, FALSE);
 			losexp((char *)0);
 			break;
@@ -679,8 +679,8 @@ gcrownu()
     if (Role_if(PM_WIZARD) &&
 	    (!uwep || (uwep->oartifact != ART_VORPAL_BLADE &&
 		       uwep->oartifact != ART_STORMBRINGER)) &&
-	    !carrying(SPE_FINGER_OF_DEATH)) {
-	class_gift = SPE_FINGER_OF_DEATH;
+	    !carrying(SPE_MIKURU_BEAMU)) {
+	class_gift = SPE_MIKURU_BEAMU;
  make_splbk:
 	obj = mksobj(class_gift, TRUE, FALSE);
 	bless(obj);
@@ -793,7 +793,7 @@ pleased(g_align)
 
 	You_feel("that %s is %s.", align_gname(g_align),
 	    u.ualign.record >= DEVOUT ?
-	    Hallucination ? "pleased as punch" : "well-pleased" :
+	    Hallucination ? "delicious" : "well-pleased" :
 	    u.ualign.record >= STRIDENT ?
 	    Hallucination ? "ticklish" : "pleased" :
 	    Hallucination ? "full" : "satisfied");
@@ -1076,7 +1076,7 @@ STATIC_OVL void
 gods_angry(g_align)
     aligntyp g_align;
 {
-    godvoice(g_align, "Thou hast angered me.");
+    godvoice(g_align, "!lame");
 }
 
 /* The g_align god is upset with you. */
@@ -1110,7 +1110,7 @@ register struct obj *otmp;
     else if (Blind && u.ualign.type == A_LAWFUL)
 	Your("sacrifice disappears!");
     else Your("sacrifice is consumed in a %s!",
-	      u.ualign.type == A_LAWFUL ? "flash of light" : "burst of flame");
+	      u.ualign.type == A_LAWFUL ? "flash of pix" : "deluge of SPAM");
     if (carried(otmp)) useup(otmp);
     else useupf(otmp, 1L);
     exercise(A_WIS, TRUE);
@@ -1290,7 +1290,7 @@ dosacrifice()
 pline("An invisible choir sings, and you are bathed in radiance...");
 		godvoice(altaralign, "Congratulations, mortal!");
 		display_nhwindow(WIN_MESSAGE, FALSE);
-verbalize("In return for thy service, I grant thee the gift of Immortality!");
+verbalize("In return for thy service, I grant thee the gift of Buttsecks!");
 		You("ascend to the status of Demigod%s...",
 		    flags.female ? "dess" : "");
 		done(ASCENDED);
@@ -1492,7 +1492,7 @@ verbalize("In return for thy service, I grant thee the gift of Immortality!");
 		    You("think %s brushed your %s.",something, body_part(FOOT));
 		else You(Hallucination ?
 		    "see crabgrass at your %s.  A funny thing in a dungeon." :
-		    "glimpse a four-leaf clover at your %s.",
+		    "glimpse a pi-leaf clover at your %s.",
 		    makeplural(body_part(FOOT)));
 	    }
 	}

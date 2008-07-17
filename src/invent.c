@@ -259,7 +259,7 @@ struct obj *obj;
 	} else if (obj->otyp == BELL_OF_OPENING) {
 		if (u.uhave.bell) impossible("already have silver bell?");
 		u.uhave.bell = 1;
-	} else if (obj->otyp == SPE_BOOK_OF_THE_DEAD) {
+	} else if (obj->otyp == SPE_BOOK_OF_THE_DESU) {
 		if (u.uhave.book) impossible("already have the book?");
 		u.uhave.book = 1;
 	} else if (obj->oartifact) {
@@ -505,7 +505,7 @@ struct obj *obj;
 	} else if (obj->otyp == BELL_OF_OPENING) {
 		if (!u.uhave.bell) impossible("don't have silver bell?");
 		u.uhave.bell = 0;
-	} else if (obj->otyp == SPE_BOOK_OF_THE_DEAD) {
+	} else if (obj->otyp == SPE_BOOK_OF_THE_DESU) {
 		if (!u.uhave.book) impossible("don't have the book?");
 		u.uhave.book = 0;
 	} else if (obj->oartifact) {
@@ -567,7 +567,7 @@ register struct obj *obj;
 	if (obj->otyp == AMULET_OF_YENDOR ||
 			obj->otyp == CANDELABRUM_OF_INVOCATION ||
 			obj->otyp == BELL_OF_OPENING ||
-			obj->otyp == SPE_BOOK_OF_THE_DEAD) {
+			obj->otyp == SPE_BOOK_OF_THE_DESU) {
 		/* player might be doing something stupid, but we
 		 * can't guarantee that.  assume special artifacts
 		 * are indestructible via drawbridges, and exploding

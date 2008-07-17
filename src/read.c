@@ -69,7 +69,7 @@ doread()
     "Oracle(TM) Fountains 10th Annual Wet T-Shirt Contest",
     "Hey, black dragon!  Disintegrate THIS!",
     "I'm With Stupid -->",
-    "Don't blame me, I voted for Izchak!",
+    "Don't blame me, I voted for Tehats!",
     "Don't Panic",				/* HHGTTG */
     "Furinkan High School Athletic Dept.",	/* Ranma 1/2 */
     "Hel-LOOO, Nurse!",			/* Animaniacs */
@@ -110,7 +110,7 @@ doread()
 	}
 
 	/* Actions required to win the game aren't counted towards conduct */
-	if (scroll->otyp != SPE_BOOK_OF_THE_DEAD &&
+	if (scroll->otyp != SPE_BOOK_OF_THE_DESU &&
 		scroll->otyp != SPE_BLANK_PAPER &&
 		scroll->otyp != SCR_BLANK_PAPER)
 	    u.uconduct.literate++;
@@ -312,7 +312,7 @@ int curse_bless;
 	    case MAGIC_MARKER:
 	    case TINNING_KIT:
 #ifdef TOURIST
-	    case EXPENSIVE_CAMERA:
+	    case PR_N_CAMERA:
 #endif
 		if (is_cursed) stripspe(obj);
 		else if (rechrg && obj->otyp == MAGIC_MARKER) {	/* previously recharged */
@@ -985,7 +985,7 @@ register struct obj	*sobj;
 				       sobj->blessed ? rnd(3-uwep->spe/3) : 1);
 		break;
 	case SCR_TAMING:
-	case SPE_CHARM_MONSTER:
+	case SPE_MIND_CONTROL:
 		if (u.uswallow) {
 		    maybe_tame(u.ustuck, sobj);
 		} else {
@@ -999,8 +999,8 @@ register struct obj	*sobj;
 		    }
 		}
 		break;
-	case SCR_GENOCIDE:
-		You("have found a scroll of genocide!");
+	case SCR_ELIMINATE:
+		You("have found a death note!");
 		known = TRUE;
 		if (sobj->blessed) do_class_genocide();
 		else do_genocide(!sobj->cursed | (2 * !!Confusion));
@@ -1113,9 +1113,9 @@ register struct obj	*sobj;
 		else if (!strncmpi(plname, "Maud", 4))
 			pline("As your mind turns inward on itself, you forget everything else.");
 		else if (rn2(2))
-			pline("Who was that Maud person anyway?");
+			pline("University of Western Ontario? Where's that?");
 		else
-			pline("Thinking of Maud you forget everything else.");
+			pline("Thinking of Western you forget everything else.");
 		exercise(A_WIS, FALSE);
 		break;
 	case SCR_FIRE:
@@ -1288,7 +1288,7 @@ register struct obj	*sobj;
 		    return 0;
 		}
 		if (!cansee(cc.x, cc.y) || distu(cc.x, cc.y) >= 32) {
-		    You("smell rotten eggs.");
+		    You("smell mathies.");
 		    return 0;
 		}
 		(void) create_gas_cloud(cc.x, cc.y, 3+bcsign(sobj),
@@ -1437,7 +1437,7 @@ do_class_genocide()
 			return;
 		}
 		do {
-		    getlin("What class of monsters do you wish to genocide?",
+		    getlin("What class of monsters do you wish to eliminate?",
 			buf);
 		    (void)mungspaces(buf);
 		} while (buf[0]=='\033' || !buf[0]);
@@ -1477,7 +1477,7 @@ do_class_genocide()
 	pline("All such monsters are already nonexistent.");
 			else if (immunecnt ||
 				(buf[0] == DEF_INVISIBLE && buf[1] == '\0'))
-	You("aren't permitted to genocide such monsters.");
+	You("aren't permitted to eliminate such monsters.");
 			else
 #ifdef WIZARD	/* to aid in topology testing; remove pesky monsters */
 			  if (wizard && buf[0] == '*') {
@@ -1491,6 +1491,7 @@ do_class_genocide()
 				gonecnt++;
 			    }
 	pline("Eliminated %d monster%s.", gonecnt, plur(gonecnt));
+	pline("Just as planned!");
 			    return;
 			} else
 #endif
@@ -1516,7 +1517,7 @@ do_class_genocide()
 			    reset_rndmonst(i);
 			    kill_genocided_monsters();
 			    update_inventory();		/* eggs & tins */
-			    pline("Wiped out all %s.", nam);
+			    pline("You scribble furiously and yell \"SAKUJO!\" Eliminated all %s.", nam);
 			    if (Upolyd && i == u.umonnum) {
 				u.mh = -1;
 				if (Unchanging) {
@@ -1561,7 +1562,7 @@ do_class_genocide()
 				/* one special case */
 				if (i == PM_HIGH_PRIEST) uniq = FALSE;
 
-				You("aren't permitted to genocide %s%s.",
+				You("aren't permitted to eliminate %s%s.",
 				    (uniq && !named) ? "the " : "",
 				    (uniq || named) ? mons[i].mname : nam);
 			    }
@@ -1570,7 +1571,7 @@ do_class_genocide()
 		}
 		if (gameover || u.uhp == -1) {
 		    killer_format = KILLED_BY_AN;
-		    killer = "scroll of genocide";
+		    killer = "death note";
 		    if (gameover) done(GENOCIDED);
 		}
 		return;
@@ -1605,7 +1606,7 @@ int how;
 		    pline(thats_enough_tries);
 		    return;
 		}
-		getlin("What monster do you want to genocide? [type the name]",
+		getlin("What monster do you want to eliminate? [type the name]",
 			buf);
 		(void)mungspaces(buf);
 		/* choosing "none" preserves genocideless conduct */
@@ -1686,14 +1687,14 @@ int how;
 		u.uhp = -1;
 		if (how & PLAYER) {
 		    killer_format = KILLED_BY;
-		    killer = "genocidal confusion";
+		    killer = "death note confusion";
 		} else if (how & ONTHRONE) {
 		    /* player selected while on a throne */
 		    killer_format = KILLED_BY_AN;
 		    killer = "imperious order";
 		} else { /* selected player deliberately, not confused */
 		    killer_format = KILLED_BY_AN;
-		    killer = "scroll of genocide";
+		    killer = "death note";
 		}
 
 	/* Polymorphed characters will die as soon as they're rehumanized. */

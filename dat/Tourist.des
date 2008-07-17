@@ -384,7 +384,7 @@ DOOR:random,(51,15)
 DOOR:open,(59,14)
 DOOR:open,(59,17)
 # Objects
-OBJECT:'(',"credit card",(04,01),blessed,0,"The Platinum Yendorian Express Card"
+OBJECT:'(',"WatCard",(04,01),blessed,0,"The University of Waterloo Student ID"
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
@@ -434,15 +434,15 @@ MONSTER:'&',"incubus",(08,14)
 MONSTER:'&',"incubus",(02,17)
 MONSTER:'&',"incubus",(08,17)
 # Police station (with drunken prisoners)
-MONSTER:'K',"Kop Kaptain",(24,09),hostile
-MONSTER:'K',"Kop Lieutenant",(20,09),hostile
-MONSTER:'K',"Kop Lieutenant",(22,11),hostile
-MONSTER:'K',"Kop Lieutenant",(22,07),hostile
-MONSTER:'K',"Keystone Kop",(19,07),hostile
-MONSTER:'K',"Keystone Kop",(19,08),hostile
-MONSTER:'K',"Keystone Kop",(22,09),hostile
-MONSTER:'K',"Keystone Kop",(24,11),hostile
-MONSTER:'K',"Keystone Kop",(19,11),hostile
+MONSTER:'K',"Policy 71 Kaptain",(24,09),hostile
+MONSTER:'K',"Policy 71 Lieutenant",(20,09),hostile
+MONSTER:'K',"Policy 71 Lieutenant",(22,11),hostile
+MONSTER:'K',"Policy 71 Lieutenant",(22,07),hostile
+MONSTER:'K',"Policy 71 Cop",(19,07),hostile
+MONSTER:'K',"Policy 71 Cop",(19,08),hostile
+MONSTER:'K',"Policy 71 Cop",(22,09),hostile
+MONSTER:'K',"Policy 71 Cop",(24,11),hostile
+MONSTER:'K',"Policy 71 Cop",(19,11),hostile
 MONSTER:'@',"prisoner",(19,13)
 MONSTER:'@',"prisoner",(21,13)
 MONSTER:'@',"prisoner",(24,13)

@@ -971,7 +971,7 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 	    if (realizes_damage)
 		pline_The("fiery blade %s %s%c",
 			!spec_dbon_applies ? "hits" :
-			(mdef->data == &mons[PM_WATER_ELEMENTAL]) ?
+			(mdef->data == &mons[PM_PDENG_ELEMENTAL]) ?
 			"vaporizes part of" : "burns",
 			hittee, !spec_dbon_applies ? '.' : '!');
 	    if (!rn2(4)) (void) destroy_mitem(mdef, POTION_CLASS, AD_FIRE);
@@ -1349,6 +1349,12 @@ arti_invoke(obj)
 				       aobjnam(otmp, "fall"), (const char *)0);
 	    break;
 	  }
+#ifdef ENGINEER
+	case EARTH: {
+	    pline("Hmm, it seems to be broken. OHNOES!");
+	    break;
+	}
+#endif
 	}
     } else {
 	long eprop = (u.uprops[oart->inv_prop].extrinsic ^= W_ARTI),

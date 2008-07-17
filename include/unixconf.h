@@ -6,6 +6,9 @@
 #ifndef UNIXCONF_H
 #define UNIXCONF_H
 
+/* Game event notifications to sockets */
+#define STATUS_SOCKET "/var/socket/status"
+
 /*
  * Some include files are in a different place under SYSV
  *	BSD		   SYSV
@@ -34,10 +37,10 @@
 /* define any of the following that are appropriate */
 #define SVR4		/* use in addition to SYSV for System V Release 4 */
 			/* including Solaris 2+ */
-#define NETWORK		/* if running on a networked system */
+/*#define NETWORK */	/* if running on a networked system */
 			/* e.g. Suns sharing a playground through NFS */
 /* #define SUNOS4 */	/* SunOS 4.x */
-/* #define LINUX */	/* Another Unix clone */
+#define LINUX		/* Another Unix clone */
 /* #define CYGWIN32 */	/* Unix on Win32 -- use with case sensitive defines */
 /* #define GENIX */	/* Yet Another Unix Clone */
 /* #define HISX */	/* Bull Unix for XPS Machines */
@@ -95,14 +98,14 @@
  *		Ralf Brown, 7/26/89 (from v2.3 hack of 10/10/88)
  */
 
-/* #define NO_FILE_LINKS */	/* if no hard links */
-/* #define LOCKDIR "/usr/games/lib/nethackdir" */	/* where to put locks */
+ #define NO_FILE_LINKS 	/* if no hard links */
+ #define LOCKDIR "/var/games/nethack/locks" 	/* where to put locks */
 
 /*
  * If you want the static parts of your playground on a read-only file
  * system, define VAR_PLAYGROUND to be where the variable parts are kept.
  */
-/* #define VAR_PLAYGROUND "/var/lib/games/nethack" */
+/* #define VAR_PLAYGROUND "/var/games/nethack" */
 
 
 /*
@@ -132,7 +135,7 @@
  * "extra output" method is used, but not all systems provide access to
  * a fine-grained timer.
  */
-/* #define TIMED_DELAY */	/* usleep() */
+#define TIMED_DELAY 1 /* usleep() */
 #endif
 
 /*
@@ -143,7 +146,7 @@
  * A stat system call is done on the mailbox every MAILCKFREQ moves.
  */
 
-#define MAIL			/* Deliver mail during the game */
+/*#define MAIL	*/		/* Deliver mail during the game */
 
 /* The Andrew Message System does mail a little differently from normal
  * UNIX.  Mail is deposited in the user's own directory in ~/Mailbox

@@ -1420,7 +1420,7 @@ struct mkroom *croom;
  * Assumes there are no rooms within the invocation area and that inv_pos
  * is not too close to the edge of the map.  Also assume the hero can see,
  * which is guaranteed for normal play due to the fact that sight is needed
- * to read the Book of the Dead.
+ * to read the Book of the DESU.
  */
 void
 mkinvokearea()

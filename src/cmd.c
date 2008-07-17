@@ -456,12 +456,18 @@ domonability()
 	else if (webmaker(youmonst.data)) return dospinweb();
 	else if (is_hider(youmonst.data)) return dohide();
 	else if (is_mind_flayer(youmonst.data)) return domindblast();
+#ifdef ENGINEER
+	else if (youmonst.data->mlet == S_GOOSE)
+		You("poop.");
+#else
 	else if (u.umonnum == PM_GREMLIN) {
 	    if(IS_FOUNTAIN(levl[u.ux][u.uy].typ)) {
 		if (split_mon(&youmonst, (struct monst *)0))
 		    dryup(u.ux, u.uy, TRUE);
 	    } else There("is no fountain here.");
-	} else if (is_unicorn(youmonst.data)) {
+	}
+#endif
+	else if (is_unicorn(youmonst.data)) {
 	    use_unicorn_horn((struct obj *)0);
 	    return 1;
 	} else if (youmonst.data->msound == MS_SHRIEK) {
@@ -946,8 +952,8 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 	if (Adornment) {
 	    int adorn = 0;
 
-	    if(uleft && uleft->otyp == RIN_ADORNMENT) adorn += uleft->spe;
-	    if(uright && uright->otyp == RIN_ADORNMENT) adorn += uright->spe;
+	    if(uleft && uleft->otyp == RIN_HAWTNESS) adorn += uleft->spe;
+	    if(uright && uright->otyp == RIN_HAWTNESS) adorn += uright->spe;
 	    if (adorn < 0)
 		you_are("poorly adorned");
 	    else
@@ -1297,9 +1303,9 @@ int final;
 
 	ngenocided = num_genocides();
 	if (ngenocided == 0) {
-	    you_have_never("genocided any monsters");
+	    you_have_never("eliminated any monsters");
 	} else {
-	    Sprintf(buf, "genocided %d type%s of monster%s",
+	    Sprintf(buf, "eliminated %d type%s of monster%s",
 		    ngenocided, plur(ngenocided), plur(ngenocided));
 	    you_have_X(buf);
 	}
@@ -2036,7 +2042,7 @@ char sym;
 	u.dx = xdir[dp-sdp];
 	u.dy = ydir[dp-sdp];
 	u.dz = zdir[dp-sdp];
-	if (u.dx && u.dy && u.umonnum == PM_GRID_BUG) {
+	if (u.dx && u.dy && u.umonnum == PM_ZAPADA) {
 		u.dx = u.dy = 0;
 		return 0;
 	}
@@ -2148,14 +2154,14 @@ const char *msg;
 		putstr(win, 0, "");
 	    }
 	}
-	if (iflags.num_pad && u.umonnum == PM_GRID_BUG) {
+	if (iflags.num_pad && u.umonnum == PM_ZAPADA) {
 	    putstr(win, 0, "Valid direction keys in your current form (with number_pad on) are:");
 	    putstr(win, 0, "             8   ");
 	    putstr(win, 0, "             |   ");
 	    putstr(win, 0, "          4- . -6");
 	    putstr(win, 0, "             |   ");
 	    putstr(win, 0, "             2   ");
-	} else if (u.umonnum == PM_GRID_BUG) {
+	} else if (u.umonnum == PM_ZAPADA) {
 	    putstr(win, 0, "Valid direction keys in your current form are:");
 	    putstr(win, 0, "             k   ");
 	    putstr(win, 0, "             |   ");
@@ -2194,7 +2200,7 @@ const char *msg;
 void
 confdir()
 {
-	register int x = (u.umonnum == PM_GRID_BUG) ? 2*rn2(4) : rn2(8);
+	register int x = (u.umonnum == PM_ZAPADA) ? 2*rn2(4) : rn2(8);
 	u.dx = xdir[x];
 	u.dy = ydir[x];
 	return;

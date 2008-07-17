@@ -48,7 +48,7 @@ MONSTER:'@',"Wizard of Yendor",(16,05),asleep
 MONSTER:'d',"hell hound",(15,05)
 MONSTER:'V',"vampire lord",(17,05)
 # The local treasure
-OBJECT:'+',"Book of the Dead",(16,05)
+OBJECT:'+',"Book of the DESU",(16,05)
 # Surrounding terror
 MONSTER:';',"kraken",(14,02)
 MONSTER:';',"giant eel",(17,02)

@@ -1346,7 +1346,7 @@ boolean shop_floor_obj;
 
 	    if (objects[otmp->otyp].oc_material == GLASS
 #ifdef TOURIST
-		|| otmp->otyp == EXPENSIVE_CAMERA
+		|| otmp->otyp == PR_N_CAMERA
 #endif
 		) {
 		if (otmp->otyp == MIRROR)

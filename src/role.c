@@ -27,7 +27,7 @@
 const struct Role roles[] = {
 {	{"Archeologist", 0}, {
 	{"Digger",      0},
-	{"Field Worker",0},
+	{"Driller",     0},
 	{"Investigator",0},
 	{"Exhumer",     0},
 	{"Excavator",   0},
@@ -35,7 +35,7 @@ const struct Role roles[] = {
 	{"Speleologist",0},
 	{"Collector",   0},
 	{"Curator",     0} },
-	"Quetzalcoatl", "Camaxtli", "Huhetotl", /* Central American */
+	"Kamina", "_The Spiral King", "Eris", /* Central American */
 	"Arc", "the College of Archeology", "the Tomb of the Toltec Kings",
 	PM_ARCHEOLOGIST, NON_PM, NON_PM,
 	PM_LORD_CARNARVON, PM_STUDENT, PM_MINION_OF_HUHETOTL,
@@ -101,13 +101,13 @@ const struct Role roles[] = {
 	/* Init   Lower  Higher */
 	{ 14, 0,  0, 8,  2, 0 },	/* Hit points */
 	{  1, 0,  0, 1,  0, 1 },10,	/* Energy */
-	0, 12, 0, 1,  8, A_INT, SPE_DIG,             -4
+	0, 12, 0, 1,  8, A_INT, SPE_DRILLING,             -4
 },
 {	{"Healer", 0}, {
 	{"Rhizotomist",    0},
 	{"Empiric",        0},
 	{"Embalmer",       0},
-	{"Dresser",        0},
+	{"Buffeter",       0},
 	{"Medicus ossium", "Medica ossium"},
 	{"Herbalist",      0},
 	{"Magister",       "Magistra"},
@@ -158,7 +158,7 @@ const struct Role roles[] = {
 	{"Novice",            0},
 	{"Initiate",          0},
 	{"Student of Stones", 0},
-	{"Student of Waters", 0},
+	{"Student of Phalluses", 0},
 	{"Student of Metals", 0},
 	{"Student of Winds",  0},
 	{"Student of Fire",   0},
@@ -187,7 +187,7 @@ const struct Role roles[] = {
 	{"Priest",      "Priestess"},
 	{"Curate",      0},
 	{"Canon",       "Canoness"},
-	{"Lama",        0},
+	{"Pope",        "Popess"},
 	{"Patriarch",   "Matriarch"},
 	{"High Priest", "High Priestess"} },
 	0, 0, 0,	/* chosen randomly from among the other roles */
@@ -215,7 +215,7 @@ const struct Role roles[] = {
 	{"Pilferer",    0},
 	{"Robber",      0},
 	{"Burglar",     0},
-	{"Filcher",     0},
+	{"Sonuvabitch", "Daughterofabitch"},
 	{"Magsman",     "Magswoman"},
 	{"Thief",       0} },
 	"Issek", "Mog", "Kos", /* Nehwon */
@@ -250,7 +250,7 @@ const struct Role roles[] = {
 	"Solonor Thelandira", "Aerdrie Faenya", "Lolth", /* Elven */
 #endif
 	{"Tenderfoot",    0},
-	{"Lookout",       0},
+	{"Bivouacer",     0},
 	{"Trailblazer",   0},
 	{"Reconnoiterer", "Reconnoiteress"},
 	{"Scout",         0},
@@ -315,7 +315,7 @@ const struct Role roles[] = {
 	PM_TOURIST, NON_PM, NON_PM,
 	PM_TWOFLOWER, PM_GUIDE, PM_MASTER_OF_THIEVES,
 	PM_GIANT_SPIDER, PM_FOREST_CENTAUR, S_SPIDER, S_CENTAUR,
-	ART_YENDORIAN_EXPRESS_CARD,
+	ART_UNIVERSITY_OF_WATERLOO_STU,
 	MH_HUMAN | ROLE_MALE|ROLE_FEMALE | ROLE_NEUTRAL,
 	/* Str Int Wis Dex Con Cha */
 	{   7, 10,  6,  7,  7, 10 },
@@ -323,7 +323,7 @@ const struct Role roles[] = {
 	/* Init   Lower  Higher */
 	{  8, 0,  0, 8,  0, 0 },	/* Hit points */
 	{  1, 0,  0, 1,  0, 1 },14,	/* Energy */
-	0, 5, 1, 2, 10, A_INT, SPE_CHARM_MONSTER,   -4
+	0, 5, 1, 2, 10, A_INT, SPE_MIND_CONTROL,   -4
 },
 #endif
 {	{"Valkyrie", 0}, {
@@ -351,17 +351,17 @@ const struct Role roles[] = {
 	{  1, 0,  0, 1,  0, 1 },10,	/* Energy */
 	0, 10,-2, 0,  9, A_WIS, SPE_CONE_OF_COLD,    -4
 },
-{	{"Wizard", 0}, {
-	{"Evoker",      0},
+{	{"Wizzard", 0}, {
+	{"Squib",       0},
 	{"Conjurer",    0},
 	{"Thaumaturge", 0},
 	{"Magician",    0},
 	{"Enchanter",   "Enchantress"},
 	{"Sorcerer",    "Sorceress"},
 	{"Necromancer", 0},
-	{"Wizard",      0},
-	{"Mage",        0} },
-	"Ptah", "Thoth", "Anhur", /* Egyptian */
+	{"Wizzard",     0},
+	{"Wizzzard",    0} },
+	"Ptah", "Thoth", "Cantide", /* Egyptian */
 	"Wiz", "the Lonely Tower", "the Tower of Darkness",
 	PM_WIZARD, NON_PM, PM_KITTEN,
 	PM_NEFERET_THE_GREEN, PM_APPRENTICE, PM_DARK_ONE,
@@ -371,12 +371,48 @@ const struct Role roles[] = {
 	  ROLE_NEUTRAL|ROLE_CHAOTIC,
 	/* Str Int Wis Dex Con Cha */
 	{   7, 10,  7,  7,  7,  7 },
-	{  10, 30, 10, 20, 20, 10 },
+	{  12, 30, 10, 20, 20,  8 },
 	/* Init   Lower  Higher */
 	{ 10, 0,  0, 8,  1, 0 },	/* Hit points */
 	{  4, 3,  0, 2,  0, 3 },12,	/* Energy */
 	0, 1, 0, 3, 10, A_INT, SPE_MAGIC_MISSILE,   -4
 },
+#ifdef ENGINEER
+{	{"Engineer", 0}, {
+	{"Nublet",      "Nublette"},
+	{"Forumer",      0},
+	{"Virgin",       0},
+	{"Idler",        0},
+	{"Regular",      0},
+	{"Jaded",        0},
+	{"Manly",        "Hawt"},
+	{"Engineer",     0},
+	{"Professional Engineer", 0} },
+	"Science", "Opera", "Eris", /* UWEng */
+	"Eng", "CPH", "the University of Toronto",
+	PM_ENGINEER, NON_PM, PM_GOSLING,
+	PM_DONG_TING, PM_STUDENT, PM_MACGREGOR,
+	PM_QUANTUM_MECHANIC, PM_IDLER_ABOVE, S_XAN, S_ELEMENTAL,
+	ART_TOOL,
+	MH_HUMAN | ROLE_MALE|ROLE_FEMALE |
+	  ROLE_LAWFUL|ROLE_NEUTRAL|ROLE_CHAOTIC,
+	/* Str Int Wis Dex Con Cha */
+	{   7, 10,  7,  7,  7,  7 },    /* Minimum */
+	{  20, 30,  5, 20, 20,  5 },    /* Distribution at init */
+	/* Init   Lower  Higher */
+	{ 10, 3,  1, 8,  1, 3 },	/* Hit points */
+	{  10, 5,  0, 2,  0, 3 },	/* Energy */
+	/* first is fixed amount gained, second is random amount gained */
+	/* when level is this or higher, use the "higher" column instead */
+	15,
+	/* initial alignment record */
+	0,
+	/* spellcasting penalties: base, healing, shield, metal; stat used */
+	0, 2, 1, 1, A_INT,
+	/* excels at which spell, penalty for it */
+	SPE_CONSTRUCT, -5
+},
+#endif
 /* Array terminator */
 {{0, 0}}
 };
@@ -404,7 +440,7 @@ struct Role urole =
 
 /* Table of all races */
 const struct Race races[] = {
-{	"human", "human", "humanity", "Hum",
+{	"frosh", "frosh", "froshkind", "Hum",
 	{"man", "woman"},
 	PM_HUMAN, NON_PM, PM_HUMAN_MUMMY, PM_HUMAN_ZOMBIE,
 	MH_HUMAN | ROLE_MALE|ROLE_FEMALE |
@@ -441,7 +477,7 @@ const struct Race races[] = {
 	{  4, 0,  0, 3,  2, 0 },	/* Hit points */
 	{  0, 0,  0, 0,  0, 0 }		/* Energy */
 },
-{	"gnome", "gnomish", "gnomehood", "Gno",
+{	"GNOME", "GNOMEish", "GNOMEhood", "Gno",
 	{0, 0},
 	PM_GNOME, NON_PM, PM_GNOME_MUMMY, PM_GNOME_ZOMBIE,
 	MH_GNOME | ROLE_MALE|ROLE_FEMALE | ROLE_NEUTRAL,
@@ -499,7 +535,7 @@ const struct Align aligns[] = {
 	{"law",		"lawful",	"Law",	ROLE_LAWFUL,	A_LAWFUL},
 	{"balance",	"neutral",	"Neu",	ROLE_NEUTRAL,	A_NEUTRAL},
 	{"chaos",	"chaotic",	"Cha",	ROLE_CHAOTIC,	A_CHAOTIC},
-	{"evil",	"unaligned",	"Una",	0,		A_NONE}
+	{"PDEng-esque",	"unaligned",	"Una",	0,		A_NONE}
 };
 
 STATIC_DCL char * FDECL(promptsep, (char *, int));
@@ -1456,7 +1492,7 @@ struct monst *mtmp;
 	    		"Irasshaimase" : "Konnichi wa"); /* Japanese */
 #ifdef TOURIST
 	case PM_TOURIST:
-	    return ("Aloha");       /* Hawaiian */
+	    return ("Aloha Mahalo");       /* Hawaiian */
 #endif
 	case PM_VALKYRIE:
 	    return (
@@ -1464,6 +1500,10 @@ struct monst *mtmp;
 	    		mtmp && mtmp->data == &mons[PM_MAIL_DAEMON] ? "Hallo" :
 #endif
 	    		"Velkommen");   /* Norse */
+#ifdef ENGINEER
+	case PM_ENGINEER:
+	    return ("Hai");
+#endif
 	default:
 	    return ("Hello");
 	}
@@ -1483,6 +1523,10 @@ Goodbye()
 #endif
 	case PM_VALKYRIE:
 	    return ("Farvel");          /* Norse */
+#ifdef ENGINEER
+	case PM_ENGINEER:
+	    return ("BAI");
+#endif
 	default:
 	    return ("Goodbye");
 	}

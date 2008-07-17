@@ -5,7 +5,9 @@
 #include "hack.h"
 #include "prop.h"
 
+#ifndef ENGINEER
 STATIC_DCL void FDECL(mkbox_cnts,(struct obj *));
+#endif
 STATIC_DCL void FDECL(obj_timer_checks,(struct obj *, XCHAR_P, XCHAR_P, int));
 #ifdef OVL1
 STATIC_DCL void FDECL(container_weight, (struct obj *));
@@ -134,7 +136,10 @@ boolean artif;
 	return(mksobj(i, TRUE, artif));
 }
 
-STATIC_OVL void
+#ifndef ENGINEER
+EXTERN_OVL
+#endif
+void
 mkbox_cnts(box)
 struct obj *box;
 {
@@ -379,7 +384,7 @@ boolean artif;
 	otmp->otyp = otyp;
 	otmp->where = OBJ_FREE;
 	otmp->dknown = index(dknowns, let) ? 0 : 1;
-	if ((otmp->otyp >= ELVEN_SHIELD && otmp->otyp <= ORCISH_SHIELD) ||
+	if ((otmp->otyp >= ELVEN_SHIELD && otmp->otyp <= CECS_SHIELD) ||
 			otmp->otyp == SHIELD_OF_REFLECTION)
 		otmp->dknown = 0;
 	if (!objects[otmp->otyp].oc_uses_known)
@@ -490,7 +495,7 @@ boolean artif;
 		case BAG_OF_HOLDING:	mkbox_cnts(otmp);
 					break;
 #ifdef TOURIST
-		case EXPENSIVE_CAMERA:
+		case PR_N_CAMERA:
 #endif
 		case TINNING_KIT:
 		case MAGIC_MARKER:	otmp->spe = rn1(70,30);
@@ -526,7 +531,7 @@ boolean artif;
 	case AMULET_CLASS:
 		if (otmp->otyp == AMULET_OF_YENDOR) flags.made_amulet = TRUE;
 		if(rn2(10) && (otmp->otyp == AMULET_OF_STRANGULATION ||
-		   otmp->otyp == AMULET_OF_CHANGE ||
+		   otmp->otyp == AMULET_OF_RANMA____ ||
 		   otmp->otyp == AMULET_OF_RESTFUL_SLEEP)) {
 			curse(otmp);
 		} else	blessorcurse(otmp, 10);

@@ -209,7 +209,7 @@ mattackm(magr, mdef)
     pa = magr->data;  pd = mdef->data;
 
     /* Grid bugs cannot attack at an angle. */
-    if (pa == &mons[PM_GRID_BUG] && magr->mx != mdef->mx
+    if (pa == &mons[PM_ZAPADA] && magr->mx != mdef->mx
 						&& magr->my != mdef->my)
 	return(MM_MISS);
 
@@ -931,7 +931,9 @@ mdamagem(magr, mdef, mattk)
 		tmp = 0;
 		break;
 	    case AD_CURS:
+#ifndef ENGINEER
 		if (!night() && (pa == &mons[PM_GREMLIN])) break;
+#endif
 		if (!magr->mcan && !rn2(10)) {
 		    mdef->mcan = 1;	/* cancelled regardless of lifesave */
 		    mdef->mstrategy &= ~STRAT_WAITFORU;

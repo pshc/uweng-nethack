@@ -329,12 +329,12 @@ dodrink()
 	const char *potion_descr;
 
 	if (Strangled) {
-		pline("If you can't breathe air, how can you drink liquid?");
+		pline("If you can't breathe air, how can you bhav liquid?");
 		return 0;
 	}
 	/* Is there a fountain to drink from here? */
 	if (IS_FOUNTAIN(levl[u.ux][u.uy].typ) && !Levitation) {
-		if(yn("Drink from the fountain?") == 'y') {
+		if(yn("Bhav from the fountain?") == 'y') {
 			drinkfountain();
 			return 1;
 		}
@@ -342,7 +342,7 @@ dodrink()
 #ifdef SINKS
 	/* Or a kitchen sink? */
 	if (IS_SINK(levl[u.ux][u.uy].typ)) {
-		if (yn("Drink from the sink?") == 'y') {
+		if (yn("Bhav from the sink?") == 'y') {
 			drinksink();
 			return 1;
 		}
@@ -351,13 +351,13 @@ dodrink()
 
 	/* Or are you surrounded by water? */
 	if (Underwater) {
-		if (yn("Drink the water around you?") == 'y') {
+		if (yn("Bhav the water around you?") == 'y') {
 		    pline("Do you know what lives in this water!");
 			return 1;
 		}
 	}
 
-	otmp = getobj(beverages, "drink");
+	otmp = getobj(beverages, "bhav");
 	if(!otmp) return(0);
 	otmp->in_use = TRUE;		/* you've opened the stopper */
 
@@ -440,7 +440,7 @@ peffects(otmp)
 		    }
 		}
 		break;
-	case POT_HALLUCINATION:
+	case POT_LSD:
 		if (Hallucination || Halluc_resistance) nothing++;
 		(void) make_hallucinated(itimeout_incr(HHallucination,
 					   rn1(200, 600 - 300 * bcsign(otmp))),
@@ -494,7 +494,7 @@ peffects(otmp)
 		    }
 		}
 		break;
-	case POT_BOOZE:
+	case POT_VODKA:
 		unkn++;
 		pline("Ooph!  This tastes like %s%s!",
 		      otmp->odiluted ? "watered down " : "",
@@ -1052,7 +1052,7 @@ boolean your_fault;
 		    pline("%s looks rather ill.", Monnam(mon));
 		break;
 	case POT_CONFUSION:
-	case POT_BOOZE:
+	case POT_VODKA:
 		if(!resist(mon, POTION_CLASS, 0, NOTELL))  mon->mconf = TRUE;
 		break;
 	case POT_INVISIBILITY:
@@ -1109,10 +1109,14 @@ boolean your_fault;
 				!Protection_from_shape_changers)
 			    new_were(mon);	/* transform into beast */
 		    }
-		} else if(mon->data == &mons[PM_GREMLIN]) {
+		}
+#ifndef ENGINEER
+		else if(mon->data == &mons[PM_GREMLIN]) {
 		    angermon = FALSE;
 		    (void)split_mon(mon, (struct monst *)0);
-		} else if(mon->data == &mons[PM_IRON_GOLEM]) {
+		}
+#endif
+		else if(mon->data == &mons[PM_IRON_GOLEM]) {
 		    if (canseemon(mon))
 			pline("%s rusts.", Monnam(mon));
 		    mon->mhp -= d(1,6);
@@ -1234,11 +1238,11 @@ register struct obj *obj;
 			exercise(A_CON, FALSE);
 		}
 		break;
-	case POT_HALLUCINATION:
+	case POT_LSD:
 		You("have a momentary vision.");
 		break;
 	case POT_CONFUSION:
-	case POT_BOOZE:
+	case POT_VODKA:
 		if(!Confusion)
 			You_feel("somewhat dizzy.");
 		make_confused(itimeout_incr(HConfusion, rnd(5)), FALSE);
@@ -1263,7 +1267,7 @@ register struct obj *obj;
 	case POT_SLEEPING:
 		kn++;
 		if (!Free_action && !Sleep_resistance) {
-		    You_feel("rather tired.");
+		    You_feel("rather le tired.");
 		    nomul(-rnd(5));
 		    nomovemsg = You_can_move_again;
 		    exercise(A_DEX, FALSE);
@@ -1283,9 +1287,12 @@ register struct obj *obj;
 		if (!Blind && !u.usleep) Your(vision_clears);
 		break;
 	case POT_WATER:
+#ifndef ENGINEER
 		if(u.umonnum == PM_GREMLIN) {
 		    (void)split_mon(&youmonst, (struct monst *)0);
-		} else if (u.ulycn >= LOW_PM) {
+		} else
+#endif
+		if (u.ulycn >= LOW_PM) {
 		    /* vapor from [un]holy water will trigger
 		       transformation but won't cure lycanthropy */
 		    if (obj->blessed && youmonst.data == &mons[u.ulycn])
@@ -1361,21 +1368,21 @@ register struct obj *o1, *o2;
 			switch (o2->otyp) {
 			    case POT_SICKNESS:
 				return POT_FRUIT_JUICE;
-			    case POT_HALLUCINATION:
+			    case POT_LSD:
 			    case POT_BLINDNESS:
 			    case POT_CONFUSION:
 				return POT_WATER;
 			}
 			break;
 		case AMETHYST:		/* "a-methyst" == "not intoxicated" */
-			if (o2->otyp == POT_BOOZE)
+			if (o2->otyp == POT_VODKA)
 			    return POT_FRUIT_JUICE;
 			break;
 		case POT_GAIN_LEVEL:
 		case POT_GAIN_ENERGY:
 			switch (o2->otyp) {
 			    case POT_CONFUSION:
-				return (rn2(3) ? POT_BOOZE : POT_ENLIGHTENMENT);
+				return (rn2(3) ? POT_VODKA : POT_ENLIGHTENMENT);
 			    case POT_HEALING:
 				return POT_EXTRA_HEALING;
 			    case POT_EXTRA_HEALING:
@@ -1384,8 +1391,8 @@ register struct obj *o1, *o2;
 				return POT_GAIN_ABILITY;
 			    case POT_FRUIT_JUICE:
 				return POT_SEE_INVISIBLE;
-			    case POT_BOOZE:
-				return POT_HALLUCINATION;
+			    case POT_VODKA:
+				return POT_LSD;
 			}
 			break;
 		case POT_FRUIT_JUICE:
@@ -1393,7 +1400,7 @@ register struct obj *o1, *o2;
 			    case POT_SICKNESS:
 				return POT_SICKNESS;
 			    case POT_SPEED:
-				return POT_BOOZE;
+				return POT_VODKA;
 			    case POT_GAIN_LEVEL:
 			    case POT_GAIN_ENERGY:
 				return POT_SEE_INVISIBLE;
@@ -1405,8 +1412,8 @@ register struct obj *o1, *o2;
 				if (rn2(3)) return POT_GAIN_LEVEL;
 				break;
 			    case POT_FRUIT_JUICE:
-				return POT_BOOZE;
-			    case POT_BOOZE:
+				return POT_VODKA;
+			    case POT_VODKA:
 				return POT_CONFUSION;
 			}
 			break;
@@ -1484,7 +1491,7 @@ register struct obj *obj;
 	    case SPBOOK_CLASS:
 		if (obj->otyp != SPE_BLANK_PAPER) {
 
-			if (obj->otyp == SPE_BOOK_OF_THE_DEAD) {
+			if (obj->otyp == SPE_BOOK_OF_THE_DESU) {
 	pline("%s suddenly heats up; steam rises and it remains dry.",
 				The(xname(obj)));
 			} else {

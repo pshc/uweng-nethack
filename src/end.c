@@ -72,7 +72,7 @@ static NEARDATA const char *deaths[] = {		/* the array of death */
 	"died", "choked", "poisoned", "starvation", "drowning",
 	"burning", "dissolving under the heat and pressure",
 	"crushed", "turned to stone", "turned into slime",
-	"genocided", "panic", "trickery",
+	"eliminated", "panic", "trickery",
 	"quit", "escaped", "ascended"
 };
 
@@ -80,7 +80,7 @@ static NEARDATA const char *ends[] = {		/* "when you..." */
 	"died", "choked", "were poisoned", "starved", "drowned",
 	"burned", "dissolved in the lava",
 	"were crushed", "turned to stone", "turned into slime",
-	"were genocided", "panicked", "were tricked",
+	"were eliminated", "panicked", "were tricked",
 	"quit", "escaped", "ascended"
 };
 
@@ -279,7 +279,7 @@ panic VA_DECL(const char *, str)
 # else
 	if (!wizard)
 	    raw_printf("Report error to \"%s\"%s.",
-#  ifdef WIZARD_NAME	/*(KR1ED)*/
+#  ifdef WIZARD_NAME
 			WIZARD_NAME,
 #  else
 			WIZARD,
@@ -508,7 +508,7 @@ winid endwin;
     for (otmp = list; otmp; otmp = otmp->nobj) {
 	if (otmp->oartifact ||
 			otmp->otyp == BELL_OF_OPENING ||
-			otmp->otyp == SPE_BOOK_OF_THE_DEAD ||
+			otmp->otyp == SPE_BOOK_OF_THE_DESU ||
 			otmp->otyp == CANDELABRUM_OF_INVOCATION) {
 	    value = arti_cost(otmp);	/* zorkmid value */
 	    points = value * 5 / 2;	/* score value */
@@ -584,7 +584,7 @@ int how;
 		if(u.uhpmax <= 0) u.uhpmax = 10;	/* arbitrary */
 		savelife(how);
 		if (how == GENOCIDED)
-			pline("Unfortunately you are still genocided...");
+			pline("Unfortunately you are still eliminated...");
 		else {
 			killer = 0;
 			killer_format = 0;
@@ -911,6 +911,44 @@ die:
 	}
 
 	if(done_stopprint) { raw_print(""); raw_print(""); }
+
+#ifdef STATUS_SOCKET
+	{
+	    plname[0] = toupper(plname[0]);
+	    Sprintf(pbuf, "%s the %s", plname,
+		   how != ASCENDED ?
+		    (const char *) ((flags.female && urole.name.f) ?
+		        urole.name.f : urole.name.m) :
+		    (const char *) (flags.female ? "Demigoddess" : "Demigod"));
+
+	    if (u.uz.dnum == 0 && u.uz.dlevel <= 0) {
+		/* level teleported out of the dungeon; `how' is DIED,
+		   due to falling or to "arriving at heaven prematurely" */
+		Sprintf(eos(pbuf), " %s beyond the confines of the dungeon",
+			(u.uz.dlevel < 0) ? "passed away" : ends[how]);
+	    } else {
+		/* more conventional demise */
+		const char *where = dungeons[u.uz.dnum].dname;
+
+		if (Is_astralevel(&u.uz))
+			where = "The Astral Plane";
+		Sprintf(eos(pbuf), " %s in %s", ends[how], where);
+		if (!In_endgame(&u.uz) && !Is_knox(&u.uz))
+		    Sprintf(eos(pbuf), " on dungeon level %d",
+			    In_quest(&u.uz) ? dunlev(&u.uz) : depth(&u.uz));
+	    }
+	    Sprintf(eos(pbuf), " with %ld point%s. ",
+		    u.urexp, plur(u.urexp));
+	    /* How you died */
+	    Sprintf(eos(pbuf), "Friggin' %s.", kilbuf);
+	    /* Send it */
+	    notify_game_status(pbuf);
+	}
+#endif /* STATUS_SOCKET */
+
+	/* Pause so we can see the last screen on telnet */
+	if(!done_stopprint) pline("");
+
 	terminate(EXIT_SUCCESS);
 }
 
@@ -1074,12 +1112,12 @@ boolean ask;
 
     /* genocided species list */
     if (ngenocided != 0) {
-	c = ask ? yn_function("Do you want a list of species genocided?",
+	c = ask ? yn_function("Do you want a list of species eliminated?",
 			      ynqchars, defquery) : defquery;
 	if (c == 'q') done_stopprint++;
 	if (c == 'y') {
 	    klwin = create_nhwindow(NHW_MENU);
-	    putstr(klwin, 0, "Genocided species:");
+	    putstr(klwin, 0, "Eliminated species:");
 	    putstr(klwin, 0, "");
 
 	    for (i = LOW_PM; i < NUMMONS; i++)
@@ -1094,7 +1132,7 @@ boolean ask;
 		}
 
 	    putstr(klwin, 0, "");
-	    Sprintf(buf, "%d species genocided.", ngenocided);
+	    Sprintf(buf, "%d species eliminated.", ngenocided);
 	    putstr(klwin, 0, buf);
 
 	    display_nhwindow(klwin, TRUE);

@@ -205,7 +205,7 @@ Cloak_on()
 	case CLOAK_OF_DISPLACEMENT:
 		makeknown(uarmc->otyp);
 		break;
-	case ORCISH_CLOAK:
+	case CECSISH_CLOAK:
 	case DWARVISH_CLOAK:
 	case CLOAK_OF_MAGIC_RESISTANCE:
 	case ROBE:
@@ -253,7 +253,7 @@ Cloak_off()
     setworn((struct obj *)0, W_ARMC);
     switch (otyp) {
 	case ELVEN_CLOAK:
-	case ORCISH_CLOAK:
+	case CECSISH_CLOAK:
 	case DWARVISH_CLOAK:
 	case CLOAK_OF_PROTECTION:
 	case CLOAK_OF_MAGIC_RESISTANCE:
@@ -478,7 +478,7 @@ Shield_on()
 	case SMALL_SHIELD:
 	case ELVEN_SHIELD:
 	case URUK_HAI_SHIELD:
-	case ORCISH_SHIELD:
+	case CECS_SHIELD:
 	case DWARVISH_ROUNDSHIELD:
 	case LARGE_SHIELD:
 	case SHIELD_OF_REFLECTION:
@@ -498,7 +498,7 @@ Shield_off()
 	case SMALL_SHIELD:
 	case ELVEN_SHIELD:
 	case URUK_HAI_SHIELD:
-	case ORCISH_SHIELD:
+	case CECS_SHIELD:
 	case DWARVISH_ROUNDSHIELD:
 	case LARGE_SHIELD:
 	case SHIELD_OF_REFLECTION:
@@ -591,7 +591,7 @@ Amulet_on()
 		    flags.botl = 1;
 		}
 		break;
-	case AMULET_OF_CHANGE:
+	case AMULET_OF_RANMA____:
 	    {
 		int orig_sex = poly_gender();
 
@@ -599,7 +599,7 @@ Amulet_on()
 		change_sex();
 		/* Don't use same message as polymorph */
 		if (orig_sex != poly_gender()) {
-		    makeknown(AMULET_OF_CHANGE);
+		    makeknown(AMULET_OF_RANMA____);
 		    You("are suddenly very %s!", flags.female ? "feminine"
 			: "masculine");
 		    flags.botl = 1;
@@ -609,8 +609,8 @@ Amulet_on()
 		    You("don't feel like yourself.");
 		pline_The("amulet disintegrates!");
 		if (orig_sex == poly_gender() && uamul->dknown &&
-			!objects[AMULET_OF_CHANGE].oc_name_known &&
-			!objects[AMULET_OF_CHANGE].oc_uname)
+			!objects[AMULET_OF_RANMA____].oc_name_known &&
+			!objects[AMULET_OF_RANMA____].oc_uname)
 		    docall(uamul);
 		useup(uamul);
 		break;
@@ -642,7 +642,7 @@ Amulet_off()
 	case AMULET_OF_LIFE_SAVING:
 	case AMULET_VERSUS_POISON:
 	case AMULET_OF_REFLECTION:
-	case AMULET_OF_CHANGE:
+	case AMULET_OF_RANMA____:
 	case AMULET_OF_UNCHANGING:
 	case FAKE_AMULET_OF_YENDOR:
 		break;
@@ -703,7 +703,7 @@ register struct obj *obj;
 	case RIN_FIRE_RESISTANCE:
 	case RIN_COLD_RESISTANCE:
 	case RIN_SHOCK_RESISTANCE:
-	case RIN_CONFLICT:
+	case RIN_FLAMEBAIT:
 	case RIN_TELEPORT_CONTROL:
 	case RIN_POLYMORPH:
 	case RIN_POLYMORPH_CONTROL:
@@ -750,7 +750,7 @@ register struct obj *obj;
 	case RIN_GAIN_CONSTITUTION:
 		which = A_CON;
 		goto adjust_attrib;
-	case RIN_ADORNMENT:
+	case RIN_HAWTNESS:
 		which = A_CHA;
  adjust_attrib:
 		old_attrib = ACURR(which);
@@ -809,7 +809,7 @@ boolean gone;
 	case RIN_FIRE_RESISTANCE:
 	case RIN_COLD_RESISTANCE:
 	case RIN_SHOCK_RESISTANCE:
-	case RIN_CONFLICT:
+	case RIN_FLAMEBAIT:
 	case RIN_TELEPORT_CONTROL:
 	case RIN_POLYMORPH:
 	case RIN_POLYMORPH_CONTROL:
@@ -855,7 +855,7 @@ boolean gone;
 	case RIN_GAIN_CONSTITUTION:
 		which = A_CON;
 		goto adjust_attrib;
-	case RIN_ADORNMENT:
+	case RIN_HAWTNESS:
 		which = A_CHA;
  adjust_attrib:
 		old_attrib = ACURR(which);
@@ -1548,7 +1548,7 @@ doputon()
 		if (otmp->oartifact && !touch_artifact(otmp, &youmonst))
 		    return 1;
 		setworn(otmp, W_AMUL);
-		if (otmp->otyp == AMULET_OF_CHANGE) {
+		if (otmp->otyp == AMULET_OF_RANMA____) {
 			Amulet_on();
 			/* Don't do a prinv() since the amulet is now gone */
 			return(1);

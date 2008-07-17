@@ -69,9 +69,9 @@ const char *fmt, *arg;
 			(mvitals[urace.femalenum].mvflags & G_GENOD))) {
 	    /* intervening activity might have clobbered genocide info */
 	    killer = delayed_killer;
-	    if (!killer || !strstri(killer, "genocid")) {
+	    if (!killer || !strstri(killer, "elimina")) {
 		killer_format = KILLED_BY;
-		killer = "self-genocide";
+		killer = "self-elimination";
 	    }
 	    done(GENOCIDED);
 	}
@@ -511,8 +511,10 @@ int	mntmp;
 		pline(use_thec,monsterc,"summon help");
 	    if (webmaker(youmonst.data))
 		pline(use_thec,monsterc,"spin a web");
+#ifndef ENGINEER
 	    if (u.umonnum == PM_GREMLIN)
 		pline(use_thec,monsterc,"multiply in a fountain");
+#endif
 	    if (is_unicorn(youmonst.data))
 		pline(use_thec,monsterc,"use your horn");
 	    if (is_mind_flayer(youmonst.data))
@@ -1198,7 +1200,7 @@ int part;
 		    mptr != &mons[PM_INCUBUS] && mptr != &mons[PM_SUCCUBUS])
 		return part == HAND ? "claw" : "clawed";
 	}
-	if ((mptr == &mons[PM_MUMAK] || mptr == &mons[PM_MASTODON]) &&
+	if ((mptr == &mons[PM_FRIGGIN__MUMAK] || mptr == &mons[PM_MASTODON]) &&
 		part == NOSE)
 	    return "trunk";
 	if (mptr == &mons[PM_SHARK] && part == HAIR)

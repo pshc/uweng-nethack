@@ -1101,7 +1101,7 @@ opentin()		/* called during each move whilst opening a tin */
 		pline("It contains some decaying%s%s substance.",
 			Blind ? "" : " ", Blind ? "" : hcolor(NH_GREEN));
 	    else
-		pline("It contains spinach.");
+		pline("It contains an inflatable banana.");
 
 	    if (yn("Eat it?") == 'n') {
 		if (!Hallucination && !tin.tin->cursed)
@@ -1117,7 +1117,7 @@ opentin()		/* called during each move whilst opening a tin */
 
 	    if (!tin.tin->cursed)
 		pline("This makes you feel like %s!",
-		      Hallucination ? "Swee'pea" : "Popeye");
+		      Hallucination ? "frosh" : "a grad student");
 	    lesshungry(600);
 	    gainstr(tin.tin, 0);
 	    u.uconduct.food++;
@@ -1147,6 +1147,10 @@ start_tin(otmp)		/* called when starting to open a tin */
 	} else if(uwep) {
 		switch(uwep->otyp) {
 		case TIN_OPENER:
+#ifdef ENGINEER
+		case CRESCENT_WRENCH:
+		case ART_TOOL:
+#endif
 			tmp = 1;
 			break;
 		case DAGGER:
@@ -1478,7 +1482,7 @@ struct obj *otmp;
 	    if (u.uhp <= 0) return; /* died from sink fall */
 	}
 	otmp->known = otmp->dknown = 1; /* by taste */
-	if (!rn2(otmp->oclass == RING_CLASS ? 3 : 5)) {
+	/*if (!rn2(otmp->oclass == RING_CLASS ? 3 : 5))*/ {
 	  switch (otmp->otyp) {
 	    default:
 	        if (!objects[typ].oc_oprop) break; /* should never happen */
@@ -1522,7 +1526,7 @@ struct obj *otmp;
 		    break;
 		}
 		break;
-	    case RIN_ADORNMENT:
+	    case RIN_HAWTNESS:
 		accessory_has_effect(otmp);
 		if (adjattrib(A_CHA, otmp->spe, -1))
 		    makeknown(typ);
@@ -1559,7 +1563,7 @@ struct obj *otmp;
 		    You_feel("wide awake.");
 		HSleep_resistance |= FROMOUTSIDE;
 		break;
-	    case AMULET_OF_CHANGE:
+	    case AMULET_OF_RANMA____:
 		accessory_has_effect(otmp);
 		makeknown(typ);
 		change_sex();
@@ -1628,12 +1632,14 @@ eatspecial() /* called after eating non-food */
 		o_unleash(otmp);
 
 	/* KMH -- idea by "Tommy the Terrorist" */
+#ifndef ENGINEER
 	if ((otmp->otyp == TRIDENT) && !otmp->cursed)
 	{
 		pline(Hallucination ? "Four out of five dentists agree." :
 				"That was pure chewing satisfaction!");
 		exercise(A_WIS, TRUE);
 	}
+#endif
 	if ((otmp->otyp == FLINT) && !otmp->cursed)
 	{
 		pline("Yabba-dabba delicious!");

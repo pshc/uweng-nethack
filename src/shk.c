@@ -337,10 +337,10 @@ register boolean nearshop;
 	if (flags.soundok)
 	    pline("An alarm sounds!");
 
-	nokops = ((mvitals[PM_KEYSTONE_KOP].mvflags & G_GONE) &&
-		  (mvitals[PM_KOP_SERGEANT].mvflags & G_GONE) &&
-		  (mvitals[PM_KOP_LIEUTENANT].mvflags & G_GONE) &&
-		  (mvitals[PM_KOP_KAPTAIN].mvflags & G_GONE));
+	nokops = ((mvitals[PM_POLICY____COP].mvflags & G_GONE) &&
+		  (mvitals[PM_POLICY____SERGEANT].mvflags & G_GONE) &&
+		  (mvitals[PM_POLICY____LIEUTENANT].mvflags & G_GONE) &&
+		  (mvitals[PM_POLICY____KAPTAIN].mvflags & G_GONE));
 
 	if(!angry_guards(!flags.soundok) && nokops) {
 	    if(flags.verbose && flags.soundok)
@@ -356,14 +356,14 @@ register boolean nearshop;
 	    if (nearshop) {
 		/* Create swarm around you, if you merely "stepped out" */
 		if (flags.verbose)
-		    pline_The("Keystone Kops appear!");
+		    pline_The("Policy 71 Cops appear!");
 		mm.x = u.ux;
 		mm.y = u.uy;
 		makekops(&mm);
 		return;
 	    }
 	    if (flags.verbose)
-		 pline_The("Keystone Kops are after you!");
+		 pline_The("Policy 71 Cops are after you!");
 	    /* Create swarm near down staircase (hinders return to level) */
 	    mm.x = xdnstair;
 	    mm.y = ydnstair;
@@ -3208,7 +3208,7 @@ register struct monst *shkp;
 	    remove_damage(shkp, FALSE);
 
 	if((udist = distu(omx,omy)) < 3 &&
-	   (shkp->data != &mons[PM_GRID_BUG] || (omx==u.ux || omy==u.uy))) {
+	   (shkp->data != &mons[PM_ZAPADA] || (omx==u.ux || omy==u.uy))) {
 		if(ANGRY(shkp) ||
 		   (Conflict && !resist(shkp, RING_CLASS, 0, 0))) {
 			if(Displaced)
@@ -3420,7 +3420,7 @@ makekops(mm)
 coord *mm;
 {
 	static const short k_mndx[4] = {
-	    PM_KEYSTONE_KOP, PM_KOP_SERGEANT, PM_KOP_LIEUTENANT, PM_KOP_KAPTAIN
+	    PM_POLICY____COP, PM_POLICY____SERGEANT, PM_POLICY____LIEUTENANT, PM_POLICY____KAPTAIN
 	};
 	int k_cnt[4], cnt, mndx, k;
 
@@ -3721,16 +3721,16 @@ long cost;
 #ifdef OVLB
 
 /* First 4 supplied by Ronen and Tamar, remainder by development team */
-const char *Izchak_speaks[]={
+const char *Tehats_speaks[]={
     "%s says: 'These shopping malls give me a headache.'",
-    "%s says: 'Slow down.  Think clearly.'",
+    "%s says: 'Slow down.  Think clearly. PERMATIRED.'",
     "%s says: 'You need to take things one at a time.'",
-    "%s says: 'I don't like poofy coffee... give me Columbian Supremo.'",
-    "%s says that getting the devteam's agreement on anything is difficult.",
-    "%s says that he has noticed those who serve their deity will prosper.",
-    "%s says: 'Don't try to steal from me - I have friends in high places!'",
+    "%s says: 'Coffee coffee coffee... give me Columbian Supremo.'",
+    "%s says that getting the pauhaus' agreement on anything is difficult.",
+    "%s says that he has noticed those who serve $DEITY will prosper.",
+    "%s says: 'Don't try to steal from me--I have friends in high places!'",
     "%s says: 'You may well need something from this shop in the future.'",
-    "%s comments about the Valley of the Dead as being a gateway."
+    "%s comments about the Valley of the DESU as being a gateway."
 };
 
 void
@@ -3793,8 +3793,8 @@ struct monst *shkp;
 	else if (shkmoney > 4000)
 #endif
 		pline("%s says that business is good.", shkname(shkp));
-	else if (strcmp(shkname(shkp), "Izchak") == 0)
-		pline(Izchak_speaks[rn2(SIZE(Izchak_speaks))],shkname(shkp));
+	else if (strcmp(shkname(shkp), "Tehats") == 0)
+		pline(Tehats_speaks[rn2(SIZE(Tehats_speaks))],shkname(shkp));
 	else
 		pline("%s talks about the problem of shoplifters.",shkname(shkp));
 }
@@ -3866,7 +3866,7 @@ boolean altusage; /* some items have an "alternate" use with different cost */
 	} else if (otmp->otyp == CAN_OF_GREASE ||
 		   otmp->otyp == TINNING_KIT
 #ifdef TOURIST
-		   || otmp->otyp == EXPENSIVE_CAMERA
+		   || otmp->otyp == PR_N_CAMERA
 #endif
 		   ) {
 		tmp /= 10L;

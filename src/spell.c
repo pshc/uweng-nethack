@@ -62,7 +62,7 @@ STATIC_DCL int FDECL(isqrt, (int));
  *  spelspec, spelsbon:
  *	Arc map masters (SPE_MAGIC_MAPPING)
  *	Bar fugue/berserker (SPE_HASTE_SELF)
- *	Cav born to dig (SPE_DIG)
+ *	Cav born to dig (SPE_DRILLING)
  *	Hea to heal (SPE_CURE_SICKNESS)
  *	Kni to turn back evil (SPE_TURN_UNDEAD)
  *	Mon to preserve their abilities (SPE_RESTORE_ABILITY)
@@ -70,7 +70,7 @@ STATIC_DCL int FDECL(isqrt, (int));
  *	Ran to hide (SPE_INVISIBILITY)
  *	Rog to find loot (SPE_DETECT_TREASURE)
  *	Sam to be At One (SPE_CLAIRVOYANCE)
- *	Tou to smile (SPE_CHARM_MONSTER)
+ *	Tou to smile (SPE_MIND_CONTROL)
  *	Val control the cold (SPE_CONE_OF_COLD)
  *	Wiz all really, but SPE_MAGIC_MISSILE is their party trick
  *
@@ -181,7 +181,7 @@ struct obj *spellbook;
 {
 	boolean gone = FALSE;
 
-	if (!rn2(3) && spellbook->otyp != SPE_BOOK_OF_THE_DEAD) {
+	if (!rn2(3) && spellbook->otyp != SPE_BOOK_OF_THE_DESU) {
 	    spellbook->in_use = TRUE;	/* in case called from learn */
 	    pline(
 	"Being confused you have difficulties in controlling your actions.");
@@ -199,7 +199,7 @@ struct obj *spellbook;
 	return gone;
 }
 
-/* special effects for The Book of the Dead */
+/* special effects for The Book of the DESU */
 STATIC_OVL void
 deadbook(book2)
 struct obj *book2;
@@ -207,9 +207,9 @@ struct obj *book2;
     struct monst *mtmp, *mtmp2;
     coord mm;
 
-    You("turn the pages of the Book of the Dead...");
-    makeknown(SPE_BOOK_OF_THE_DEAD);
-    /* KMH -- Need ->known to avoid "_a_ Book of the Dead" */
+    You("turn the pages of the Book of the DESU...");
+    makeknown(SPE_BOOK_OF_THE_DESU);
+    /* KMH -- Need ->known to avoid "_a_ Book of the DESU" */
     book2->known = 1;
     if(invocation_pos(u.ux, u.uy) && !On_stairs(u.ux, u.uy)) {
 	register struct obj *otmp;
@@ -335,7 +335,7 @@ learn()
 	}
 	exercise(A_WIS, TRUE);		/* you're studying. */
 	booktype = book->otyp;
-	if(booktype == SPE_BOOK_OF_THE_DEAD) {
+	if(booktype == SPE_BOOK_OF_THE_DESU) {
 	    deadbook(book);
 	    return(0);
 	}
@@ -433,7 +433,7 @@ register struct obj *spellbook;
 		/* Books are often wiser than their readers (Rus.) */
 		spellbook->in_use = TRUE;
 		if (!spellbook->blessed &&
-		    spellbook->otyp != SPE_BOOK_OF_THE_DEAD) {
+		    spellbook->otyp != SPE_BOOK_OF_THE_DESU) {
 		    if (spellbook->cursed) {
 			too_hard = TRUE;
 		    } else {
@@ -485,7 +485,7 @@ register struct obj *spellbook;
 		spellbook->in_use = FALSE;
 
 		You("begin to %s the runes.",
-		    spellbook->otyp == SPE_BOOK_OF_THE_DEAD ? "recite" :
+		    spellbook->otyp == SPE_BOOK_OF_THE_DESU ? "recite" :
 		    "memorize");
 	}
 
@@ -605,7 +605,7 @@ int skill;
 	    case P_ESCAPE_SPELL:
 		return "escape";
 	    case P_MATTER_SPELL:
-		return "matter";
+		return "stuff";
 	    default:
 		impossible("Unknown spell skill, %d;", skill);
 		return "";
@@ -863,18 +863,21 @@ boolean atme;
 	case SPE_KNOCK:
 	case SPE_SLOW_MONSTER:
 	case SPE_WIZARD_LOCK:
-	case SPE_DIG:
+	case SPE_DRILLING:
 	case SPE_TURN_UNDEAD:
 	case SPE_POLYMORPH:
 	case SPE_TELEPORT_AWAY:
 	case SPE_CANCELLATION:
-	case SPE_FINGER_OF_DEATH:
+	case SPE_MIKURU_BEAMU:
 	case SPE_LIGHT:
 	case SPE_DETECT_UNSEEN:
 	case SPE_HEALING:
 	case SPE_EXTRA_HEALING:
 	case SPE_DRAIN_LIFE:
 	case SPE_STONE_TO_FLESH:
+#ifdef ENGINEER
+	case SPE_CONSTRUCT:
+#endif
 		if (!(objects[pseudo->otyp].oc_dir == NODIR)) {
 			if (atme) u.dx = u.dy = u.dz = 0;
 			else if (!getdir((char *)0)) {
@@ -900,7 +903,7 @@ boolean atme;
 		/* high skill yields effect equivalent to blessed scroll */
 		if (role_skill >= P_SKILLED) pseudo->blessed = 1;
 		/* fall through */
-	case SPE_CHARM_MONSTER:
+	case SPE_MIND_CONTROL:
 	case SPE_MAGIC_MAPPING:
 	case SPE_CREATE_MONSTER:
 	case SPE_IDENTIFY:

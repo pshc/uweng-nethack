@@ -1296,6 +1296,7 @@ int retryct;
 #endif
 	char locknambuf[BUFSZ];
 	const char *lockname;
+	int i;
 
 	nesting++;
 	if (nesting > 1) {
@@ -1337,7 +1338,7 @@ int retryct;
 
 		break;
 	    case ENOENT:
-		HUP raw_printf("Can't find file %s to lock!", filename);
+		HUP raw_printf("Can't find file %s to lock %s!", filename, lockname);
 		nesting--;
 		return FALSE;
 	    case EACCES:

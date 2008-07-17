@@ -723,7 +723,7 @@ struct entity *etmp;
 
 			if (Hallucination)
 			    pline("%s the %s and disappears.",
-				  E_phrase(etmp, "drink"),
+				  E_phrase(etmp, "bhav"),
 				  lava ? "lava" : "moat");
 			else
 			    pline("%s into the %s.",

@@ -195,7 +195,7 @@ const struct shclass shtypes[] = {
 	{"antique weapons outlet", WEAPON_CLASS, 5, D_SHOP,
 	    {{90, WEAPON_CLASS}, {10, ARMOR_CLASS}, {0, 0}}, shkweapons},
 	{"delicatessen", FOOD_CLASS, 5, D_SHOP,
-	    {{83, FOOD_CLASS}, {5, -POT_FRUIT_JUICE}, {4, -POT_BOOZE},
+	    {{83, FOOD_CLASS}, {5, -POT_FRUIT_JUICE}, {4, -POT_VODKA},
 	     {5, -POT_WATER}, {3, -ICE_BOX}}, shkfoods},
 	{"jewelers", RING_CLASS, 3, D_SHOP,
 	    {{85, RING_CLASS}, {10, GEM_CLASS}, {5, AMULET_CLASS}, {0, 0}},
@@ -284,7 +284,7 @@ const char * const *nlp;
 	if (nlp == shklight && In_mines(&u.uz)
 		&& (sptr = Is_special(&u.uz)) != 0 && sptr->flags.town) {
 	    /* special-case minetown lighting shk */
-	    shname = "Izchak";
+	    shname = "Tehats";
 	    shk->female = FALSE;
 	} else {
 	    /* We want variation from game to game, without needing the save

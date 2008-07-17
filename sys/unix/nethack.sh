@@ -60,9 +60,9 @@ fi
 cd $HACKDIR
 case $1 in
 	-s*)
-		exec $HACK "$@"
+		exec gdb --args $HACK "$@"
 		;;
 	*)
-		exec $HACK "$@" $MAXNROFPLAYERS
+		exec gdb --args $HACK "$@" $MAXNROFPLAYERS
 		;;
 esac

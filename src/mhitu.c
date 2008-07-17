@@ -1425,7 +1425,9 @@ dopois:
 		break;
 	    case AD_CURS:
 		hitmsg(mtmp, mattk);
+#ifndef ENGINEER
 		if(!night() && mdat == &mons[PM_GREMLIN]) break;
+#endif
 		if(!mtmp->mcan && !rn2(10)) {
 		    if (flags.soundok) {
 			if (Blind) You_hear("laughter.");
@@ -2181,17 +2183,17 @@ register struct monst *mon;
 
 	for(ring = invent; ring; ring = nring) {
 	    nring = ring->nobj;
-	    if (ring->otyp != RIN_ADORNMENT) continue;
+	    if (ring->otyp != RIN_HAWTNESS) continue;
 	    if (fem) {
 		if (rn2(20) < ACURR(A_CHA)) {
 		    Sprintf(qbuf, "\"That %s looks pretty.  May I have it?\"",
 			safe_qbuf("",sizeof("\"That  looks pretty.  May I have it?\""),
 			xname(ring), simple_typename(ring->otyp), "ring"));
-		    makeknown(RIN_ADORNMENT);
+		    makeknown(RIN_HAWTNESS);
 		    if (yn(qbuf) == 'n') continue;
 		} else pline("%s decides she'd like your %s, and takes it.",
 			Blind ? "She" : Monnam(mon), xname(ring));
-		makeknown(RIN_ADORNMENT);
+		makeknown(RIN_HAWTNESS);
 		if (ring==uleft || ring==uright) Ring_gone(ring);
 		if (ring==uwep) setuwep((struct obj *)0);
 		if (ring==uswapwep) setuswapwep((struct obj *)0);
@@ -2201,8 +2203,8 @@ register struct monst *mon;
 	    } else {
 		char buf[BUFSZ];
 
-		if (uleft && uright && uleft->otyp == RIN_ADORNMENT
-				&& uright->otyp==RIN_ADORNMENT)
+		if (uleft && uright && uleft->otyp == RIN_HAWTNESS
+				&& uright->otyp==RIN_HAWTNESS)
 			break;
 		if (ring==uleft || ring==uright) continue;
 		if (rn2(20) < ACURR(A_CHA)) {
@@ -2210,14 +2212,14 @@ register struct monst *mon;
 			safe_qbuf("",
 			    sizeof("\"That  looks pretty.  Would you wear it for me?\""),
 			    xname(ring), simple_typename(ring->otyp), "ring"));
-		    makeknown(RIN_ADORNMENT);
+		    makeknown(RIN_HAWTNESS);
 		    if (yn(qbuf) == 'n') continue;
 		} else {
 		    pline("%s decides you'd look prettier wearing your %s,",
 			Blind ? "He" : Monnam(mon), xname(ring));
 		    pline("and puts it on your finger.");
 		}
-		makeknown(RIN_ADORNMENT);
+		makeknown(RIN_HAWTNESS);
 		if (!uright) {
 		    pline("%s puts %s on your right %s.",
 			Blind ? "He" : Monnam(mon), the(xname(ring)), body_part(HAND));
@@ -2226,13 +2228,13 @@ register struct monst *mon;
 		    pline("%s puts %s on your left %s.",
 			Blind ? "He" : Monnam(mon), the(xname(ring)), body_part(HAND));
 		    setworn(ring, LEFT_RING);
-		} else if (uright && uright->otyp != RIN_ADORNMENT) {
+		} else if (uright && uright->otyp != RIN_HAWTNESS) {
 		    Strcpy(buf, xname(uright));
 		    pline("%s replaces your %s with your %s.",
 			Blind ? "He" : Monnam(mon), buf, xname(ring));
 		    Ring_gone(uright);
 		    setworn(ring, RIGHT_RING);
-		} else if (uleft && uleft->otyp != RIN_ADORNMENT) {
+		} else if (uleft && uleft->otyp != RIN_HAWTNESS) {
 		    Strcpy(buf, xname(uleft));
 		    pline("%s replaces your %s with your %s.",
 			Blind ? "He" : Monnam(mon), buf, xname(ring));

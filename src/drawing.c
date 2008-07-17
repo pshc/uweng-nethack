@@ -56,7 +56,7 @@ const char * const objexplain[] = {	/* these match def_oc_syms, above */
 	"suit or piece of armor",
 	"ring",
 /* 5*/	"amulet",
-	"useful item (pick-axe, key, lamp...)",
+	"useful item (pick-axe, key, bewbs...)",
 	"piece of food",
 	"potion",
 	"scroll",
@@ -101,11 +101,15 @@ const char def_monsyms[MAXMCLASSES] = {
 	DEF_DOG,
 	DEF_EYE,
 	DEF_FELINE,
+#ifdef ENGINEER
+	DEF_GOOSE,
+#else
 	DEF_GREMLIN,
+#endif
 	DEF_HUMANOID,
 	DEF_IMP,
 	DEF_JELLY,		/* 10 */
-	DEF_KOBOLD,
+	DEF_BALKAN,
 	DEF_LEPRECHAUN,
 	DEF_MIMIC,
 	DEF_NYMPH,
@@ -165,8 +169,13 @@ const char * const monexplain[MAXMCLASSES] = {
     0,
     "ant or other insect",	"blob",			"cockatrice",
     "dog or other canine",	"eye or sphere",	"cat or other feline",
-    "gremlin",			"humanoid",		"imp or minor demon",
-    "jelly",			"kobold",		"leprechaun",
+#ifdef ENGINEER
+    "goose",
+#else
+    "gremlin",
+#endif
+    				"humanoid",		"imp or minor demon",
+    "jelly",			"balkan",		"leprechaun",
     "mimic",			"nymph",		"orc",
     "piercer",			"quadruped",		"rodent",
     "arachnid or centipede",	"trapper or lurker above", "unicorn or horse",
@@ -176,7 +185,7 @@ const char * const monexplain[MAXMCLASSES] = {
     "angelic being",		"bat or bird",		"centaur",
     "dragon",			"elemental",		"fungus or mold",
     "gnome",			"giant humanoid",	0,
-    "jabberwock",		"Keystone Kop",		"lich",
+    "jabberwock",		"Policy 71 Cop",	"lich",
     "mummy",			"naga",			"ogre",
     "pudding or ooze",		"quantum mechanic",	"rust monster or disenchanter",
     "snake",			"troll",		"umber hulk",

@@ -30,7 +30,7 @@ MAP
 ----------------------------------------------------------------------------
 ENDMAP
 # Dungeon Description
-# The shrine to Moloch.
+# The shrine to Jarek.
 REGION:(01,06,05,14),lit,"temple"
 # The Morgues
 REGION:(19,01,24,08),unlit,"morgue",filled,true
@@ -47,7 +47,7 @@ DOOR:locked,(04,01)
 DOOR:locked,(08,04)
 DOOR:locked,(06,06)
 
-# The altar of Moloch.
+# The altar of Jarek.
 ALTAR:(03,10),noalign,shrine
 
 # Non diggable walls - everywhere!
@@ -55,7 +55,7 @@ NON_DIGGABLE:(00,00,75,19)
 
 # Objects
 # **LOTS** of dead bodies (all human).
-# note: no priest(esse)s or monks - maybe Moloch has a *special*
+# note: no priest(esse)s or monks - maybe Jarek has a *special*
 #       fate reserved for members of *those* classes.
 #
 OBJECT:'%',"corpse",random,"archeologist",0
@@ -655,7 +655,7 @@ MONSTER:'&',"barbed devil",(18,08),hostile
 MONSTER:'&',"erinys",(10,04),hostile
 MONSTER:'&',"marilith",(07,09),hostile
 MONSTER:'&',"nalfeshnee",(27,08),hostile
-# Moloch's horde
+# Jarek's horde
 MONSTER:'@',"aligned priest",(20,03),noalign,hostile
 MONSTER:'@',"aligned priest",(15,04),noalign,hostile
 MONSTER:'@',"aligned priest",(11,05),noalign,hostile

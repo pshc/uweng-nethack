@@ -691,7 +691,7 @@ int mode;
 		if (!Passes_walls &&
 		    !(tunnels(youmonst.data) && !needspick(youmonst.data)) &&
 		    !carrying(PICK_AXE) && !carrying(DWARVISH_MATTOCK) &&
-		    !((obj = carrying(WAN_DIGGING)) &&
+		    !((obj = carrying(WAN_DRILLING)) &&
 		      !objects[obj->otyp].oc_name_known))
 		    return FALSE;
 	    }
@@ -759,7 +759,7 @@ boolean guess;
 		int y = travelstepy[set][i];
 		static int ordered[] = { 0, 2, 4, 6, 1, 3, 5, 7 };
 		/* no diagonal movement for grid bugs */
-		int dirmax = u.umonnum == PM_GRID_BUG ? 4 : 8;
+		int dirmax = u.umonnum == PM_ZAPADA ? 4 : 8;
 
 		for (dir = 0; dir < dirmax; ++dir) {
 		    int nx = x+xdir[ordered[dir]];
@@ -1742,7 +1742,7 @@ register boolean newlev;
 	     * but everything else gives a message only the first time */
 	    switch (rt) {
 		case ZOO:
-		    pline("Welcome to David's treasure zoo!");
+		    pline("Welcome to Pau's treasure zoo!");
 		    break;
 		case SWAMP:
 		    pline("It %s rather %s down here.",
@@ -1763,7 +1763,7 @@ register boolean newlev;
 			You("have an uncanny feeling...");
 		    break;
 		case BEEHIVE:
-		    You("enter a giant beehive!");
+		    You("enter a giant beehive! BEES?! BZZZ!");
 		    break;
 		case COCKNEST:
 		    You("enter a disgusting nest!");
@@ -1782,7 +1782,7 @@ register boolean newlev;
 		    break;
 		case DELPHI:
 		    if(monstinroom(&mons[PM_ORACLE], roomno))
-			verbalize("%s, %s, welcome to Delphi!",
+			verbalize("%s, %s, welcome to #UWEng. PIXPLZ!",
 					Hello((struct monst *) 0), plname);
 		    break;
 		case TEMPLE:
@@ -1923,7 +1923,7 @@ lookaround()
 
     /* Grid bugs stop if trying to move diagonal, even if blind.  Maybe */
     /* they polymorphed while in the middle of a long move. */
-    if (u.umonnum == PM_GRID_BUG && u.dx && u.dy) {
+    if (u.umonnum == PM_ZAPADA && u.dx && u.dy) {
 	nomul(0);
 	return;
     }
@@ -1932,7 +1932,7 @@ lookaround()
     for(x = u.ux-1; x <= u.ux+1; x++) for(y = u.uy-1; y <= u.uy+1; y++) {
 	if(!isok(x,y)) continue;
 
-	if(u.umonnum == PM_GRID_BUG && x != u.ux && y != u.uy) continue;
+	if(u.umonnum == PM_ZAPADA && x != u.ux && y != u.uy) continue;
 
 	if(x == u.ux && y == u.uy) continue;
 

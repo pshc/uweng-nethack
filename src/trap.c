@@ -802,12 +802,14 @@ unsigned trflags;
 		    if (Half_physical_damage) dam = (dam+1) / 2;
 		    losehp(dam, "rusting away", KILLED_BY);
 		    break;
-		} else if (u.umonnum == PM_GREMLIN && rn2(3)) {
+		}
+#ifndef ENGINEER
+		else if (u.umonnum == PM_GREMLIN && rn2(3)) {
 		    pline("%s you!", A_gush_of_water_hits);
 		    (void)split_mon(&youmonst, (struct monst *)0);
 		    break;
 		}
-
+#endif
 	    /* Unlike monsters, traps cannot aim their rust attacks at
 	     * you, so instead of looping through and taking either the
 	     * first rustable one or the body, we take whatever we get,
@@ -1881,9 +1883,12 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 				mondied(mtmp);
 				if (mtmp->mhp <= 0)
 					trapkilled = TRUE;
-			} else if (mptr == &mons[PM_GREMLIN] && rn2(3)) {
+			}
+#ifndef ENGINEER
+			else if (mptr == &mons[PM_GREMLIN] && rn2(3)) {
 				(void)split_mon(mtmp, (struct monst *)0);
 			}
+#endif
 			break;
 		    }
 		case FIRE_TRAP:
@@ -2542,7 +2547,7 @@ domagictrap()
 				"smell hamburgers." :
 				"smell charred flesh.");
 			break;
-	     case 18:	You_feel("tired.");
+	     case 18:	You_feel("le tired.");
 			break;
 
 	     /* very occasionally something nice happens. */
@@ -2645,7 +2650,7 @@ xchar x, y;
 	} else if (obj->oclass == SCROLL_CLASS || obj->oclass == SPBOOK_CLASS) {
 	    if (obj->otyp == SCR_FIRE || obj->otyp == SPE_FIREBALL)
 		continue;
-	    if (obj->otyp == SPE_BOOK_OF_THE_DEAD) {
+	    if (obj->otyp == SPE_BOOK_OF_THE_DESU) {
 		if (in_sight) pline("Smoke rises from %s.", the(xname(obj)));
 		continue;
 	    }
@@ -2716,7 +2721,7 @@ register boolean force, here;
 			obj->spe = 0;
 		    }
 		} else if (obj->oclass == SPBOOK_CLASS) {
-			if (obj->otyp == SPE_BOOK_OF_THE_DEAD)
+			if (obj->otyp == SPE_BOOK_OF_THE_DESU)
 				pline("Steam rises from %s.", the(xname(obj)));
 			else obj->otyp = SPE_BLANK_PAPER;
 		} else if (obj->oclass == POTION_CLASS) {
@@ -2844,10 +2849,12 @@ drown()
 	}
 
 	water_damage(invent, FALSE, FALSE);
-
+#ifndef ENGINEER
 	if (u.umonnum == PM_GREMLIN && rn2(3))
 	    (void)split_mon(&youmonst, (struct monst *)0);
-	else if (u.umonnum == PM_IRON_GOLEM) {
+	else
+#endif
+	if (u.umonnum == PM_IRON_GOLEM) {
 	    You("rust!");
 	    i = d(2,6);
 	    if (u.mhmax > i) u.mhmax -= i;

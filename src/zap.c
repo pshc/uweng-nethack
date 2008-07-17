@@ -222,12 +222,12 @@ struct obj *otmp;
 		}
 		break;
 	    }
-	case WAN_NOTHING:
+	case WAN_IDLING:
 	case WAN_LOCKING:
 	case SPE_WIZARD_LOCK:
 		wake = FALSE;
 		break;
-	case WAN_PROBING:
+	case WAN_PROBING___:
 		wake = FALSE;
 		reveal_invis = TRUE;
 		probe_monster(mtmp);
@@ -825,7 +825,7 @@ register struct obj *obj;
 				flags.botl = 1;
 			}
 			break;
-		case RIN_ADORNMENT:
+		case RIN_HAWTNESS:
 			if ((obj->owornmask & W_RING) && u_ring) {
 				ABON(A_CHA) -= obj->spe;
 				flags.botl = 1;
@@ -874,7 +874,7 @@ register struct obj *obj;
 		break;
 	      case SPBOOK_CLASS:
 		if (obj->otyp != SPE_CANCELLATION &&
-			obj->otyp != SPE_BOOK_OF_THE_DEAD) {
+			obj->otyp != SPE_BOOK_OF_THE_DESU) {
 		    costly_cancel(obj);
 		    obj->otyp = SPE_BLANK_PAPER;
 		}
@@ -941,7 +941,7 @@ register struct obj *obj;
 	    	flags.botl = 1;
 	    }
 	    break;
-	case RIN_ADORNMENT:
+	case RIN_HAWTNESS:
 	    if ((obj->owornmask & W_RING) && u_ring) {
 	    	ABON(A_CHA)--;
 	    	flags.botl = 1;
@@ -985,7 +985,7 @@ struct obj *obj;
 int ochance, achance;	/* percent chance for ordinary objects, artifacts */
 {
 	if (obj->otyp == AMULET_OF_YENDOR ||
-	    obj->otyp == SPE_BOOK_OF_THE_DEAD ||
+	    obj->otyp == SPE_BOOK_OF_THE_DESU ||
 	    obj->otyp == CANDELABRUM_OF_INVOCATION ||
 	    obj->otyp == BELL_OF_OPENING ||
 	    (obj->otyp == CORPSE && is_rider(&mons[obj->corpsenm]))) {
@@ -1341,7 +1341,7 @@ poly_obj(obj, id)
 
 	case SPBOOK_CLASS:
 	    while (otmp->otyp == SPE_POLYMORPH)
-		otmp->otyp = rnd_class(SPE_DIG, SPE_BLANK_PAPER);
+		otmp->otyp = rnd_class(SPE_DRILLING, SPE_BLANK_PAPER);
 	    /* reduce spellbook abuse */
 	    otmp->spestudied = obj->spestudied + 1;
 	    break;
@@ -1521,7 +1521,7 @@ struct obj *obj, *otmp;
 		obj = poly_obj(obj, STRANGE_OBJECT);
 		newsym(obj->ox,obj->oy);
 		break;
-	case WAN_PROBING:
+	case WAN_PROBING___:
 		res = !obj->dknown;
 		/* target object has now been "seen (up close)" */
 		obj->dknown = 1;
@@ -1537,7 +1537,7 @@ struct obj *obj, *otmp;
 		    }
 		    res = 1;
 		}
-		if (res) makeknown(WAN_PROBING);
+		if (res) makeknown(WAN_PROBING___);
 		break;
 	case WAN_STRIKING:
 	case SPE_FORCE_BOLT:
@@ -1596,7 +1596,7 @@ struct obj *obj, *otmp;
 	case WAN_SLOW_MONSTER:		/* no effect on objects */
 	case SPE_SLOW_MONSTER:
 	case WAN_SPEED_MONSTER:
-	case WAN_NOTHING:
+	case WAN_IDLING:
 	case SPE_HEALING:
 	case SPE_EXTRA_HEALING:
 		res = 0;
@@ -2047,10 +2047,10 @@ boolean ordinary;
 		    tele();
 		    break;
 
-		case WAN_DEATH:
-		case SPE_FINGER_OF_DEATH:
+		case WAN_DESU:
+		case SPE_MIKURU_BEAMU:
 		    if (nonliving(youmonst.data) || is_demon(youmonst.data)) {
-			pline((obj->otyp == WAN_DEATH) ?
+			pline((obj->otyp == WAN_DESU) ?
 			  "The wand shoots an apparently harmless beam at you."
 			  : "You seem no deader than before.");
 			break;
@@ -2086,7 +2086,7 @@ boolean ordinary;
 		 /* assert( !ordinary ); */
 		    damage = d(obj->spe, 25);
 #ifdef TOURIST
-		case EXPENSIVE_CAMERA:
+		case PR_N_CAMERA:
 #endif
 		    damage += rnd(25);
 		    if (!resists_blnd(&youmonst)) {
@@ -2102,18 +2102,18 @@ boolean ordinary;
 		case SPE_KNOCK:
 		    if (Punished) Your("chain quivers for a moment.");
 		    break;
-		case WAN_DIGGING:
-		case SPE_DIG:
+		case WAN_DRILLING:
+		case SPE_DRILLING:
 		case SPE_DETECT_UNSEEN:
-		case WAN_NOTHING:
+		case WAN_IDLING:
 		case WAN_LOCKING:
 		case SPE_WIZARD_LOCK:
 		    break;
-		case WAN_PROBING:
+		case WAN_PROBING___:
 		    for (obj = invent; obj; obj = obj->nobj)
 			obj->dknown = 1;
 		    /* note: `obj' reused; doesn't point at wand anymore */
-		    makeknown(WAN_PROBING);
+		    makeknown(WAN_PROBING___);
 		    ustatusline();
 		    break;
 		case SPE_STONE_TO_FLESH:
@@ -2169,9 +2169,9 @@ struct obj *obj;	/* wand or spell */
 	    * Carefully test the results of any that are
 	    * moved here from the bottom section.
 	    */
-		case WAN_PROBING:
+		case WAN_PROBING___:
 		    probe_monster(u.usteed);
-		    makeknown(WAN_PROBING);
+		    makeknown(WAN_PROBING___);
 		    steedhit = TRUE;
 		    break;
 		case WAN_TELEPORTATION:
@@ -2300,7 +2300,7 @@ struct obj *obj;	/* wand or spell */
 	ttmp = t_at(x, y); /* trap if there is one */
 
 	switch (obj->otyp) {
-	case WAN_PROBING:
+	case WAN_PROBING___:
 	    ptmp = 0;
 	    if (u.dz < 0) {
 		You("probe towards the %s.", ceiling(x,y));
@@ -2479,9 +2479,13 @@ register struct	obj	*obj;
 	} else {
 	    /* neither immediate nor directionless */
 
-	    if (otyp == WAN_DIGGING || otyp == SPE_DIG)
+	    if (otyp == WAN_DRILLING || otyp == SPE_DRILLING)
 		zap_dig();
-	    else if (otyp >= SPE_MAGIC_MISSILE && otyp <= SPE_FINGER_OF_DEATH)
+#ifdef ENGINEER
+            else if (otyp == WAN_CONSTRUCT || otyp == SPE_CONSTRUCT)
+	    	zap_construct();
+#endif
+	    else if (otyp >= SPE_MAGIC_MISSILE && otyp <= SPE_MIKURU_BEAMU)
 		buzz(otyp - SPE_MAGIC_MISSILE + 10,
 		     u.ulevel / 2 + 1,
 		     u.ux, u.uy, u.dx, u.dy);
@@ -2734,7 +2738,7 @@ struct obj *obj;			/* object tossed/used */
 		    }
 		}
 	    } else {
-		if (weapon == ZAPPED_WAND && obj->otyp == WAN_PROBING &&
+		if (weapon == ZAPPED_WAND && obj->otyp == WAN_PROBING___ &&
 		   glyph_is_invisible(levl[bhitpos.x][bhitpos.y].glyph)) {
 		    unmap_object(bhitpos.x, bhitpos.y);
 		    newsym(x, y);
@@ -3853,7 +3857,7 @@ register int osym, dmgtyp;
 
 		    if (obj->otyp == SCR_FIRE || obj->otyp == SPE_FIREBALL)
 			skip++;
-		    if (obj->otyp == SPE_BOOK_OF_THE_DEAD) {
+		    if (obj->otyp == SPE_BOOK_OF_THE_DESU) {
 			skip++;
 			if (!Blind)
 			    pline("%s glows a strange %s, but remains intact.",
@@ -3980,7 +3984,7 @@ int osym, dmgtyp;
 		case AD_FIRE:
 		    if (obj->otyp == SCR_FIRE || obj->otyp == SPE_FIREBALL)
 			skip++;
-		    if (obj->otyp == SPE_BOOK_OF_THE_DEAD) {
+		    if (obj->otyp == SPE_BOOK_OF_THE_DESU) {
 			skip++;
 			if (vis)
 			    pline("%s glows a strange %s, but remains intact.",

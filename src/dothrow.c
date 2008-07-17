@@ -1632,7 +1632,7 @@ struct obj *obj;
 	    return 1;
 	switch (obj->oclass == POTION_CLASS ? POT_WATER : obj->otyp) {
 #ifdef TOURIST
-		case EXPENSIVE_CAMERA:
+		case PR_N_CAMERA:
 #endif
 		case POT_WATER:		/* really, all potions */
 		case EGG:
@@ -1663,7 +1663,7 @@ boolean in_view;
 		case MIRROR:
 		case CRYSTAL_BALL:
 #ifdef TOURIST
-		case EXPENSIVE_CAMERA:
+		case PR_N_CAMERA:
 #endif
 			to_pieces = " into a thousand pieces";
 			/*FALLTHRU*/

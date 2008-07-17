@@ -23,7 +23,7 @@ STATIC_DCL struct permonst *FDECL(muse_newcham_mon, (struct monst *));
 STATIC_DCL int FDECL(precheck, (struct monst *,struct obj *));
 STATIC_DCL void FDECL(mzapmsg, (struct monst *,struct obj *,BOOLEAN_P));
 STATIC_DCL void FDECL(mreadmsg, (struct monst *,struct obj *));
-STATIC_DCL void FDECL(mquaffmsg, (struct monst *,struct obj *));
+STATIC_DCL void FDECL(mbhavmsg, (struct monst *,struct obj *));
 STATIC_PTR int FDECL(mbhitm, (struct monst *,struct obj *));
 STATIC_DCL void FDECL(mbhit,
 	(struct monst *,int,int FDECL((*),(MONST_P,OBJ_P)),
@@ -75,7 +75,7 @@ struct obj *obj;
 	        if ( flags.ghost_count < MAXMONNO &&
 		    !rn2(POTION_OCCUPANT_CHANCE(flags.ghost_count))) {
 		    if (!enexto(&cc, mon->mx, mon->my, &mons[PM_GHOST])) return 0;
-		    mquaffmsg(mon, obj);
+		    mbhavmsg(mon, obj);
 		    m_useup(mon, obj);
 		    mtmp = makemon(&mons[PM_GHOST], cc.x, cc.y, NO_MM_FLAGS);
 		    if (!mtmp) {
@@ -98,7 +98,7 @@ struct obj *obj;
 		    flags.djinni_count < MAXMONNO &&
 		    !rn2(POTION_OCCUPANT_CHANCE(flags.djinni_count))) {
 		if (!enexto(&cc, mon->mx, mon->my, &mons[PM_DJINNI])) return 0;
-		mquaffmsg(mon, obj);
+		mbhavmsg(mon, obj);
 		m_useup(mon, obj);
 		mtmp = makemon(&mons[PM_DJINNI], cc.x, cc.y, NO_MM_FLAGS);
 		if (!mtmp) {
@@ -203,13 +203,13 @@ struct obj *otmp;
 }
 
 STATIC_OVL void
-mquaffmsg(mtmp, otmp)
+mbhavmsg(mtmp, otmp)
 struct monst *mtmp;
 struct obj *otmp;
 {
 	if (canseemon(mtmp)) {
 		otmp->dknown = 1;
-		pline("%s drinks %s!", Monnam(mtmp), singular(otmp, doname));
+		pline("%s bhavs %s!", Monnam(mtmp), singular(otmp, doname));
 	} else
 		if (flags.soundok)
 			You_hear("a chugging sound.");
@@ -223,7 +223,7 @@ struct obj *otmp;
 #define MUSE_WAN_TELEPORTATION_SELF 2
 #define MUSE_POT_HEALING 3
 #define MUSE_POT_EXTRA_HEALING 4
-#define MUSE_WAN_DIGGING 5
+#define MUSE_WAN_DRILLING 5
 #define MUSE_TRAPDOOR 6
 #define MUSE_TELEPORT_TRAP 7
 #define MUSE_UPSTAIRS 8
@@ -369,7 +369,7 @@ struct monst *mtmp;
 		for(xx = x-1; xx <= x+1; xx++) for(yy = y-1; yy <= y+1; yy++)
 		if (isok(xx,yy))
 		if (xx != u.ux && yy != u.uy)
-		if (mtmp->data != &mons[PM_GRID_BUG] || xx == x || yy == y)
+		if (mtmp->data != &mons[PM_ZAPADA] || xx == x || yy == y)
 		if ((xx==x && yy==y) || !level.monsters[xx][yy])
 		if ((t = t_at(xx,yy)) != 0)
 		if ((verysmall(mtmp->data) || throws_rocks(mtmp->data) ||
@@ -428,9 +428,9 @@ struct monst *mtmp;
 		/* don't always use the same selection pattern */
 		if (m.has_defense && !rn2(3)) break;
 
-		/* nomore(MUSE_WAN_DIGGING); */
-		if (m.has_defense == MUSE_WAN_DIGGING) break;
-		if (obj->otyp == WAN_DIGGING && obj->spe > 0 && !stuck && !t
+		/* nomore(MUSE_WAN_DRILLING); */
+		if (m.has_defense == MUSE_WAN_DRILLING) break;
+		if (obj->otyp == WAN_DRILLING && obj->spe > 0 && !stuck && !t
 		    && !mtmp->isshk && !mtmp->isgd && !mtmp->ispriest
 		    && !is_floater(mtmp->data)
 		    /* monsters digging in Sokoban can ruin things */
@@ -442,7 +442,7 @@ struct monst *mtmp;
 		    && !(mtmp->data == &mons[PM_VLAD_THE_IMPALER]
 			 && In_V_tower(&u.uz))) {
 			m.defensive = obj;
-			m.has_defense = MUSE_WAN_DIGGING;
+			m.has_defense = MUSE_WAN_DRILLING;
 		}
 		nomore(MUSE_WAN_TELEPORTATION_SELF);
 		nomore(MUSE_WAN_TELEPORTATION);
@@ -640,13 +640,13 @@ mon_tele:
 		} else goto mon_tele;
 		return 2;
 	    }
-	case MUSE_WAN_DIGGING:
+	case MUSE_WAN_DRILLING:
 	    {	struct trap *ttmp;
 
 		m_flee(mtmp);
 		mzapmsg(mtmp, otmp, FALSE);
 		otmp->spe--;
-		if (oseen) makeknown(WAN_DIGGING);
+		if (oseen) makeknown(WAN_DRILLING);
 		if (IS_FURNITURE(levl[mtmp->mx][mtmp->my].typ) ||
 		    IS_DRAWBRIDGE(levl[mtmp->mx][mtmp->my].typ) ||
 		    (is_drawbridge_wall(mtmp->mx, mtmp->my) >= 0) ||
@@ -843,7 +843,7 @@ mon_tele:
 
 		goto mon_tele;
 	case MUSE_POT_HEALING:
-		mquaffmsg(mtmp, otmp);
+		mbhavmsg(mtmp, otmp);
 		i = d(6 + 2 * bcsign(otmp), 4);
 		mtmp->mhp += i;
 		if (mtmp->mhp > mtmp->mhpmax) mtmp->mhp = ++mtmp->mhpmax;
@@ -857,7 +857,7 @@ mon_tele:
 		m_useup(mtmp, otmp);
 		return 2;
 	case MUSE_POT_EXTRA_HEALING:
-		mquaffmsg(mtmp, otmp);
+		mbhavmsg(mtmp, otmp);
 		i = d(6 + 2 * bcsign(otmp), 8);
 		mtmp->mhp += i;
 		if (mtmp->mhp > mtmp->mhpmax)
@@ -872,7 +872,7 @@ mon_tele:
 		m_useup(mtmp, otmp);
 		return 2;
 	case MUSE_POT_FULL_HEALING:
-		mquaffmsg(mtmp, otmp);
+		mbhavmsg(mtmp, otmp);
 		if (otmp->otyp == POT_SICKNESS) unbless(otmp); /* Pestilence */
 		mtmp->mhp = (mtmp->mhpmax += (otmp->blessed ? 8 : 4));
 		if (!mtmp->mcansee && otmp->otyp != POT_SICKNESS) {
@@ -934,13 +934,13 @@ struct monst *mtmp;
 									)
 				return 0;
 			else
-				return WAN_DIGGING;
+				return WAN_DRILLING;
 	}
 	/*NOTREACHED*/
 	return 0;
 }
 
-#define MUSE_WAN_DEATH 1
+#define MUSE_WAN_DESU 1
 #define MUSE_WAN_SLEEP 2
 #define MUSE_WAN_FIRE 3
 #define MUSE_WAN_COLD 4
@@ -987,11 +987,11 @@ struct monst *mtmp;
 	if (!ranged_stuff) return FALSE;
 #define nomore(x) if(m.has_offense==x) continue;
 	for(obj=mtmp->minvent; obj; obj=obj->nobj) {
-		/* nomore(MUSE_WAN_DEATH); */
+		/* nomore(MUSE_WAN_DESU); */
 		if (!reflection_skip) {
-		    if(obj->otyp == WAN_DEATH && obj->spe > 0) {
+		    if(obj->otyp == WAN_DESU && obj->spe > 0) {
 			m.offensive = obj;
-			m.has_offense = MUSE_WAN_DEATH;
+			m.has_offense = MUSE_WAN_DESU;
 		    }
 		    nomore(MUSE_WAN_SLEEP);
 		    if(obj->otyp == WAN_SLEEP && obj->spe > 0 && multi >= 0) {
@@ -1276,7 +1276,7 @@ struct monst *mtmp;
 	oseen = otmp && canseemon(mtmp);
 
 	switch(m.has_offense) {
-	case MUSE_WAN_DEATH:
+	case MUSE_WAN_DESU:
 	case MUSE_WAN_SLEEP:
 	case MUSE_WAN_FIRE:
 	case MUSE_WAN_COLD:
@@ -1527,7 +1527,7 @@ struct monst *mtmp;
 			|| pm->mlet == S_KOP
 # endif
 		) return 0;
-	if (difficulty > 7 && !rn2(35)) return WAN_DEATH;
+	if (difficulty > 7 && !rn2(35)) return WAN_DESU;
 	switch (rn2(9 - (difficulty < 4) + 4 * (difficulty > 6))) {
 		case 0: {
 		    struct obj *helmet = which_armor(mtmp, W_ARMH);
@@ -1594,7 +1594,7 @@ struct monst *mtmp;
 	  for(xx = x-1; xx <= x+1; xx++)
 	    for(yy = y-1; yy <= y+1; yy++)
 		if (isok(xx,yy) && (xx != u.ux || yy != u.uy))
-		    if (mdat != &mons[PM_GRID_BUG] || xx == x || yy == y)
+		    if (mdat != &mons[PM_ZAPADA] || xx == x || yy == y)
 			if (/* (xx==x && yy==y) || */ !level.monsters[xx][yy])
 			    if ((t = t_at(xx, yy)) != 0 &&
 			      (ignore_boulders || !sobj_at(BOULDER, xx, yy))
@@ -1706,7 +1706,7 @@ struct monst *mtmp;
 
 	switch(m.has_misc) {
 	case MUSE_POT_GAIN_LEVEL:
-		mquaffmsg(mtmp, otmp);
+		mbhavmsg(mtmp, otmp);
 		if (otmp->cursed) {
 		    if (Can_rise_up(mtmp->mx, mtmp->my, &u.uz)) {
 			register int tolev = depth(&u.uz)-1;
@@ -1750,7 +1750,7 @@ skipmsg:
 		    mzapmsg(mtmp, otmp, TRUE);
 		    otmp->spe--;
 		} else
-		    mquaffmsg(mtmp, otmp);
+		    mbhavmsg(mtmp, otmp);
 		/* format monster's name before altering its visibility */
 		Strcpy(nambuf, See_invisible ? Monnam(mtmp) : mon_nam(mtmp));
 		mon_set_minvis(mtmp);
@@ -1774,7 +1774,7 @@ skipmsg:
 		mon_adjust_speed(mtmp, 1, otmp);
 		return 2;
 	case MUSE_POT_SPEED:
-		mquaffmsg(mtmp, otmp);
+		mbhavmsg(mtmp, otmp);
 		/* note difference in potion effect due to substantially
 		   different methods of maintaining speed ratings:
 		   player's character becomes "very fast" temporarily;
@@ -1789,7 +1789,7 @@ skipmsg:
 		if (oseen) makeknown(WAN_POLYMORPH);
 		return 2;
 	case MUSE_POT_POLYMORPH:
-		mquaffmsg(mtmp, otmp);
+		mbhavmsg(mtmp, otmp);
 		if (vismon) pline("%s suddenly mutates!", Monnam(mtmp));
 		(void) newcham(mtmp, muse_newcham_mon(mtmp), FALSE, FALSE);
 		if (oseen) makeknown(POT_POLYMORPH);
@@ -1962,7 +1962,7 @@ struct obj *obj;
 	case WAND_CLASS:
 	    if (obj->spe <= 0)
 		return FALSE;
-	    if (typ == WAN_DIGGING)
+	    if (typ == WAN_DRILLING)
 		return (boolean)(!is_floater(mon->data));
 	    if (typ == WAN_POLYMORPH)
 		return (boolean)(monstr[monsndx(mon->data)] < 6);
@@ -2139,11 +2139,11 @@ boolean stoning;
 
 	obj->quan = 1L;
 	pline("%s %ss %s.", Monnam(mon),
-		    (obj->otyp == POT_ACID) ? "quaff" : "eat",
+		    (obj->otyp == POT_ACID) ? "bhav" : "eat",
 		    distant_name(obj,doname));
 	obj->quan = save_quan;
     } else if (flags.soundok)
-	You_hear("%s.", (obj->otyp == POT_ACID) ? "drinking" : "chewing");
+	You_hear("%s.", (obj->otyp == POT_ACID) ? "bhaving" : "chewing");
     m_useup(mon, obj);
     if (((obj->otyp == POT_ACID) || acidic(&mons[obj->corpsenm])) &&
 		    !resists_acid(mon)) {

@@ -452,25 +452,25 @@ MONSTER:';',random,random
 MONSTER:';',random,random
 MONSTER:';',random,random
 # These guys feel like home here
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
-MONSTER:'E',"water elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
+MONSTER:'E',"PDEng elemental",random,hostile
 
 
 MAZE:"astral",' '
@@ -531,7 +531,7 @@ DOOR:closed,(63,09)
 # Non diggable and phazeable everywhere
 NON_DIGGABLE:(00,00,74,19)
 NON_PASSWALL:(00,00,74,19)
-# Moloch's horde
+# Jarek's horde
 # West round room
 MONSTER:'@',"aligned priest",(18,09),noalign,hostile
 MONSTER:'@',"aligned priest",(19,08),noalign,hostile

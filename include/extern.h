@@ -222,6 +222,10 @@ E int FDECL(dosearch0, (int));
 E int NDECL(dosearch);
 E void NDECL(sokoban_detect);
 
+#ifdef ENGINEER
+/* construct.c */
+E void NDECL(zap_construct);
+#endif 
 /* ### dig.c ### */
 
 E boolean NDECL(is_digging);
@@ -242,6 +246,9 @@ E void FDECL(bury_objs, (int,int));
 E void FDECL(unearth_objs, (int,int));
 E void FDECL(rot_organic, (genericptr_t, long));
 E void FDECL(rot_corpse, (genericptr_t, long));
+#ifdef WIZARD
+E void FDECL(mkbox_cnts, (struct obj *));
+#endif
 #if 0
 E void FDECL(bury_monst, (struct monst *));
 E void NDECL(bury_you);

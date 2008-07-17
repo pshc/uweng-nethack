@@ -54,7 +54,7 @@ register struct obj *otmp;
 	case SCR_TELEPORTATION:
 		return(20);
 /*		break; */
-	case SCR_GENOCIDE:
+	case SCR_ELIMINATE:
 		return(30);
 /*		break; */
 	case SCR_BLANK_PAPER:
@@ -122,6 +122,10 @@ register struct obj *pen;
 		(void)mungspaces(bp + 1);	/* remove the extra space */
 	}
 
+	/* renamed genocide to eliminate; let 'em write genocide if they want*/
+	if(!strncmpi(nm, "genocide", 8))
+		(void)strncpy(nm, "eliminate", 10); /* adds the '\0' */
+
 	first = bases[(int)paper->oclass];
 	last = bases[(int)paper->oclass + 1] - 1;
 	for (i = first; i <= last; i++) {
@@ -136,6 +140,7 @@ register struct obj *pen;
 		}
 	}
 
+
 	There("is no such %s!", typeword);
 	return 1;
 found:
@@ -144,7 +149,7 @@ found:
 		You_cant("write that!");
 		pline("It's obscene!");
 		return 1;
-	} else if (i == SPE_BOOK_OF_THE_DEAD) {
+	} else if (i == SPE_BOOK_OF_THE_DESU) {
 		pline("No mere dungeon adventurer could write that.");
 		return 1;
 	} else if (by_descr && paper->oclass == SPBOOK_CLASS &&
@@ -203,7 +208,7 @@ found:
 		/* scrolls disappear, spellbooks don't */
 		if (paper->oclass == SPBOOK_CLASS) {
 			You(
-       "write in your best handwriting:  \"My Diary\", but it quickly fades.");
+       "write a LiveJournal post, but it quickly fades.");
 			update_inventory();	/* pen charges */
 		} else {
 			if (by_descr) {

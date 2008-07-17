@@ -490,7 +490,7 @@ struct monst *mtmp;
 	real = BELL_OF_OPENING;
 	fake = BELL;
     } else if(u.uhave.book) {
-	real = SPE_BOOK_OF_THE_DEAD;
+	real = SPE_BOOK_OF_THE_DESU;
     } else if(u.uhave.menorah) {
 	real = CANDELABRUM_OF_INVOCATION;
     } else return;	/* you have nothing of special interest */

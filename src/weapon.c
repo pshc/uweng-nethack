@@ -42,7 +42,11 @@ STATIC_VAR NEARDATA const short skill_names_indices[P_NUM_SKILLS] = {
 	TWO_HANDED_SWORD, SCIMITAR,       PN_SABER,     CLUB,
 	MACE,             MORNING_STAR,   FLAIL,
 	PN_HAMMER,        QUARTERSTAFF,   PN_POLEARMS,  SPEAR,
+#ifdef ENGINEER
+	JAVELIN,          CRESCENT_WRENCH,        LANCE,        BOW,
+#else
 	JAVELIN,          TRIDENT,        LANCE,        BOW,
+#endif
 	SLING,            CROSSBOW,       DART,
 	SHURIKEN,         BOOMERANG,      PN_WHIP,      UNICORN_HORN,
 	PN_ATTACK_SPELL,     PN_HEALING_SPELL,
@@ -71,7 +75,7 @@ STATIC_VAR NEARDATA const char * const odd_skill_names[] = {
     "enchantment spells",
     "clerical spells",
     "escape spells",
-    "matter spells",
+    "stuff spells",
 };
 /* indexed vis `is_martial() */
 STATIC_VAR NEARDATA const char * const barehands_or_martial[] = {
@@ -146,10 +150,12 @@ struct monst *mon;
 	   index(kebabable, ptr->mlet)) tmp += 2;
 
 	/* trident is highly effective against swimmers */
+#ifndef ENGINEER
 	if (otmp->otyp == TRIDENT && is_swimmer(ptr)) {
 	   if (is_pool(mon->mx, mon->my)) tmp += 4;
 	   else if (ptr->mlet == S_EEL || ptr->mlet == S_SNAKE) tmp += 2;
 	}
+#endif
 
 	/* Picks used against xorns and earth elementals */
 	if (is_pick(otmp) &&
@@ -213,6 +219,9 @@ struct monst *mon;
 		case PARTISAN:
 		case RUNESWORD:
 		case ELVEN_BROADSWORD:
+#ifdef ENGINEER
+		case CRESCENT_WRENCH:
+#endif
 		case BROADSWORD:	tmp++; break;
 
 		case FLAIL:
@@ -225,7 +234,12 @@ struct monst *mon;
 
 		case BATTLE_AXE:
 		case BARDICHE:
-		case TRIDENT:		tmp += d(2,4); break;
+#ifdef ENGINEER
+		case ART_TOOL:
+#else
+		case TRIDENT:
+#endif
+		tmp += d(2,4); break;
 
 		case TSURUGI:
 		case DWARVISH_MATTOCK:
@@ -241,7 +255,10 @@ struct monst *mon;
 		case WAR_HAMMER:
 		case FLAIL:
 		case SPETUM:
-		case TRIDENT:		tmp++; break;
+#ifndef ENGINEER
+		case TRIDENT:
+#endif
+		tmp++; break;
 
 		case BATTLE_AXE:
 		case BARDICHE:
@@ -253,6 +270,10 @@ struct monst *mon;
 		case BROADSWORD:
 		case ELVEN_BROADSWORD:
 		case RUNESWORD:
+#ifdef ENGINEER
+		case CRESCENT_WRENCH:
+		case ART_TOOL:
+#endif
 		case VOULGE:		tmp += rnd(4); break;
 
 		case ACID_VENOM:	tmp += rnd(6); break;
@@ -468,14 +489,18 @@ register struct monst *mtmp;
 static const NEARDATA short hwep[] = {
 	  CORPSE,  /* cockatrice corpse */
 	  TSURUGI, RUNESWORD, DWARVISH_MATTOCK, TWO_HANDED_SWORD, BATTLE_AXE,
+#ifdef ENGINEER
+	  KATANA, UNICORN_HORN, CRYSKNIFE, CRESCENT_WRENCH, LONG_SWORD,
+#else
 	  KATANA, UNICORN_HORN, CRYSKNIFE, TRIDENT, LONG_SWORD,
+#endif
 	  ELVEN_BROADSWORD, BROADSWORD, SCIMITAR, SILVER_SABER,
 	  MORNING_STAR, ELVEN_SHORT_SWORD, DWARVISH_SHORT_SWORD, SHORT_SWORD,
 	  ORCISH_SHORT_SWORD, MACE, AXE, DWARVISH_SPEAR, SILVER_SPEAR,
 	  ELVEN_SPEAR, SPEAR, ORCISH_SPEAR, FLAIL, BULLWHIP, QUARTERSTAFF,
 	  JAVELIN, AKLYS, CLUB, PICK_AXE,
 #ifdef KOPS
-	  RUBBER_HOSE,
+	  LETTER_OF_EXPULSION,
 #endif /* KOPS */
 	  WAR_HAMMER, SILVER_DAGGER, ELVEN_DAGGER, DAGGER, ORCISH_DAGGER,
 	  ATHAME, SCALPEL, KNIFE, WORM_TOOTH

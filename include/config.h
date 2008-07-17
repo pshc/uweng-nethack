@@ -143,10 +143,10 @@
 
 #ifndef WIZARD		/* allow for compile-time or Makefile changes */
 # ifndef KR1ED
-#  define WIZARD  "wizard" /* the person allowed to use the -D option */
+#  define WIZARD  "root" /* the person allowed to use the -D option */
 # else
 #  define WIZARD
-#  define WIZARD_NAME "wizard"
+#  define WIZARD_NAME "root"
 # endif
 #endif
 
@@ -169,11 +169,11 @@
 
 #ifdef UNIX
 /* path and file name extension for compression program */
-#define COMPRESS "/usr/bin/compress"	/* Lempel-Ziv compression */
-#define COMPRESS_EXTENSION ".Z"		/* compress's extension */
+/* #define COMPRESS "/usr/bin/compress" */	/* Lempel-Ziv compression */
+/* #define COMPRESS_EXTENSION ".Z" */		/* compress's extension */
 /* An example of one alternative you might want to use: */
-/* #define COMPRESS "/usr/local/bin/gzip" */	/* FSF gzip compression */
-/* #define COMPRESS_EXTENSION ".gz" */		/* normal gzip extension */
+#define COMPRESS "/bin/gzip" 		/* FSF gzip compression */
+#define COMPRESS_EXTENSION ".gz" 	/* normal gzip extension */
 #endif
 
 #ifndef COMPRESS
@@ -185,7 +185,7 @@
  *	a tar-like file, thus making a neater installation.  See *conf.h
  *	for detailed configuration.
  */
-/* #define DLB */	/* not supported on all platforms */
+#define DLB	/* not supported on all platforms */
 
 /*
  *	Defining INSURANCE slows down level changes, but allows games that
@@ -194,9 +194,9 @@
  */
 #define INSURANCE	/* allow crashed game recovery */
 
-#ifndef MAC
-# define CHDIR		/* delete if no chdir() available */
-#endif
+/*#ifndef MAC*/
+/*# define CHDIR*/		/* delete if no chdir() available */
+/*#endif*/
 
 #ifdef CHDIR
 /*
@@ -204,7 +204,7 @@
  * otherwise it will be the current directory.
  */
 # ifndef HACKDIR
-#  define HACKDIR "/usr/games/lib/nethackdir"
+#  define HACKDIR "/usr/share/games/nethack"
 # endif
 
 /*
@@ -300,7 +300,7 @@ typedef unsigned char	uchar;
  * functions that have been macroized.
  */
 
-/* #define VISION_TABLES */ /* use vision tables generated at compile time */
+#define VISION_TABLES /* use vision tables generated at compile time */
 #ifndef VISION_TABLES
 # ifndef NO_MACRO_CPATH
 #  define MACRO_CPATH	/* use clear_path macros instead of functions */
@@ -338,7 +338,7 @@ typedef unsigned char	uchar;
 #endif
 
 #define EXP_ON_BOTL	/* Show experience on bottom line */
-/* #define SCORE_ON_BOTL */	/* added by Gary Erickson (erickson@ucivax) */
+#define SCORE_ON_BOTL	/* added by Gary Erickson (erickson@ucivax) */
 
 /*
  * Section 5:  EXPERIMENTAL STUFF
@@ -348,10 +348,16 @@ typedef unsigned char	uchar;
  * bugs left here.
  */
 
+#define ENGINEER
+
+/* #define GOLDOBJ */ 	/* Gold is kept on obj chains - Helge Hafting */
+#define AUTOPICKUP_EXCEPTIONS /* exceptions to autopickup */
+#define HPMON
+
 #if defined(TTY_GRAPHICS) || defined(MSWIN_GRAPHICS)
 # define MENU_COLOR
 # define MENU_COLOR_REGEX
-/*# define MENU_COLOR_REGEX_POSIX */
+# define MENU_COLOR_REGEX_POSIX
 /* if MENU_COLOR_REGEX is defined, use regular expressions (regex.h,
  * GNU specific functions by default, POSIX functions with
  * MENU_COLOR_REGEX_POSIX).
@@ -359,9 +365,6 @@ typedef unsigned char	uchar;
  * pmatch() provides basic globbing: '*' and '?' wildcards.
  */
 #endif
-
-/*#define GOLDOBJ */	/* Gold is kept on obj chains - Helge Hafting */
-/*#define AUTOPICKUP_EXCEPTIONS */ /* exceptions to autopickup */
 
 /* End of Section 5 */
 
