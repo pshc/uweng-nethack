@@ -915,7 +915,7 @@ register const char *let,*word;
 
 		/* "ugly check" for reading fortune cookies, part 2 */
 		if ((!strcmp(word, "read") &&
-		    (otmp->otyp == FORTUNE_COOKIE
+		    (otmp->otyp == LUCKEE_COOKIE
 #ifdef TOURIST
 			|| otmp->otyp == T_SHIRT
 #endif

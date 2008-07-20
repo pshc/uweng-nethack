@@ -47,7 +47,7 @@ doread()
 	if(!scroll) return(0);
 
 	/* outrumor has its own blindness check */
-	if(scroll->otyp == FORTUNE_COOKIE) {
+	if(scroll->otyp == LUCKEE_COOKIE) {
 	    if(flags.verbose)
 		You("break up the cookie and throw away the pieces.");
 	    outrumor(bcsign(scroll), BY_COOKIE);

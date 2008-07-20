@@ -1342,7 +1342,7 @@ struct monst *mtmp;
 		    typ != WATCARD && !is_shirt(obj) &&
 #endif
 		    !(typ == CORPSE && verysmall(&mons[obj->corpsenm])) &&
-		    typ != FORTUNE_COOKIE && typ != CANDY_BAR &&
+		    typ != LUCKEE_COOKIE && typ != CANDY_BAR &&
 		    typ != PANCAKE && typ != LEMBAS_WAFER &&
 		    typ != LUMP_OF_ROYAL_JELLY &&
 		    obj->oclass != AMULET_CLASS &&

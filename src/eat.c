@@ -1689,7 +1689,7 @@ register struct obj *otmp;
 	    case CARROT:
 		make_blinded((long)u.ucreamed,TRUE);
 		break;
-	    case FORTUNE_COOKIE:
+	    case LUCKEE_COOKIE:
 		outrumor(bcsign(otmp), BY_COOKIE);
 		if (!Blind) u.uconduct.literate++;
 		break;
@@ -2044,7 +2044,7 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 
 	    default:
 		if (otmp->otyp == PANCAKE ||
-		    otmp->otyp == FORTUNE_COOKIE || /* eggs */
+		    otmp->otyp == LUCKEE_COOKIE || /* eggs */
 		    otmp->otyp == CREAM_PIE ||
 		    otmp->otyp == CANDY_BAR || /* milk */
 		    otmp->otyp == LUMP_OF_ROYAL_JELLY)
@@ -2053,7 +2053,7 @@ doeat()		/* generic "eat" command funtion (see cmd.c) */
 	    }
 
 	    victual.reqtime = objects[otmp->otyp].oc_delay;
-	    if (otmp->otyp != FORTUNE_COOKIE &&
+	    if (otmp->otyp != LUCKEE_COOKIE &&
 		(otmp->cursed ||
 		 (((monstermoves - otmp->age) > (int) otmp->blessed ? 50:30) &&
 		(otmp->orotten || !rn2(7))))) {
