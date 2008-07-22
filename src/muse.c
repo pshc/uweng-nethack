@@ -652,7 +652,7 @@ mon_tele:
 		    (is_drawbridge_wall(mtmp->mx, mtmp->my) >= 0) ||
 		    (sstairs.sx && sstairs.sx == mtmp->mx &&
 				   sstairs.sy == mtmp->my)) {
-			pline_The("digging ray is ineffective.");
+			pline_The("drilling ray is ineffective.");
 			return 2;
 		}
 		if (!Can_dig_down(&u.uz)) {

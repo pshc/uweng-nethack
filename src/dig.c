@@ -166,7 +166,7 @@ dig_check(madeby, verbose, x, y)
 	int		x, y;
 {
 	struct trap *ttmp = t_at(x, y);
-	const char *verb = (madeby == BY_YOU && uwep && is_axe(uwep)) ? "chop" : "dig in";
+	const char *verb = (madeby == BY_YOU && uwep && is_axe(uwep)) ? "chop" : "drill in";
 
 	if (On_stairs(x, y)) {
 	    if (x == xdnladder || x == xupladder) {
@@ -213,7 +213,7 @@ dig()
 	register xchar dpx = digging.pos.x, dpy = digging.pos.y;
 	register boolean ispick = uwep && is_pick(uwep);
 	const char *verb =
-	    (!uwep || is_pick(uwep)) ? "dig into" : "chop through";
+	    (!uwep || is_pick(uwep)) ? "drill into" : "chop through";
 
 	lev = &levl[dpx][dpy];
 	/* perhaps a nymph stole your pick-axe while you were busy digging */
@@ -396,7 +396,7 @@ dig()
 					dpx, dpy, NO_MM_FLAGS);
 			break;
 		    }
-		    if(mtmp) pline_The("debris from your digging comes to life!");
+		    if(mtmp) pline_The("debris from your drilling comes to life!");
 		}
 		if(IS_DOOR(lev->typ) && (lev->doormask & D_TRAPPED)) {
 			lev->doormask = D_NODOOR;
@@ -516,7 +516,7 @@ int ttyp;
 	}
 
 	if (ttyp != PIT && !Can_dig_down(&u.uz)) {
-	    impossible("digactualhole: can't dig %s on this level.",
+	    impossible("digactualhole: can't drill %s on this level.",
 		       defsyms[trap_to_defsym(ttyp)].explanation);
 	    ttyp = PIT;
 	}
@@ -539,7 +539,7 @@ int ttyp;
 	if (ttyp == PIT) {
 
 	    if(madeby_u) {
-		You("dig a pit in the %s.", surface_type);
+		You("drill a pit in the %s.", surface_type);
 		if (shopdoor) pay_for_damage("ruin", FALSE);
 	    } else if (!madeby_obj && canseemon(madeby))
 		pline("%s digs a pit in the %s.", Monnam(madeby), surface_type);
@@ -568,7 +568,7 @@ int ttyp;
 	} else {	/* was TRAPDOOR now a HOLE*/
 
 	    if(madeby_u)
-		You("dig a hole through the %s.", surface_type);
+		You("drill a hole through the %s.", surface_type);
 	    else if(!madeby_obj && canseemon(madeby))
 		pline("%s digs a hole through the %s.",
 		      Monnam(madeby), surface_type);
@@ -598,7 +598,7 @@ int ttyp;
 		    if (*u.ushops && madeby_u)
 			shopdig(1); /* shk might snatch pack */
 		    /* handle earlier damage, eg breaking wand of digging */
-		    else if (!madeby_u) pay_for_damage("dig into", TRUE);
+		    else if (!madeby_u) pay_for_damage("drill into", TRUE);
 
 		    You("fall through...");
 		    /* Earlier checks must ensure that the destination
@@ -658,7 +658,7 @@ boolean pit_only;
 	if ((ttmp && (ttmp->ttyp == MAGIC_PORTAL || nohole)) ||
 	   (IS_ROCK(lev->typ) && lev->typ != SDOOR &&
 	    (lev->wall_info & W_NONDIGGABLE) != 0)) {
-		pline_The("%s here is too hard to dig in.", surface(u.ux,u.uy));
+		pline_The("%s here is too hard to drill in.", surface(u.ux,u.uy));
 
 	} else if (is_pool(u.ux, u.uy) || is_lava(u.ux, u.uy)) {
 		pline_The("%s sloshes furiously for a moment, then subsides.",
@@ -671,7 +671,7 @@ boolean pit_only;
 		   bridge is extended; drawbridge_wall is the open "doorway" or
 		   closed "door" where the portcullis/mechanism is located */
 		if (pit_only) {
-		    pline_The("drawbridge seems too hard to dig through.");
+		    pline_The("drawbridge seems too hard to drill through.");
 		    return FALSE;
 		} else {
 		    int x = u.ux, y = u.uy;
@@ -711,7 +711,7 @@ boolean pit_only;
 			 * We can't dig a hole here since that will destroy
 			 * the drawbridge.  The following is a cop-out. --dlc
 			 */
-			pline_The("%s here is too hard to dig in.",
+			pline_The("%s here is too hard to drill in.",
 			      surface(u.ux, u.uy));
 			return FALSE;
 		}
@@ -827,7 +827,7 @@ struct obj *obj;
 	    else res = 1;
 	}
 	ispick = is_pick(obj);
-	verb = ispick ? "dig" : "chop";
+	verb = ispick ? "drill" : "chop";
 
 	if (u.utrap && u.utraptype == TT_WEB) {
 	    pline("%s you can't %s while entangled in a web.",
@@ -868,7 +868,7 @@ struct obj *obj;
 	register struct rm *lev;
 	int dig_target;
 	boolean ispick = is_pick(obj);
-	const char *verbing = ispick ? "digging" : "chopping";
+	const char *verbing = ispick ? "drilling" : "chopping";
 
 	if (u.uswallow && attack(u.ustuck)) {
 		;  /* return(1) */
@@ -924,7 +924,7 @@ struct obj *obj;
 			} else if (IS_TREE(lev->typ))
 			    You("need an axe to cut down a tree.");
 			else if (IS_ROCK(lev->typ))
-			    You("need a pick to dig rock.");
+			    You("need a pick to drill rock.");
 			else if (!ispick && (sobj_at(STATUE, rx, ry) ||
 					     sobj_at(BOULDER, rx, ry))) {
 			    boolean vibrate = !rn2(3);
@@ -939,7 +939,7 @@ struct obj *obj;
 		} else {
 			static const char * const d_action[6] = {
 						"swinging",
-						"digging",
+						"drilling",
 						"chipping the statue",
 						"hitting the boulder",
 						"chopping at the door",
@@ -1276,7 +1276,7 @@ zap_dig()
 	} /* while */
 	tmp_at(DISP_END,0);	/* closing call */
 	if (shopdoor || shopwall)
-	    pay_for_damage(shopdoor ? "destroy" : "dig into", FALSE);
+	    pay_for_damage(shopdoor ? "destroy" : "drill into", FALSE);
 	return;
 }
 

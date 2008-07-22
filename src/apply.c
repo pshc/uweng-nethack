@@ -2743,7 +2743,7 @@ do_break_wand(obj)
 
     /* Note: if player fell thru, this call is a no-op.
        Damage is handled in digactualhole in that case */
-    if (shop_damage) pay_for_damage("dig into", FALSE);
+    if (shop_damage) pay_for_damage("drill into", FALSE);
 
     if (obj->otyp == WAN_LIGHT)
 	litroom(TRUE, obj);	/* only needs to be done once */

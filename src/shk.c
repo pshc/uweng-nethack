@@ -581,7 +581,7 @@ register char *enterstring;
 	    if (pick || mattock) {
 		cnt = 1;	/* so far */
 		if (pick && mattock) {	/* carrying both types */
-		    tool = "digging tool";
+		    tool = "drilling tool";
 		    cnt = 2;	/* `more than 1' is all that matters */
 		} else if (pick) {
 		    tool = "pick-axe";
@@ -3451,7 +3451,7 @@ boolean cant_mollify;
 	register boolean uinshp = (*u.ushops != '\0');
 	char qbuf[80];
 	register xchar x, y;
-	boolean dugwall = !strcmp(dmgstr, "dig into") ||	/* wand */
+	boolean dugwall = !strcmp(dmgstr, "drill into") ||	/* wand */
 			  !strcmp(dmgstr, "damage");		/* pick-axe */
 	struct damage *tmp_dam, *appear_here = 0;
 	/* any number >= (80*80)+(24*24) would do, actually */

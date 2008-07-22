@@ -704,7 +704,7 @@ doengrave()
 			type  = ENGRAVE;
 			if(!objects[otmp->otyp].oc_name_known) {
 			    if (flags.verbose)
-				pline("This %s is a wand of digging!",
+				pline("This %s is a wand of drilling!",
 				xname(otmp));
 			    doknown = TRUE;
 			}
