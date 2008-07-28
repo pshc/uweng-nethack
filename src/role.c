@@ -277,7 +277,7 @@ const struct Role roles[] = {
 {	{"Samurai", 0}, {
 	{"Hatamoto",    0},  /* Banner Knight */
 	{"Ronin",       0},  /* no allegiance */
-	{"Ninja",       "Kunoichi"},  /* secret society */
+	{"Bushi",       0},  /* ninjas don't make sense */
 	{"Joshu",       0},  /* heads a castle */
 	{"Ryoshu",      0},  /* has a territory */
 	{"Kokushu",     0},  /* heads a province */
