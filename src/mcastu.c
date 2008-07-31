@@ -578,7 +578,7 @@ int spellnum;
 	    pline("%s summons insects around your displaced image!",
 		Monnam(mtmp));
 	else
-	    pline("%s summons insects!", Monnam(mtmp));
+	    pline("%s summons beads?!", Monnam(mtmp));
 	dmg = 0;
 	break;
       }
