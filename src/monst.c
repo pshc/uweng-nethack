@@ -148,7 +148,7 @@ NEARDATA struct permonst mons[] = {
 	M1_BREATHLESS|M1_AMORPHOUS|M1_NOEYES|M1_NOLIMBS|M1_NOHEAD|
 	  M1_MINDLESS|M1_ACID,
 	M2_WANDER|M2_NEUTER, 0, CLR_GREEN),
-    MON("quivering blob", S_BLOB,
+    MON("worthless protoplasm", S_BLOB,
 	LVL(5, 1, 8, 0, 0), (G_GENO|2),
 	A(ATTK(AT_TUCH, AD_PHYS, 1, 8),
 	  NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
