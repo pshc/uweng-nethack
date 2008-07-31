@@ -2048,7 +2048,7 @@ boolean ordinary;
 		    break;
 
 		case WAN_DESU:
-		case SPE_MIKURU_BEAMU:
+		case SPE_BUSTER_BEAM:
 		    if (nonliving(youmonst.data) || is_demon(youmonst.data)) {
 			pline((obj->otyp == WAN_DESU) ?
 			  "The wand shoots an apparently harmless beam at you."
@@ -2485,7 +2485,7 @@ register struct	obj	*obj;
             else if (otyp == WAN_CONSTRUCT || otyp == SPE_CONSTRUCT)
 	    	zap_construct();
 #endif
-	    else if (otyp >= SPE_MAGIC_MISSILE && otyp <= SPE_MIKURU_BEAMU)
+	    else if (otyp >= SPE_MAGIC_MISSILE && otyp <= SPE_BUSTER_BEAM)
 		buzz(otyp - SPE_MAGIC_MISSILE + 10,
 		     u.ulevel / 2 + 1,
 		     u.ux, u.uy, u.dx, u.dy);

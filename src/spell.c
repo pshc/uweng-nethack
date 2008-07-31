@@ -868,7 +868,7 @@ boolean atme;
 	case SPE_POLYMORPH:
 	case SPE_TELEPORT_AWAY:
 	case SPE_CANCELLATION:
-	case SPE_MIKURU_BEAMU:
+	case SPE_BUSTER_BEAM:
 	case SPE_LIGHT:
 	case SPE_DETECT_UNSEEN:
 	case SPE_HEALING:

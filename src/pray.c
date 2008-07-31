@@ -679,8 +679,8 @@ gcrownu()
     if (Role_if(PM_WIZARD) &&
 	    (!uwep || (uwep->oartifact != ART_VORPAL_BLADE &&
 		       uwep->oartifact != ART_STORMBRINGER)) &&
-	    !carrying(SPE_MIKURU_BEAMU)) {
-	class_gift = SPE_MIKURU_BEAMU;
+	    !carrying(SPE_BUSTER_BEAM)) {
+	class_gift = SPE_BUSTER_BEAM;
  make_splbk:
 	obj = mksobj(class_gift, TRUE, FALSE);
 	bless(obj);
