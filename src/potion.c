@@ -1110,12 +1110,6 @@ boolean your_fault;
 			    new_were(mon);	/* transform into beast */
 		    }
 		}
-#ifndef ENGINEER
-		else if(mon->data == &mons[PM_GREMLIN]) {
-		    angermon = FALSE;
-		    (void)split_mon(mon, (struct monst *)0);
-		}
-#endif
 		else if(mon->data == &mons[PM_IRON_GOLEM]) {
 		    if (canseemon(mon))
 			pline("%s rusts.", Monnam(mon));
@@ -1287,11 +1281,6 @@ register struct obj *obj;
 		if (!Blind && !u.usleep) Your(vision_clears);
 		break;
 	case POT_WATER:
-#ifndef ENGINEER
-		if(u.umonnum == PM_GREMLIN) {
-		    (void)split_mon(&youmonst, (struct monst *)0);
-		} else
-#endif
 		if (u.ulycn >= LOW_PM) {
 		    /* vapor from [un]holy water will trigger
 		       transformation but won't cure lycanthropy */

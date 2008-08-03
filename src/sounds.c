@@ -302,11 +302,9 @@ register struct monst *mtmp;
 	case MS_SILENT:
 		ret = "commotion";
 		break;
-#ifdef ENGINEER
 	case MS_HONK:
 		ret = "honk";
 		break;
-#endif
 	default:
 		ret = "scream";
 	}
@@ -352,11 +350,9 @@ register struct monst *mtmp;
 	case MS_MEW:
 	    yelp_verb = "yowl";
 	    break;
-#ifdef ENGINEER
 	case MS_HONK:
 	    yelp_verb = "hiss";
 	    break;
-#endif
 	case MS_BARK:
 	case MS_GROWL:
 	    yelp_verb = "yelp";
@@ -402,9 +398,7 @@ register struct monst *mtmp;
 	case MS_BARK:
 	    whimper_verb = "whine";
 	    break;
-#ifdef ENGINEER
 	case MS_HONK:
-#endif
 	case MS_SQEEK:
 	    whimper_verb = "squeal";
 	    break;
@@ -590,7 +584,6 @@ register struct monst *mtmp;
 	case MS_GROWL:
 	    pline_msg = mtmp->mpeaceful ? "snarls." : "growls!";
 	    break;
-#ifdef ENGINEER
 	case MS_HONK:
 	    if (mtmp->mtame) {
 		if (mtmp->mconf || mtmp->mflee || mtmp->mtrapped ||
@@ -606,7 +599,6 @@ register struct monst *mtmp;
 	    else
 	    	pline_msg = mtmp->mpeaceful ? "poops!" : "hisses!";
 	    break;
-#endif
 	case MS_ROAR:
 	    pline_msg = mtmp->mpeaceful ? "snarls." : "roars!";
 	    break;

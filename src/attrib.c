@@ -88,14 +88,12 @@ const struct innate {
 	wiz_abil[] = { {	15, &(HWarning), "sensitive", "" },
 		     {  17, &(HTeleport_control), "controlled","uncontrolled" },
 		     {	 0, 0, 0, 0 } },
-#ifdef ENGINEER
 	eng_abil[] = { {   1, &(HSearching), "", "" },
 		     {   3, &(HShock_resistance), "insulated", "conductive" },
 		     {   6, &(HSleep_resistance), "awake", "permatired" },
 		     {   9, &(HWarning), "sensitive", "blunted" },
 		     {  15, &(HTeleport_control), "controlled","uncontrolled" },
 		     {   0, 0, 0, 0 } },
-#endif
 
 	/* Intrinsics conferred by race */
 	elf_abil[] = { {	4, &(HSleep_resistance), "awake", "tired" },
@@ -564,9 +562,7 @@ int oldlevel, newlevel;
 #endif
 	case PM_VALKYRIE:       abil = val_abil;	break;
 	case PM_WIZARD:         abil = wiz_abil;	break;
-#ifdef ENGINEER
 	case PM_ENGINEER:       abil = eng_abil;        break;
-#endif
 	default:                abil = 0;		break;
 	}
 

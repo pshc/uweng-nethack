@@ -101,11 +101,7 @@ const char def_monsyms[MAXMCLASSES] = {
 	DEF_DOG,
 	DEF_EYE,
 	DEF_FELINE,
-#ifdef ENGINEER
 	DEF_GOOSE,
-#else
-	DEF_GREMLIN,
-#endif
 	DEF_HUMANOID,
 	DEF_IMP,
 	DEF_JELLY,		/* 10 */
@@ -169,11 +165,7 @@ const char * const monexplain[MAXMCLASSES] = {
     0,
     "ant or other insect",	"blob",			"cockatrice",
     "dog or other canine",	"eye or sphere",	"cat or other feline",
-#ifdef ENGINEER
     "goose",
-#else
-    "gremlin",
-#endif
     				"humanoid",		"imp or minor demon",
     "jelly",			"balkan",		"leprechaun",
     "mimic",			"nymph",		"orc",

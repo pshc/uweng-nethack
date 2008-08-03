@@ -348,8 +348,6 @@ typedef unsigned char	uchar;
  * bugs left here.
  */
 
-#define ENGINEER
-
 /* #define GOLDOBJ */ 	/* Gold is kept on obj chains - Helge Hafting */
 #define AUTOPICKUP_EXCEPTIONS /* exceptions to autopickup */
 #define HPMON

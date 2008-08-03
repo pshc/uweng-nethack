@@ -288,9 +288,6 @@ breakarm(ptr)	/* creature will break out of armor */
 	return ((bigmonst(ptr) || (ptr->msize > MZ_SMALL && !humanoid(ptr)) ||
 		/* special cases of humanoids that cannot wear body armor */
 		ptr == &mons[PM_MARILITH]
-#ifndef ENGINEER
-		|| ptr == &mons[PM_WINGED_GARGOYLE]
-#endif
 		) && !sliparm(ptr));
 }
 #endif /* OVLB */

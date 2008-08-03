@@ -511,10 +511,6 @@ int	mntmp;
 		pline(use_thec,monsterc,"summon help");
 	    if (webmaker(youmonst.data))
 		pline(use_thec,monsterc,"spin a web");
-#ifndef ENGINEER
-	    if (u.umonnum == PM_GREMLIN)
-		pline(use_thec,monsterc,"multiply in a fountain");
-#endif
 	    if (is_unicorn(youmonst.data))
 		pline(use_thec,monsterc,"use your horn");
 	    if (is_mind_flayer(youmonst.data))

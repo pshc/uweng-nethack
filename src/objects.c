@@ -116,13 +116,8 @@ WEAPON("javelin", "throwing spear",
 	0, 1, 0, 10, 20,  3,  6,  6, 0, P,   P_JAVELIN, IRON, HI_METAL),
 
 						/* +1 small, +2d4 large */
-#ifdef ENGINEER
 WEAPON("crescent wrench", "wrench",
 	1, 0, 0,  8, 20,  5,  5,  3, 2, P,   P_TRIDENT, IRON, HI_METAL),
-#else
-WEAPON("trident", (char *)0,
-	1, 0, 0,  8, 25,  5,  6,  4, 0, P,   P_TRIDENT, IRON, HI_METAL),
-#endif
 
 /* blades */
 WEAPON("dagger", (char *)0,
@@ -841,10 +836,7 @@ SPELL("stone to flesh",	 "thick",       P_HEALING_SPELL, 15,  1, 3, 1, IMMEDIATE
 SPELL("flame sphere",    "canvas",      P_MATTER_SPELL, 20,  2, 1, 1, NODIR, CLR_BROWN),
 SPELL("freeze sphere",   "hardcover",   P_MATTER_SPELL, 20,  2, 1, 1, NODIR, CLR_BROWN),
 #endif
-#ifdef ENGINEER
-// name,desc,sub,prob,delay,level,mgc,dir,color
 SPELL("construct", "cute", P_MATTER_SPELL, 20, 1, 2, 1, RAY, CLR_BRIGHT_MAGENTA),
-#endif
 /* blank spellbook must come last because it retains its description */
 SPELL("blank paper",     "plain",       P_NONE, 18,  0, 0, 0, 0,         HI_PAPER),
 /* a special, one of a kind, spellbook */
@@ -881,9 +873,7 @@ WAND("cold",           "short",    40, 175, 1, RAY,       IRON,     HI_METAL),
 WAND("sleep",          "runed",    50, 175, 1, RAY,       IRON,     HI_METAL),
 WAND("DESU",           "long",      5, 500, 1, RAY,       IRON,     HI_METAL),
 WAND("lightning",      "curved",   40, 175, 1, RAY,       IRON,     HI_METAL),
-#ifdef ENGINEER
 WAND("construct",      "helix",    20, 175, 1, RAY,       IRON,     HI_METAL),
-#endif
 WAND((char *)0,        "forked",    0, 150, 1, 0,         WOOD,     HI_WOOD),
 WAND((char *)0,        "spiked",    0, 150, 1, 0,         IRON,     HI_METAL),
 WAND((char *)0,        "phallic",   0, 150, 1, 0,         IRON,     HI_MINERAL),

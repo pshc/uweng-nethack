@@ -5,9 +5,6 @@
 #include "hack.h"
 #include "prop.h"
 
-#ifndef ENGINEER
-STATIC_DCL void FDECL(mkbox_cnts,(struct obj *));
-#endif
 STATIC_DCL void FDECL(obj_timer_checks,(struct obj *, XCHAR_P, XCHAR_P, int));
 #ifdef OVL1
 STATIC_DCL void FDECL(container_weight, (struct obj *));
@@ -136,9 +133,6 @@ boolean artif;
 	return(mksobj(i, TRUE, artif));
 }
 
-#ifndef ENGINEER
-EXTERN_OVL
-#endif
 void
 mkbox_cnts(box)
 struct obj *box;

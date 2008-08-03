@@ -1147,10 +1147,8 @@ start_tin(otmp)		/* called when starting to open a tin */
 	} else if(uwep) {
 		switch(uwep->otyp) {
 		case TIN_OPENER:
-#ifdef ENGINEER
 		case CRESCENT_WRENCH:
 		case ART_TOOL:
-#endif
 			tmp = 1;
 			break;
 		case DAGGER:
@@ -1631,15 +1629,6 @@ eatspecial() /* called after eating non-food */
 	else if (otmp->otyp == LEASH && otmp->leashmon)
 		o_unleash(otmp);
 
-	/* KMH -- idea by "Tommy the Terrorist" */
-#ifndef ENGINEER
-	if ((otmp->otyp == TRIDENT) && !otmp->cursed)
-	{
-		pline(Hallucination ? "Four out of five dentists agree." :
-				"That was pure chewing satisfaction!");
-		exercise(A_WIS, TRUE);
-	}
-#endif
 	if ((otmp->otyp == FLINT) && !otmp->cursed)
 	{
 		pline("Yabba-dabba delicious!");

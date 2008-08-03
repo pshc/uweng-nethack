@@ -1425,9 +1425,6 @@ dopois:
 		break;
 	    case AD_CURS:
 		hitmsg(mtmp, mattk);
-#ifndef ENGINEER
-		if(!night() && mdat == &mons[PM_GREMLIN]) break;
-#endif
 		if(!mtmp->mcan && !rn2(10)) {
 		    if (flags.soundok) {
 			if (Blind) You_hear("laughter.");

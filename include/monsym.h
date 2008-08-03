@@ -16,11 +16,7 @@
 #define S_DOG		4
 #define S_EYE		5
 #define S_FELINE	6
-#ifdef ENGINEER
-# define S_GOOSE        7
-#else
-# define S_GREMLIN	7
-#endif
+#define S_GOOSE        7
 #define S_HUMANOID	8
 #define S_IMP		9
 #define S_JELLY		10
@@ -92,11 +88,7 @@ extern uchar monsyms[MAXMCLASSES];		/* current class symbols */
 #define DEF_DOG		'd'
 #define DEF_EYE		'e'
 #define DEF_FELINE	'f'
-#ifdef ENGINEER
-# define DEF_GOOSE       'g'
-#else
-# define DEF_GREMLIN	'g'
-#endif
+#define DEF_GOOSE       'g'
 #define DEF_HUMANOID	'h'
 #define DEF_IMP		'i'
 #define DEF_JELLY	'j'

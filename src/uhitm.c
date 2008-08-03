@@ -2478,23 +2478,6 @@ struct obj *otmp;	/* source of flash */
 		    pline("%s is blinded by the flash!", Monnam(mtmp));
 		    res = 1;
 		}
-#ifndef ENGINEER
-		if (mtmp->data == &mons[PM_GREMLIN]) {
-		    /* Rule #1: Keep them out of the light. */
-		    amt = otmp->otyp == WAN_LIGHT ? d(1 + otmp->spe, 4) :
-		          rn2(min(mtmp->mhp,4));
-		    pline("%s %s!", Monnam(mtmp), amt > mtmp->mhp / 2 ?
-			  "wails in agony" : "cries out in pain");
-		    if ((mtmp->mhp -= amt) <= 0) {
-			if (flags.mon_moving)
-			    monkilled(mtmp, (char *)0, AD_BLND);
-			else
-			    killed(mtmp);
-		    } else if (cansee(mtmp->mx,mtmp->my) && !canspotmon(mtmp)){
-			map_invisible(mtmp->mx, mtmp->my);
-		    }
-		}
-#endif
 		if (mtmp->mhp > 0) {
 		    if (!flags.mon_moving) setmangry(mtmp);
 		    if (tmp < 9 && !mtmp->isshk && rn2(4)) {

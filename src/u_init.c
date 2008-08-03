@@ -170,7 +170,6 @@ static struct trobj Wizard[] = {
 	{ UNDEF_TYP, UNDEF_SPE, SPBOOK_CLASS, 1, UNDEF_BLESS },
 	{ 0, 0, 0, 0, 0 }
 };
-#ifdef ENGINEER
 static struct trobj Engineer[] = {
 	{ CRESCENT_WRENCH, 1, WEAPON_CLASS, 1, UNDEF_BLESS },
 	{ T_SHIRT, 0, ARMOR_CLASS, 1, UNDEF_BLESS },
@@ -181,7 +180,6 @@ static struct trobj Engineer[] = {
 	{ UNDEF_TYP, UNDEF_SPE, SPBOOK_CLASS, 1, UNDEF_BLESS },
 	{ 0, 0, 0, 0, 0 }
 };
-#endif
 /*
  *	Optional extra inventory items.
  */
@@ -220,12 +218,12 @@ static struct trobj Leash[] = {
 	{ 0, 0, 0, 0, 0 }
 };
 #endif
-#if defined(TOURIST) || defined(ENGINEER)
+#if defined(TOURIST)
 static struct trobj Towel[] = {
 	{ TOWEL, 0, TOOL_CLASS, 1, 0 },
 	{ 0, 0, 0, 0, 0 }
 };
-#endif	/* TOURIST || ENGINEER */
+#endif	/* TOURIST */
 static struct trobj Wishing[] = {
 	{ WAN_WISHING, 3, WAND_CLASS, 1, 0 },
 	{ 0, 0, 0, 0, 0 }
@@ -508,7 +506,6 @@ static const struct def_skill Skill_W[] = {
     { P_NONE, 0 }
 };
 
-#ifdef ENGINEER
 static const struct def_skill Skill_Eng[] = {
     { P_DAGGER, P_EXPERT },		{ P_KNIFE,  P_SKILLED },
     { P_AXE, P_BASIC },			{ P_PICK_AXE, P_SKILLED },
@@ -526,7 +523,6 @@ static const struct def_skill Skill_Eng[] = {
     { P_BARE_HANDED_COMBAT, P_SKILLED },
     { P_NONE, 0 }
 };
-#endif
 
 STATIC_OVL void
 knows_object(obj)
@@ -765,7 +761,6 @@ u_init()
 		if(!rn2(5)) ini_inv(Blindfold);
 		skill_init(Skill_W);
 		break;
-#ifdef ENGINEER
 	case PM_ENGINEER:
 #ifndef GOLDOBJ
 		u.ugold = u.ugold0 = 404;
@@ -779,7 +774,6 @@ u_init()
 		if(!rn2(10)) ini_inv(Magicmarker);
 		skill_init(Skill_Eng);
 		break;
-#endif
 
 	default:	/* impossible */
 		break;
@@ -920,9 +914,7 @@ int otyp;
 #endif
      case PM_VALKYRIE:		skills = Skill_V; break;
      case PM_WIZARD:		skills = Skill_W; break;
-#ifdef ENGINEER
      case PM_ENGINEER:          skills = Skill_Eng; break;
-#endif
      default:			skills = 0; break;	/* lint suppression */
     }
 
@@ -994,10 +986,8 @@ register struct trobj *trop;
 				/* wizard patch -- they already have one */
 				|| (otyp == SPE_FORCE_BOLT &&
 				    Role_if(PM_WIZARD))
-#ifdef ENGINEER
 				|| (otyp == SPE_CONSTRUCT &&
 				    Role_if(PM_ENGINEER))
-#endif
 				/* powerful spells are either useless to
 				   low level players or unbalancing; also
 				   spells in restricted skill categories */
@@ -1081,7 +1071,7 @@ register struct trobj *trop;
 				setworn(obj, W_ARMH);
 			else if (is_gloves(obj) && !uarmg)
 				setworn(obj, W_ARMG);
-#if defined(TOURIST) || defined(ENGINEER)
+#if defined(TOURIST)
 			else if (is_shirt(obj) && !uarmu)
 				setworn(obj, W_ARMU);
 #endif

@@ -6,8 +6,6 @@
 #include "edog.h"
 /* #define DEBUG */	/* turn on for diagnostics */
 
-#ifdef ENGINEER
-
 /*
 boolean
 is_constructing()
@@ -233,7 +231,5 @@ zap_construct()
 	tmp_at(DISP_END,0);	/* closing call */
 	newsym(zx, zy);
 }
-
-#endif /* ENGINEER */
 
 /*construct.c*/

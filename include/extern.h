@@ -222,10 +222,8 @@ E int FDECL(dosearch0, (int));
 E int NDECL(dosearch);
 E void NDECL(sokoban_detect);
 
-#ifdef ENGINEER
 /* construct.c */
 E void NDECL(zap_construct);
-#endif 
 /* ### dig.c ### */
 
 E boolean NDECL(is_digging);

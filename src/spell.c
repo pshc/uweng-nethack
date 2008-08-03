@@ -875,9 +875,7 @@ boolean atme;
 	case SPE_EXTRA_HEALING:
 	case SPE_DRAIN_LIFE:
 	case SPE_STONE_TO_FLESH:
-#ifdef ENGINEER
 	case SPE_CONSTRUCT:
-#endif
 		if (!(objects[pseudo->otyp].oc_dir == NODIR)) {
 			if (atme) u.dx = u.dy = u.dz = 0;
 			else if (!getdir((char *)0)) {

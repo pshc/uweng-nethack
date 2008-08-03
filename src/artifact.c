@@ -1349,12 +1349,10 @@ arti_invoke(obj)
 				       aobjnam(otmp, "fall"), (const char *)0);
 	    break;
 	  }
-#ifdef ENGINEER
 	case EARTH: {
 	    pline("Hmm, it seems to be broken. OHNOES!");
 	    break;
-	}
-#endif
+	  }
 	}
     } else {
 	long eprop = (u.uprops[oart->inv_prop].extrinsic ^= W_ARTI),

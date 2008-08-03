@@ -377,7 +377,6 @@ const struct Role roles[] = {
 	{  4, 3,  0, 2,  0, 3 },12,	/* Energy */
 	0, 1, 0, 3, 10, A_INT, SPE_MAGIC_MISSILE,   -4
 },
-#ifdef ENGINEER
 {	{"Engineer", 0}, {
 	{"Nublet",      "Nublette"},
 	{"Forumer",      0},
@@ -412,7 +411,6 @@ const struct Role roles[] = {
 	/* excels at which spell, penalty for it */
 	SPE_CONSTRUCT, -5
 },
-#endif
 /* Array terminator */
 {{0, 0}}
 };
@@ -1500,10 +1498,8 @@ struct monst *mtmp;
 	    		mtmp && mtmp->data == &mons[PM_MAIL_DAEMON] ? "Hallo" :
 #endif
 	    		"Velkommen");   /* Norse */
-#ifdef ENGINEER
 	case PM_ENGINEER:
 	    return ("Hai");
-#endif
 	default:
 	    return ("Hello");
 	}
@@ -1523,10 +1519,8 @@ Goodbye()
 #endif
 	case PM_VALKYRIE:
 	    return ("Farvel");          /* Norse */
-#ifdef ENGINEER
 	case PM_ENGINEER:
 	    return ("BAI");
-#endif
 	default:
 	    return ("Goodbye");
 	}

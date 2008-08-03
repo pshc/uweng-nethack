@@ -393,11 +393,7 @@ register struct monst *mtmp;
 	    case S_LIZARD:
 		if (mm == PM_SALAMANDER)
 			(void)mongets(mtmp, (rn2(7) ? SPEAR : rn2(3) ?
-#ifdef ENGINEER
 					     CRESCENT_WRENCH : STILETTO));
-#else
-					     TRIDENT : STILETTO));
-#endif
 		break;
 	    case S_DEMON:
 		switch (mm) {
@@ -409,11 +405,7 @@ register struct monst *mtmp;
 			(void)mongets(mtmp, WAN_DESU); /* the Wand of Orcus */
 			break;
 		    case PM_HORNED_DEVIL:
-#ifdef ENGINEER
 			(void)mongets(mtmp, BULLWHIP);
-#else
-			(void)mongets(mtmp, rn2(4) ? TRIDENT : BULLWHIP);
-#endif
 			break;
 		    case PM_DISPATER:
 			(void)mongets(mtmp, WAN_STRIKING);

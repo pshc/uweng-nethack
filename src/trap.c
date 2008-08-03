@@ -803,13 +803,6 @@ unsigned trflags;
 		    losehp(dam, "rusting away", KILLED_BY);
 		    break;
 		}
-#ifndef ENGINEER
-		else if (u.umonnum == PM_GREMLIN && rn2(3)) {
-		    pline("%s you!", A_gush_of_water_hits);
-		    (void)split_mon(&youmonst, (struct monst *)0);
-		    break;
-		}
-#endif
 	    /* Unlike monsters, traps cannot aim their rust attacks at
 	     * you, so instead of looping through and taking either the
 	     * first rustable one or the body, we take whatever we get,
@@ -1884,11 +1877,6 @@ glovecheck:		    target = which_armor(mtmp, W_ARMG);
 				if (mtmp->mhp <= 0)
 					trapkilled = TRUE;
 			}
-#ifndef ENGINEER
-			else if (mptr == &mons[PM_GREMLIN] && rn2(3)) {
-				(void)split_mon(mtmp, (struct monst *)0);
-			}
-#endif
 			break;
 		    }
 		case FIRE_TRAP:
@@ -2849,11 +2837,6 @@ drown()
 	}
 
 	water_damage(invent, FALSE, FALSE);
-#ifndef ENGINEER
-	if (u.umonnum == PM_GREMLIN && rn2(3))
-	    (void)split_mon(&youmonst, (struct monst *)0);
-	else
-#endif
 	if (u.umonnum == PM_IRON_GOLEM) {
 	    You("rust!");
 	    i = d(2,6);

@@ -396,19 +396,7 @@ register struct monst *mtmp;
 		return (0);
 #endif
 
-    /* Gremlin multiplying won't go on forever since the hit points
-     * keep going down, and when it gets to 1 hit point the clone
-     * function will fail.
-     */
-#ifndef ENGINEER
-    if (mtmp->data == &mons[PM_GREMLIN] && (inpool || infountain) && rn2(3)) {
-	if (split_mon(mtmp, (struct monst *)0))
-	    dryup(mtmp->mx, mtmp->my, FALSE);
-	if (inpool) water_damage(mtmp->minvent, FALSE, FALSE);
-	return (0);
-    } else
-#endif
-	if (mtmp->data == &mons[PM_IRON_GOLEM] && inpool && !rn2(5)) {
+    if (mtmp->data == &mons[PM_IRON_GOLEM] && inpool && !rn2(5)) {
 	int dam = d(2,6);
 	if (cansee(mtmp->mx,mtmp->my))
 	    pline("%s rusts.", Monnam(mtmp));
@@ -2592,18 +2580,10 @@ int mnum;
     mnum = little_to_big(mnum);
     /*
      * Queen bees lay killer bee eggs (usually), but killer bees don't
-     * grow into queen bees.  Ditto for [winged-]gargoyles.
+     * grow into queen bees.
      */
-    if (mnum == PM_KILLER_BEE ||
-#ifndef ENGINEER
-    mnum == PM_GARGOYLE ||
-#endif
-	    (lays_eggs(&mons[mnum]) && (BREEDER_EGG ||
-		(mnum != PM_QUEEN_BEE
-#ifndef ENGINEER
-		&& mnum != PM_WINGED_GARGOYLE
-#endif
-		))))
+    if (mnum == PM_KILLER_BEE || (lays_eggs(&mons[mnum])
+		&& (BREEDER_EGG || (mnum != PM_QUEEN_BEE))))
 	return mnum;
     return NON_PM;
 }
@@ -2616,9 +2596,6 @@ boolean force_ordinary;
 {
     if (force_ordinary || !BREEDER_EGG) {
 	if (mnum == PM_QUEEN_BEE) mnum = PM_KILLER_BEE;
-#ifndef ENGINEER
-	else if (mnum == PM_WINGED_GARGOYLE) mnum = PM_GARGOYLE;
-#endif
     }
     return mnum;
 }

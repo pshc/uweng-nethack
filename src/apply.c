@@ -2654,9 +2654,7 @@ do_break_wand(obj)
     case WAN_ENLIGHTENMENT:
     case WAN_OPENING:
     case WAN_SECRET_DOOR_DETECTION:
-#ifdef ENGINEER
     case WAN_CONSTRUCT:
-#endif
 	pline(nothing_else_happens);
 	goto discard_broken_wand;
     case WAN_DESU:

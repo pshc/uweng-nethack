@@ -718,13 +718,11 @@ doengrave()
 			else
 			    Strcpy(post_engr_text, "You hear drilling!");
 			break;
-#ifdef ENGINEER
 		    case WAN_CONSTRUCT:
 		    	if (!Blind)
 			    pline_The("pebbles on the %s assemble into bricks.",
 					surface(u.ux, u.uy));
 			break;
-#endif
 		    /* type = BURN wands */
 		    case WAN_FIRE:
 			ptext = TRUE;
