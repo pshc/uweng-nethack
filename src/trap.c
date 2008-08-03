@@ -2718,6 +2718,15 @@ register boolean force, here;
 				pline("A potion explodes!");
 				delobj(obj);
 				continue;
+			} else if (obj->otyp == POT_HYDROFLUORIC_ACID) {
+				pline("A potion explodes!");
+				if (!Disint_resistance) {
+				    killer_format = KILLED_BY_AN;
+				    killer = "exploding potion of hydrofluroric acid";
+				    done(DIED);
+				}
+				delobj(obj);
+				continue;
 			} else if (obj->odiluted) {
 				obj->otyp = POT_WATER;
 				obj->blessed = obj->cursed = 0;

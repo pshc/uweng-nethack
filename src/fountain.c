@@ -395,7 +395,7 @@ register struct obj *obj;
 		return;
 
 	/* Acid and water don't mix */
-	if (obj->otyp == POT_ACID) {
+	if (obj->otyp == POT_ACID || obj->otyp == POT_HYDROFLUORIC_ACID) {
 	    useup(obj);
 	    return;
 	}

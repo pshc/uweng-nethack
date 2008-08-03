@@ -957,6 +957,7 @@ struct monst *mtmp;
 /*#define MUSE_WAN_TELEPORTATION 15*/
 #define MUSE_POT_SLEEPING 16
 #define MUSE_SCR_EARTH 17
+#define MUSE_POT_HF 18
 
 /* Select an offensive item/action for a monster.  Returns TRUE iff one is
  * found.
@@ -1088,6 +1089,11 @@ struct monst *mtmp;
 			m.has_offense = MUSE_SCR_FIRE;
 		}
 #endif
+		nomore(MUSE_POT_HF);
+		if (obj->otyp == POT_HYDROFLUORIC_ACID) {
+			m.offensive = obj;
+			m.has_offense = MUSE_POT_HF;
+		}
 	}
 	return((boolean)(!!m.has_offense));
 #undef nomore
@@ -1492,6 +1498,7 @@ struct monst *mtmp;
 	case MUSE_POT_CONFUSION:
 	case MUSE_POT_SLEEPING:
 	case MUSE_POT_ACID:
+	case MUSE_POT_HF:
 		/* Note: this setting of dknown doesn't suffice.  A monster
 		 * which is out of sight might throw and it hits something _in_
 		 * sight, a problem not existing with wands because wand rays
@@ -1547,6 +1554,7 @@ struct monst *mtmp;
 		case 10: return WAN_FIRE;
 		case 11: return WAN_COLD;
 		case 12: return WAN_LIGHTNING;
+		/* We don't generate monsters with HF, that's mean */
 	}
 	/*NOTREACHED*/
 	return 0;
@@ -1981,6 +1989,7 @@ struct obj *obj;
 		    typ == POT_PARALYSIS ||
 		    typ == POT_SLEEPING ||
 		    typ == POT_ACID ||
+		    typ == POT_HYDROFLUORIC_ACID ||
 		    typ == POT_CONFUSION)
 		return TRUE;
 	    if (typ == POT_BLINDNESS && !attacktype(mon->data, AT_GAZE))

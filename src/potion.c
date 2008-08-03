@@ -382,6 +382,15 @@ dodrink()
 	return dopotion(otmp);
 }
 
+STATIC_OVL void
+hf_death(method)
+const char *method;
+{
+	killer_format = KILLED_BY;
+	killer = method;
+	done(DIED);
+}
+
 int
 dopotion(otmp)
 register struct obj *otmp;
@@ -892,6 +901,16 @@ peffects(otmp)
 		if (Stoned) fix_petrification();
 		unkn++; /* holy/unholy water can burn like acid too */
 		break;
+	case POT_HYDROFLUORIC_ACID:
+		/* Bad news bears */
+		if (Disint_resistance)
+		    pline("This tastes %s!", Hallucination ? "malty" : "dangerous");
+		else {
+		    pline("This burns your mouth off!");
+		    hf_death("ingesting hydrofluoric acid");
+		}
+		if (Stoned) fix_petrification();
+		break;
 	case POT_POLYMORPH:
 		You_feel("a little %s.", Hallucination ? "normal" : "strange");
 		if (!Unchanging) polyself(FALSE);
@@ -954,6 +973,23 @@ bottlename()
 	return bottlenames[rn2(SIZE(bottlenames))];
 }
 
+STATIC_OVL void
+potrustobj(obj)
+struct obj *obj;
+{
+    if (is_corrodeable(obj) && obj->oeroded2 < MAX_ERODE) {
+	if (obj->greased || obj->oerodeproof || (obj->blessed && rn2(3))) {
+	    /* pass */
+	    /* if (obj->greased && !rn2(2)) obj->greased = 0; */
+	} else {
+	    if (!Blind)
+		Your("%s%s!", aobjnam(obj, "rust"),
+			(obj->oeroded2 ? " further" : ""));
+	    obj->oeroded2++;
+	}
+    }
+}
+
 void
 potionhit(mon, obj, your_fault)
 register struct monst *mon;
@@ -1010,6 +1046,14 @@ boolean your_fault;
 				    obj->cursed ? " a lot" : "");
 		    losehp(d(obj->cursed ? 2 : 1, obj->blessed ? 4 : 8),
 				    "potion of acid", KILLED_BY_AN);
+		}
+		break;
+	case POT_HYDROFLUORIC_ACID:
+		potrustobj(uwep);
+		if (!Disint_resistance) {
+		    /* TODO: Labcoats etc? */
+		    pline("This burns your %s off!", body_part(FACE));
+		    hf_death("being splashed with hydrofluoric acid");
 		}
 		break;
 	}
@@ -1133,6 +1177,17 @@ boolean your_fault;
 			else
 			    monkilled(mon, "", AD_ACID);
 		    }
+		}
+		break;
+	case POT_HYDROFLUORIC_ACID:
+		if (!resists_disint(mon) && !resist(mon, POTION_CLASS, 0, NOTELL)) {
+		    pline("%s %s in dire pain!", Monnam(mon),
+			  is_silent(mon->data) ? "writhes" : "shrieks");
+		    mon->mhp = -1;
+		    if (your_fault)
+			killed(mon);
+		    else
+			monkilled(mon, "", AD_ACID);
 		}
 		break;
 	case POT_POLYMORPH:
@@ -1294,6 +1349,12 @@ register struct obj *obj;
 	case POT_POLYMORPH:
 		exercise(A_CON, FALSE);
 		break;
+	case POT_HYDROFLUORIC_ACID:
+		if (!Disint_resistance) {
+		    pline("Your lungs burn!");
+		    losehp(rnd(40), "inhaling HF vapour", KILLED_BY);
+		}
+		break;
 /*
 	case POT_GAIN_LEVEL:
 	case POT_LEVITATION:
@@ -1439,6 +1500,16 @@ register struct obj *obj;
 			update_inventory();
 			return (TRUE);
 		}
+		else if (obj->otyp == POT_HYDROFLUORIC_ACID) {
+			pline("It boils vigourously!");
+			You("are caught in the explosion!");
+			if (!Disint_resistance)
+			    hf_death("exploding a potion of hydrofluoric acid");
+			losehp(rnd(20), "elementary chemistry", KILLED_BY);
+			makeknown(obj->otyp);
+			update_inventory();
+			return (TRUE);
+		}
 		pline("%s %s%s.", Your_buf, aobjnam(obj,"dilute"),
 		      obj->odiluted ? " further" : "");
 		if(obj->unpaid && costly_spot(u.ux, u.uy)) {
@@ -1552,7 +1623,8 @@ dodip()
 #endif
 		    } else {
 			(void) get_wet(obj);
-			if (obj->otyp == POT_ACID) useup(obj);
+			if (obj->otyp == POT_ACID || obj->otyp == POT_HYDROFLUORIC_ACID)
+				useup(obj);
 		    }
 		    return 1;
 		}
@@ -1662,14 +1734,22 @@ dodip()
 		/* Mixing potions is dangerous... */
 		pline_The("potions mix...");
 		/* KMH, balance patch -- acid is particularly unstable */
-		if (obj->cursed || obj->otyp == POT_ACID || !rn2(10)) {
+		if (obj->cursed || obj->otyp == POT_ACID
+				|| obj->otyp == POT_HYDROFLUORIC_ACID || !rn2(10)) {
 			pline("BOOM!  They explode!");
 			exercise(A_STR, FALSE);
 			if (!breathless(youmonst.data) || haseyes(youmonst.data))
 				potionbreathe(obj);
 			useup(obj);
 			useup(potion);
-			losehp(rnd(10), "alchemic blast", KILLED_BY_AN);
+			if (obj->otyp == POT_HYDROFLUORIC_ACID) {
+			    if (!Disint_resistance)
+				hf_death("performing alchemy with hydrofluoric acid");
+			    losehp(rnd(20), "alchemic blast", KILLED_BY_AN);
+			}
+			else {
+			    losehp(rnd(10), "alchemic blast", KILLED_BY_AN);
+			}
 			return(1);
 		}
 
@@ -1758,6 +1838,21 @@ dodip()
 		pline("A coating wears off %s.", the(xname(obj)));
 		obj->opoisoned = 0;
 		goto poof;
+	    }
+	}
+
+	if (potion->otyp == POT_HYDROFLUORIC_ACID) {
+	    if (is_corrodeable(obj)) {
+		potrustobj(obj);
+		makeknown(potion->otyp);
+		useup(potion);
+		return 1;
+	    } else if (is_plastic(obj) && !obj->oartifact) {
+		pline("%s %s!", Yname2(obj), otense(obj, "melt"));
+		obj_extract_self(obj);
+		makeknown(potion->otyp);
+		useup(potion);
+		return 1;
 	    }
 	}
 

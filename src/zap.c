@@ -857,7 +857,8 @@ register struct obj *obj;
 	if (objects[obj->otyp].oc_magic
 	    || (obj->spe && (obj->oclass == ARMOR_CLASS ||
 			     obj->oclass == WEAPON_CLASS || is_weptool(obj)))
-	    || obj->otyp == POT_ACID || obj->otyp == POT_SICKNESS) {
+	    || obj->otyp == POT_ACID || obj->otyp == POT_SICKNESS
+	    || obj->otyp == POT_HYDROFLUORIC_ACID) {
 	    if (obj->spe != ((obj->oclass == WAND_CLASS) ? -1 : 0) &&
 	       obj->otyp != WAN_CANCELLATION &&
 		 /* can't cancel cancellation */
