@@ -307,27 +307,7 @@ char *argv[];
 		case 'D':
 #ifdef WIZARD
 			{
-			  char *user;
-			  int uid;
-			  struct passwd *pw = (struct passwd *)0;
-
-			  uid = getuid();
-			  user = getlogin();
-			  if (user) {
-			      pw = getpwnam(user);
-			      if (pw && (pw->pw_uid != uid)) pw = 0;
-			  }
-			  if (pw == 0) {
-			      user = nh_getenv("USER");
-			      if (user) {
-				  pw = getpwnam(user);
-				  if (pw && (pw->pw_uid != uid)) pw = 0;
-			      }
-			      if (pw == 0) {
-				  pw = getpwuid(uid);
-			      }
-			  }
-			  if (pw && !strcmp(pw->pw_name,WIZARD)) {
+			  if (!strcmp(plname, WIZARD)) {
 			      wizard = TRUE;
 			      break;
 			  }
