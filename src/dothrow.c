@@ -778,7 +778,7 @@ boolean hitsroof;
 	}
 	return FALSE;
     } else {		/* neither potion nor other breaking object */
-	boolean less_damage = uarmh && is_metallic(uarmh), artimsg = FALSE;
+	boolean less_damage = uarmh && (is_metallic(uarmh) || is_plastic(uarmh)), artimsg = FALSE;
 	int dmg = dmgval(obj, &youmonst);
 
 	if (obj->oartifact)
