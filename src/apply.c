@@ -2790,7 +2790,8 @@ doapply()
 		Strcpy(class_list, tools_too);
 	else
 		Strcpy(class_list, tools);
-	if (carrying(CREAM_PIE) || carrying(EUCALYPTUS_LEAF))
+	if (carrying(CREAM_PIE) || carrying(EUCALYPTUS_LEAF)
+			|| carrying(GOOSE_POOP))
 		add_class(class_list, FOOD_CLASS);
 
 	obj = getobj(class_list, "use or apply");
@@ -2815,6 +2816,7 @@ doapply()
 			ublindf->otyp == BLINDFOLD ? "wearing a blindfold" :
 						     "wearing lenses");
 		break;
+	case GOOSE_POOP:
 	case CREAM_PIE:
 		res = use_cream_pie(obj);
 		break;

@@ -291,6 +291,7 @@ int udist;
 #ifdef MAIL
 			&& obj->otyp != SCR_MAIL
 #endif
+			&& obj->otyp != GOOSE_POOP
 									){
 		int edible = dogfood(mtmp, obj);
 
@@ -521,6 +522,11 @@ register int after;	/* this is extra fast monster movement */
 #endif
 	/* maybe we tamed him while being swallowed --jgm */
 	if (!udist) return(0);
+
+	if(mtmp->data->mlet == S_GOOSE && !mtmp->mcan && rnd(300) == 42) {
+		goose_poop(omx, omy);
+		return 0;
+	}
 
 	nix = omx;	/* set before newdogpos */
 	niy = omy;

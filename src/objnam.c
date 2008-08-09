@@ -1998,6 +1998,11 @@ boolean from_user;
 		bp += 8;
 	}
 
+	if (!strncmpi(bp, "goose poop", 10)) {
+		typ = GOOSE_POOP;
+		goto typfnd;
+	}
+
 	/*
 	 * Find corpse type using "of" (figurine of an orc, tin of orc meat)
 	 * Don't check if it's a wand or spellbook.

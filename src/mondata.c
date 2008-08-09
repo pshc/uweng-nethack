@@ -157,7 +157,7 @@ struct obj *obj;		/* aatyp == AT_WEAP, AT_SPIT */
 
 	case AT_WEAP: case AT_SPIT: case AT_NONE:
 	    /* an object is used (thrown/spit/other) */
-	    if (obj && (obj->otyp == CREAM_PIE)) {
+	    if (obj && (obj->otyp == CREAM_PIE || obj->otyp == GOOSE_POOP)) {
 		if (is_you && Blindfolded)
 		    return FALSE;
 	    } else if (obj && (obj->otyp == BLINDING_VENOM)) {

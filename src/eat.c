@@ -1403,6 +1403,11 @@ struct obj *otmp;
 			make_vomiting((long)rn1(victual.reqtime, 14), FALSE);
 		}
 		break;
+	    case GOOSE_POOP:
+		pline("This %s is disgusting! You strange thing!",
+				singular(otmp, xname));
+		make_vomiting((long)rn1(victual.reqtime, 5), FALSE);
+		break;
 	    case MEATBALL:
 	    case MEAT_STICK:
 	    case HUGE_CHUNK_OF_MEAT:

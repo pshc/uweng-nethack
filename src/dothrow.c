@@ -749,7 +749,7 @@ boolean hitsroof;
 	int blindinc;
 
 	/* need to check for blindness result prior to destroying obj */
-	blindinc = (otyp == CREAM_PIE || otyp == BLINDING_VENOM) &&
+	blindinc = (otyp == CREAM_PIE || otyp == GOOSE_POOP || otyp == BLINDING_VENOM) &&
 		   /* AT_WEAP is ok here even if attack type was AT_SPIT */
 		   can_blnd(&youmonst, &youmonst, AT_WEAP, obj) ? rnd(25) : 0;
 
@@ -763,6 +763,7 @@ boolean hitsroof;
 		    !(poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM)))
 		goto petrify;
 	case CREAM_PIE:
+	case GOOSE_POOP:
 	case BLINDING_VENOM:
 		pline("You've got it all over your %s!", body_part(FACE));
 		if (blindinc) {
@@ -1367,7 +1368,7 @@ register struct obj   *obj;
 		tmiss(obj, mon);
 	    }
 
-	} else if ((otyp == EGG || otyp == CREAM_PIE ||
+	} else if ((otyp == EGG || otyp == CREAM_PIE || otyp == GOOSE_POOP ||
 		    otyp == BLINDING_VENOM || otyp == ACID_VENOM) &&
 		(guaranteed_hit || ACURR(A_DEX) > rnd(25))) {
 	    (void) hmon(mon, obj, 1);

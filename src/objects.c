@@ -719,6 +719,9 @@ FOOD("food ration",        380, 5, 20, 0, VEGGY, 800, HI_ORGANIC),
 FOOD("K-ration",             0, 1, 10, 0, VEGGY, 400, HI_ORGANIC),
 FOOD("C-ration",             0, 1, 10, 0, VEGGY, 300, HI_ORGANIC),
 FOOD("tin",                 75, 0, 10, 1, METAL,   0, HI_METAL),
+
+/* delicious */
+FOOD("goose poop",           0, 1,  1, 0, FLESH,  30, CLR_BLUE),
 #undef FOOD
 
 /* potions ... */

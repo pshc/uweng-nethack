@@ -416,6 +416,7 @@ E int FDECL(dogfood, (struct monst *,struct obj *));
 E struct monst *FDECL(tamedog, (struct monst *,struct obj *));
 E void FDECL(abuse_dog, (struct monst *));
 E void FDECL(wary_dog, (struct monst *, BOOLEAN_P));
+E void FDECL(goose_poop, (int, int));
 
 /* ### dogmove.c ### */
 

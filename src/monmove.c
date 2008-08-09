@@ -618,6 +618,11 @@ register int after;
 	}
 	ptr = mtmp->data; /* mintrap() can change mtmp->data -dlc */
 
+	if(ptr->mlet == S_GOOSE && !mtmp->mcan && rnd(300) == 42) {
+	    goose_poop(omx, omy);
+	    return 3;
+	}
+
 	if (mtmp->meating) {
 	    mtmp->meating--;
 	    return 3;			/* still eating */

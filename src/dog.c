@@ -709,6 +709,8 @@ register struct obj *obj;
 		case BANANA:
 		    return ((mon->data->mlet == S_YETI) ? DOGFOOD :
 			    ((herbi || starving) ? ACCFOOD : MANFOOD));
+		case GOOSE_POOP:
+		    return TABU;
 		default:
 		    if (starving) return ACCFOOD;
 		    return (obj->otyp > SLIME_MOLD ?
@@ -932,6 +934,23 @@ struct monst *mtmp;
 	
 	    if (!mtmp->mtame) newsym(mtmp->mx, mtmp->my);
 	}
+}
+
+void
+goose_poop(gx, gy)
+int gx;
+int gy;
+{
+    struct obj *obj;
+    obj = mksobj(GOOSE_POOP, FALSE, FALSE);
+    obj->quan = 1L;
+    obj->owt = weight(obj);
+    place_object(obj, gx, gy);
+    if (cansee(gx, gy)) {
+	if (!Blind) obj->dknown = 1;
+	newsym(gx, gy);
+    }
+    stackobj(obj);
 }
 
 #endif /* OVLB */

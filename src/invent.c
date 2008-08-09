@@ -888,7 +888,8 @@ register const char *let,*word;
 		     (otyp != POT_OIL || !otmp->dknown ||
 		      !objects[POT_OIL].oc_name_known)) ||
 		     (otmp->oclass == FOOD_CLASS &&
-		      otyp != CREAM_PIE && otyp != EUCALYPTUS_LEAF) ||
+		      otyp != CREAM_PIE && otyp != EUCALYPTUS_LEAF
+		      && otyp != GOOSE_POOP) ||
 		     (otmp->oclass == GEM_CLASS && !is_graystone(otmp))))
 		|| (!strcmp(word, "invoke") &&
 		    (!otmp->oartifact && !objects[otyp].oc_unique &&

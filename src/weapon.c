@@ -195,7 +195,7 @@ struct monst *mon;
 	struct permonst *ptr = mon->data;
 	boolean Is_weapon = (otmp->oclass == WEAPON_CLASS || is_weptool(otmp));
 
-	if (otyp == CREAM_PIE) return 0;
+	if (otyp == CREAM_PIE || otyp == GOOSE_POOP) return 0;
 
 	if (bigmonst(ptr)) {
 	    if (objects[otyp].oc_wldam)

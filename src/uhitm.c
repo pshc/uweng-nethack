@@ -809,13 +809,15 @@ int thrown;
 			tmp = 1;
 			break;
 		    case CREAM_PIE:
+		    case GOOSE_POOP:
 		    case BLINDING_VENOM:
 			mon->msleeping = 0;
 			if (can_blnd(&youmonst, mon, (uchar)
 				    (obj->otyp == BLINDING_VENOM
 				     ? AT_SPIT : AT_WEAP), obj)) {
 			    if (Blind) {
-				pline(obj->otyp == CREAM_PIE ?
+				pline(obj->otyp == CREAM_PIE
+				      || obj->otyp == GOOSE_POOP ?
 				      "Splat!" : "Splash!");
 			    } else if (obj->otyp == BLINDING_VENOM) {
 				pline_The("venom blinds %s%s!", mon_nam(mon),
@@ -840,7 +842,8 @@ int thrown;
 				mon->mblinded = 127;
 			    else mon->mblinded += tmp;
 			} else {
-			    pline(obj->otyp==CREAM_PIE ? "Splat!" : "Splash!");
+			    pline(obj->otyp==CREAM_PIE || obj->otyp==GOOSE_POOP
+					? "Splat!" : "Splash!");
 			    setmangry(mon);
 			}
 			if (thrown) obfree(obj, (struct obj *)0);
