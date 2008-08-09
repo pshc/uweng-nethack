@@ -1729,6 +1729,7 @@ struct alt_spellings {
 	{ "stone", ROCK },
 #ifdef TOURIST
 	{ "camera", PR_N_CAMERA },
+	{ "expensive camera", PR_N_CAMERA },
 	{ "tee shirt", T_SHIRT },
 #endif
 	{ "can", TIN },
@@ -1737,6 +1738,19 @@ struct alt_spellings {
 	{ "eucalyptus", EUCALYPTUS_LEAF },
 	{ "grapple", GRAPPLING_HOOK },
 	{ "scroll of genocide", SCR_ELIMINATE },
+	{ "wand of digging", WAN_DRILLING },
+	{ "wand of probing", WAN_PROBING___ },
+	{ "wand of construction", WAN_CONSTRUCT },
+	{ "wand of death", WAN_DESU },
+	{ "spellbook of digging", SPE_DRILLING },
+	{ "spellbook of finger of death", SPE_BUSTER_BEAM },
+	{ "spellbook of penis of death", SPE_BUSTER_BEAM },
+	{ "spellbook of charm monster", SPE_MIND_CONTROL },
+	{ "ring of adornment", RIN_HAWTNESS },
+	{ "ring of conflict", RIN_FLAMEBAIT },
+	{ "credit card", WATCARD },
+	{ "potion of hallucination", POT_LSD },
+	{ "potion of booze", POT_VODKA },
 	{ (const char *)0, 0 },
 };
 
