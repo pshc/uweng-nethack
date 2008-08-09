@@ -839,7 +839,7 @@ SPELL("stone to flesh",	 "thick",       P_HEALING_SPELL, 15,  1, 3, 1, IMMEDIATE
 SPELL("flame sphere",    "canvas",      P_MATTER_SPELL, 20,  2, 1, 1, NODIR, CLR_BROWN),
 SPELL("freeze sphere",   "hardcover",   P_MATTER_SPELL, 20,  2, 1, 1, NODIR, CLR_BROWN),
 #endif
-SPELL("construct", "cute", P_MATTER_SPELL, 20, 1, 2, 1, RAY, CLR_BRIGHT_MAGENTA),
+SPELL("construct", "cute", P_MATTER_SPELL, 20, 1, 3, 1, RAY, CLR_BRIGHT_MAGENTA),
 /* blank spellbook must come last because it retains its description */
 SPELL("blank paper",     "plain",       P_NONE, 18,  0, 0, 0, 0,         HI_PAPER),
 /* a special, one of a kind, spellbook */

@@ -399,7 +399,7 @@ const struct Role roles[] = {
 	{   7, 10,  7,  7,  7,  7 },    /* Minimum */
 	{  20, 30,  5, 20, 20,  5 },    /* Distribution at init */
 	/* Init   Lower  Higher */
-	{ 10, 3,  1, 8,  1, 3 },	/* Hit points */
+	{  10, 3,  1, 8,  1, 3 },	/* Hit points */
 	{  10, 5,  0, 2,  0, 3 },	/* Energy */
 	/* first is fixed amount gained, second is random amount gained */
 	/* when level is this or higher, use the "higher" column instead */
@@ -407,9 +407,9 @@ const struct Role roles[] = {
 	/* initial alignment record */
 	0,
 	/* spellcasting penalties: base, healing, shield, metal; stat used */
-	0, 2, 1, 1, A_INT,
+	1, 2, 1, 0, A_INT,
 	/* excels at which spell, penalty for it */
-	SPE_CONSTRUCT, -5
+	SPE_CONSTRUCT, -10
 },
 /* Array terminator */
 {{0, 0}}

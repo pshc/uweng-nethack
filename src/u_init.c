@@ -770,6 +770,7 @@ u_init()
 #endif
 		ini_inv(Engineer);
 		ini_inv(Towel);
+		knows_class(WAND_CLASS);
 		if(!rn2(4)) ini_inv(Blindfold);
 		if(!rn2(4)) ini_inv(Tinningkit);
 		if(!rn2(10)) ini_inv(Magicmarker);
