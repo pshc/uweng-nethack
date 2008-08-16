@@ -1349,8 +1349,17 @@ arti_invoke(obj)
 				       aobjnam(otmp, "fall"), (const char *)0);
 	    break;
 	  }
-	case EARTH: {
-	    pline("Hmm, it seems to be broken. OHNOES!");
+	case LEV_MAPPING: {
+	    int x, y;
+	    if (level.flags.nommap) {
+		pline("Nothing happens.");
+		break;
+	    }
+	    /*for (x = 1; x < COLNO; x++)
+		for (y = 0; y < ROWNO; y++)
+		    if (levl[x][y].typ == SDOOR)
+			cvt_sdoor_to_door(&levl[x][y]);*/
+	    do_mapping();
 	    break;
 	  }
 	}

@@ -382,7 +382,7 @@ DOOR:random,(51,15)
 DOOR:open,(59,14)
 DOOR:open,(59,17)
 # Objects
-OBJECT:')',"wrench",(04,01),blessed,0,"The Tool"
+OBJECT:')',"crescent wrench",(04,01),blessed,0,"The Tool"
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
