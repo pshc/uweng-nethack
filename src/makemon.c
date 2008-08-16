@@ -628,6 +628,10 @@ register struct	monst	*mtmp;
 			(void) mpickobj(mtmp, otmp);
 		}
 		break;
+	    case S_GOOSE:
+		if (ptr == &mons[PM_MORBIDLY_OBESE_GOOSE] && !rn2(5))
+			(void) mongets(mtmp, FOIE_GRAS);
+		break;
 	    case S_LEPRECHAUN:
 #ifndef GOLDOBJ
 		mtmp->mgold = (long) d(level_difficulty(), 30);
