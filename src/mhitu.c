@@ -2014,6 +2014,23 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		    if (dmg) mdamageu(mtmp, dmg);
 		}
 		break;
+	    case AD_SING:
+		if (!mtmp->mcan && couldsee(mtmp->mx, mtmp->my)) {
+		    static const char *verses[4] = {"I'm a shark!",
+						    "I'm a shaaaaaaark!",
+						    "Suck my diiiiick!",
+						    "I'M A SHAAAAAAAARK!"};
+		    int state = *(int *)mtmp->mextra;
+		    if (state >= 0 && state < 4 && !rn2(4))
+			pline("%s sings, \"%s\"", Monnam(mtmp),
+					verses[state++]);
+		    else if (state >= 4)
+			state = -10 - rn2(10); /* Cool off a bit */
+		    else if (state < 0)
+			state++;
+		    *(int *)mtmp->mextra = state;
+	        }
+		break;
 #ifdef PM_BEHOLDER /* work in progress */
 	    case AD_SLEE:
 		if(!mtmp->mcan && canseemon(mtmp) &&

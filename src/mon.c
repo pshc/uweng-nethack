@@ -467,7 +467,7 @@ register struct monst *mtmp;
 	}
     } else {
 	/* but eels have a difficult time outside */
-	if (mtmp->data->mlet == S_EEL && !Is_waterlevel(&u.uz)) {
+	if (mtmp->data->mlet == S_EEL && !Is_waterlevel(&u.uz) && !is_flyer(mtmp->data)) {
 	    if(mtmp->mhp > 1) mtmp->mhp--;
 	    monflee(mtmp, 2, FALSE, FALSE);
 	}

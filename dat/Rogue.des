@@ -376,9 +376,9 @@ MONSTER: ':',"chameleon",random,hostile
 MONSTER: ':',"chameleon",random,hostile
 MONSTER: ':',"chameleon",random,hostile
 MONSTER: ':',"chameleon",random,hostile
-MONSTER:';',"shark",(51,14),hostile
+MONSTER:';',"singing shark",(51,14),hostile
 MONSTER:';',"shark",(53,09),hostile
-MONSTER:';',"shark",(55,15),hostile
+MONSTER:';',"singing shark",(55,15),hostile
 MONSTER:';',"shark",(58,10),hostile
 
 #

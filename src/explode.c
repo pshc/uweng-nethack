@@ -267,6 +267,10 @@ int expltype;
 		} else if (cansee(i+x-1, j+y-1)) {
 		    if(mtmp->m_ap_type) seemimic(mtmp);
 		    pline("%s is caught in the %s!", Monnam(mtmp), str);
+		    if (mtmp->data == &mons[PM_SINGING_SHARK]) {
+			if (adtyp == AD_COLD)
+			    verbalize("Holy shit! It's frikkin' cold out here!");
+		    }
 		}
 
 		idamres += destroy_mitem(mtmp, SCROLL_CLASS, (int) adtyp);

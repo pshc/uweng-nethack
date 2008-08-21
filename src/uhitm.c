@@ -1874,7 +1874,10 @@ register struct attack *mattk;
 			break;
 		    case AD_COLD:
 			if (rn2(2)) {
-			    if (resists_cold(mdef)) {
+			    if (mdef->data == &mons[PM_SINGING_SHARK]) {
+				verbalize("Holy shit! It's frikkin' cold out here!");
+				dam = 5;
+			    } else if (resists_cold(mdef)) {
 				pline("%s seems mildly chilly.", Monnam(mdef));
 				dam = 0;
 			    } else

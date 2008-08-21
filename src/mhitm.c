@@ -1126,6 +1126,7 @@ mdamagem(magr, mdef, mattk)
 	     /* if (cancelled) break; */
 		break;
 	    case AD_MOOF:
+	    case AD_SING:
 		tmp = 0;
 		break;
 	    default:	tmp = 0;

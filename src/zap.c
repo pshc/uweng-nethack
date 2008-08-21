@@ -2945,6 +2945,8 @@ struct obj **ootmp;	/* to return worn armor for caller to disintegrate */
 		}
 		break;
 	case ZT_COLD:
+		if (mon->data == &mons[PM_SINGING_SHARK])
+		    verbalize("Holy shit! It's frikkin' cold out here!");
 		if (resists_cold(mon)) {
 		    sho_shieldeff = TRUE;
 		    break;

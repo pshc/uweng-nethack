@@ -437,8 +437,8 @@ MONSTER:';',"kraken",random
 MONSTER:';',"kraken",random
 MONSTER:';',"shark",random
 MONSTER:';',"shark",random
-MONSTER:';',"shark",random
-MONSTER:';',"shark",random
+MONSTER:';',"singing shark",random
+MONSTER:';',"singing shark",random
 MONSTER:';',"piranha",random
 MONSTER:';',"piranha",random
 MONSTER:';',"piranha",random
@@ -614,3 +614,5 @@ MONSTER:'V',random,random,hostile
 MONSTER:'D',random,random,hostile
 MONSTER:'D',random,random,hostile
 MONSTER:'D',random,random,hostile
+# A little fun
+MONSTER:';',"singing shark",random,hostile

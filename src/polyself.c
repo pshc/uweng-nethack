@@ -1199,7 +1199,7 @@ int part;
 	if ((mptr == &mons[PM_FRIGGIN__MUMAK] || mptr == &mons[PM_MASTODON]) &&
 		part == NOSE)
 	    return "trunk";
-	if (mptr == &mons[PM_SHARK] && part == HAIR)
+	if ((mptr == &mons[PM_SHARK] || mptr == &mons[PM_SINGING_SHARK]) && part == HAIR)
 	    return "skin";	/* sharks don't have scales */
 	if (mptr == &mons[PM_JELLYFISH] && (part == ARM || part == FINGER ||
 	    part == HAND || part == FOOT || part == TOE))
