@@ -49,6 +49,7 @@
 #define MS_WERE		38	/* lycanthrope in human form */
 #define MS_BOAST	39	/* giants */
 #define MS_HONK         40      /* geese */
+#define MS_MOOF         41      /* dogcow */
 #define MR_FIRE		0x01	/* resists fire */
 #define MR_COLD		0x02	/* resists cold */
 #define MR_SLEEP	0x04	/* resists sleep */

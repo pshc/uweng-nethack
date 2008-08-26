@@ -1125,6 +1125,9 @@ mdamagem(magr, mdef, mattk)
 		/* there's no msomearmor() function, so just do damage */
 	     /* if (cancelled) break; */
 		break;
+	    case AD_MOOF:
+		tmp = 0;
+		break;
 	    default:	tmp = 0;
 			break;
 	}

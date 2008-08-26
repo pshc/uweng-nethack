@@ -1551,6 +1551,10 @@ dopois:
 		    }
 		}
 		break;
+	    case AD_MOOF:
+		pline("%s moofs.", Monnam(mtmp));
+		dmg = 0;
+		break;
 	    default:	dmg = 0;
 			break;
 	}
