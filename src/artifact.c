@@ -924,6 +924,56 @@ char *hittee;			/* target's name: "you" or mon_nam(mdef) */
     return result;
 }
   
+STATIC_OVL struct obj *
+make_monkey_head(x, y)
+int x;
+int y;
+{
+	struct obj *head = mksobj(MONKEY_HEAD, FALSE, FALSE);
+	head->quan = 1L;
+	head->owt = weight(head);
+	place_object(head, x, y);
+	if (cansee(x, y)) {
+		if (!Blind) {
+			head->dknown = 1;
+			pline("A %s to the %s.", aobjnam(head, "fall"),
+					surface(x, y));
+		}
+		newsym(x, y);
+	}
+	stackobj(head);
+	return head;
+}
+
+STATIC_OVL boolean
+behead_monkey(mdef, dmgptr, otmp)
+struct monst *mdef;
+int *dmgptr;
+struct obj *otmp;
+{
+	if (mdef->data == &mons[PM_THREE_HEADED_MONKEY]) {
+		*dmgptr = 0;
+		otmp->dknown = TRUE;
+		mdef->data = &mons[PM_TWO_HEADED_MONKEY];
+		make_monkey_head(mdef->mx, mdef->my);
+		return TRUE;
+	}
+	else if (mdef->data == &mons[PM_TWO_HEADED_MONKEY]) {
+		*dmgptr = 0;
+		otmp->dknown = TRUE;
+		mdef->data = &mons[PM_MONKEY];
+		make_monkey_head(mdef->mx, mdef->my);
+		return TRUE;
+	}
+	else if (mdef->data == &mons[PM_MONKEY]) {
+		*dmgptr = 2 * mdef->mhp + FATAL_DAMAGE_MODIFIER;
+		otmp->dknown = TRUE;
+		make_monkey_head(mdef->mx, mdef->my);
+		return TRUE;
+	}
+	return FALSE;
+}
+
 /* Function used when someone attacks someone else with an artifact
  * weapon.  Only adds the special (artifact) damage, and returns a 1 if it
  * did something special (in which case the caller won't print the normal
@@ -1066,7 +1116,9 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 			return TRUE;
 		}
 	    } else if (otmp->oartifact == ART_VORPAL_BLADE &&
-			(dieroll == 1 || mdef->data == &mons[PM_JABBERWOCK])) {
+			(dieroll == 1 || mdef->data == &mons[PM_JABBERWOCK]
+			 || (mdef->data >= &mons[PM_MONKEY] &&
+			     mdef->data <= &mons[PM_THREE_HEADED_MONKEY]))) {
 		static const char * const behead_msg[2] = {
 		     "%s beheads %s!",
 		     "%s decapitates %s!"
@@ -1092,9 +1144,11 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 				      mbodypart(mdef,NECK));
 				return TRUE;
 			}
-			*dmgptr = 2 * mdef->mhp + FATAL_DAMAGE_MODIFIER;
 			pline(behead_msg[rn2(SIZE(behead_msg))],
 			      wepdesc, mon_nam(mdef));
+			if (behead_monkey(mdef, dmgptr, otmp))
+				return TRUE;
+			*dmgptr = 2 * mdef->mhp + FATAL_DAMAGE_MODIFIER;
 			otmp->dknown = TRUE;
 			return TRUE;
 		} else {

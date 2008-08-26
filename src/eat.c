@@ -1408,6 +1408,11 @@ struct obj *otmp;
 				singular(otmp, xname));
 		make_vomiting((long)rn1(victual.reqtime, 5), FALSE);
 		break;
+	    case MONKEY_HEAD:
+		if (Role_if(PM_ARCHEOLOGIST)) {
+		    pline("Aah, dessert! Chilled monkey brains.");
+		    break;
+		}
 	    case MEATBALL:
 	    case MEAT_STICK:
 	    case HUGE_CHUNK_OF_MEAT:
