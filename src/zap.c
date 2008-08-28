@@ -78,7 +78,7 @@ const char * const flash_types[] = {	/* also used in buzzmu(mcastu.c) */
 	"fireball",
 	"cone of cold",
 	"sleep ray",
-	"finger of death",
+	"buster beam",
 	"bolt of lightning",	/* There is no spell, used for retribution */
 	"",
 	"",
