@@ -3339,7 +3339,7 @@ and the air groans as though bent by immense stress and strain.
 Complete structural failure is imminent.
 %E
 %Cp Eng 00005
-"I love chicken, I love liver, microwave microwave microwave microwave..."
+"I love chicken, I love liver..."
 %E
 %Cp Eng 00006
 "Does anyone have a stapler they can lend me?"
@@ -3371,8 +3371,8 @@ Complete structural failure is imminent.
 %Cc Eng 00015
 "HI %p!"
 
-"I'm, uh, here on totally unrelated business. But while you're here,
-perhaps you can lend us a hand. Actually, we desperately need your help.
+"I'm here on totally unrelated business. But while you're here, perhaps
+you can lend us a hand. Actually, we desperately need your help.
 My stalking abilities are not what they once were..."
 
 "This won't hurt. Much."
@@ -3399,8 +3399,7 @@ or you're with the terrorists!"
 %Cc Eng 00021
 "GOOD JOB!
 
-"Okay, so, this is kind of embarrassing, but it's not my problem anyway,
-but, uh, yeah.  We kind of, you know, lost %o...
+"Here's the deal:  We kind of, you know, lost %o...
 
 "Don't give me that look! Okay, okay, so we don't know who took it.
 Your job to figure out who and take it back. All we know is that they've
@@ -3415,7 +3414,7 @@ fled to %i.
 "To enter %i you'll have to pass a lot of traps..."
 %E
 %Cp Eng 00027
-"If you do not return with %o, uh, I'll be... mad?"
+"If you do not return with %o, I'll be... mad?"
 %E
 %Cp Eng 00028
 "Don't forget to call upon %d if you truly need your butt saved."
@@ -3477,8 +3476,7 @@ This time I will destroy you, %p."
 %o.
 
 "Return it to me and I will teach you how to use it, and together we
-will rule UW.  But do so now, as my patience
-grows thin."
+will rule UW.  But do so now, as my patience grows thin."
 %E
 %Cp Eng 00060
 "%l isn't even a UW student! Where do your loyalties lie?"
@@ -3513,6 +3511,7 @@ I pity da foo."
 %E
 %Cc Eng 00070
 As you pick up %o, you realise that IT'S FRIGGIN' HEAVY!
+But it's, like, so cool!
 Better take it back to %H and find %l quick.
 %E
 %Cc Eng 00080
@@ -3542,7 +3541,7 @@ return through the magic portal that brought you here."
 %Cc Eng 00091
 "Stand back and let me snap secret pix at you, %p.
 Now that you have recovered the Amulet of Yendor, I'm afraid living
-out your days in %H would seem pretty tame.
+out your days studying in %H would seem pretty tame.
 
 "You must pierce the heavens with your drill!"
 %E
