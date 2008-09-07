@@ -407,9 +407,9 @@ const struct Role roles[] = {
 	/* initial alignment record */
 	0,
 	/* spellcasting penalties: base, healing, shield, metal; stat used */
-	1, 2, 1, 0, A_INT,
+	8, 0, 1, 0, A_INT,
 	/* excels at which spell, penalty for it */
-	SPE_CONSTRUCT, -10
+	SPE_DETECT_FOOD, -4
 },
 /* Array terminator */
 {{0, 0}}

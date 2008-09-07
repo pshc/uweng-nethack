@@ -2482,7 +2482,7 @@ register struct	obj	*obj;
 
 	    if (otyp == WAN_DRILLING || otyp == SPE_DRILLING)
 		zap_dig();
-            else if (otyp == WAN_CONSTRUCT || otyp == SPE_CONSTRUCT)
+            else if (otyp == WAN_CONSTRUCT)
 	    	zap_construct();
 	    else if (otyp >= SPE_MAGIC_MISSILE && otyp <= SPE_BUSTER_BEAM)
 		buzz(otyp - SPE_MAGIC_MISSILE + 10,

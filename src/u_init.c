@@ -175,9 +175,9 @@ static struct trobj Engineer[] = {
 	{ T_SHIRT, 0, ARMOR_CLASS, 1, UNDEF_BLESS },
 	{ LEATHER_JACKET, 1, ARMOR_CLASS, 1, UNDEF_BLESS },
 	{ PLASTIC_HARD_HAT, 1, ARMOR_CLASS, 1, UNDEF_BLESS },
+	{ WAN_CONSTRUCT, 0, WAND_CLASS, 1, 1 },
 	{ UNDEF_TYP, UNDEF_SPE, WAND_CLASS, 3, UNDEF_BLESS },
 	{ UNDEF_TYP, UNDEF_SPE, SCROLL_CLASS, 2, UNDEF_BLESS },
-	{ SPE_CONSTRUCT, 0, SPBOOK_CLASS, 1, 1 },
 	{ UNDEF_TYP, UNDEF_SPE, SPBOOK_CLASS, 1, UNDEF_BLESS },
 	{ 0, 0, 0, 0, 0 }
 };
@@ -988,8 +988,6 @@ register struct trobj *trop;
 				/* wizard patch -- they already have one */
 				|| (otyp == SPE_FORCE_BOLT &&
 				    Role_if(PM_WIZARD))
-				|| (otyp == SPE_CONSTRUCT &&
-				    Role_if(PM_ENGINEER))
 				/* powerful spells are either useless to
 				   low level players or unbalancing; also
 				   spells in restricted skill categories */
