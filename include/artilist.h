@@ -213,7 +213,7 @@ A("The Tsurugi of Muramasa",	TSURUGI,
 	0,		A_LAWFUL, PM_SAMURAI, NON_PM, 4500L ),
 
 #ifdef TOURIST
-A("The University of Waterloo Student ID", WATCARD,
+A("The Platinum Yendorian Express Card", WATCARD,
 	(SPFX_NOGEN|SPFX_RESTR|SPFX_INTEL|SPFX_DEFN),
 		(SPFX_ESP|SPFX_HSPDAM), 0,
 	NO_ATTK,	NO_DFNS,	CARY(AD_MAGM),

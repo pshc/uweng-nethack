@@ -990,10 +990,9 @@ const char *str;
 		if (tmp && (!named || tmp < named))	/* found an "of" */
 		    insert_the = TRUE;
 		/* stupid special case: lacks "of" but needs "the" */
-		/* PAU EDIT: IT DOES NOW! */
-		/*else if (!named && (l = strlen(str)) >= 31 &&
-		      !strcmp(&str[l - 31], "University of Waterloo Student "))
-		    insert_the = TRUE;*/
+		else if (!named && (l = strlen(str)) >= 31 &&
+		      !strcmp(&str[l - 31], "Platinum Yendorian Express Card"))
+		    insert_the = TRUE;
 	    }
 	}
 	if (insert_the)

@@ -384,7 +384,7 @@ DOOR:random,(51,15)
 DOOR:open,(59,14)
 DOOR:open,(59,17)
 # Objects
-OBJECT:'(',"WatCard",(04,01),blessed,0,"The University of Waterloo Student ID"
+OBJECT:'(',"WatCard",(04,01),blessed,0,"The Platinum Yendorian Express Card"
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
