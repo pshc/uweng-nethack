@@ -359,6 +359,9 @@ MONSTER: '@', "mathie", random, hostile
 MONSTER: '@', "mathie", random, hostile
 MONSTER: '@', "mathie", random, hostile
 MONSTER: ';', "singing shark", random, hostile
+MONSTER: 'F', "teflon fungus", random, hostile
+MONSTER: 'F', "teflon fungus", random, hostile
+MONSTER: 'F', "teflon fungus", random, hostile
 
 MAZE: "Eng-filb" , ' '
 INIT_MAP: '.' , ' ', true, true, random, true
@@ -378,6 +381,9 @@ OBJECT: random, random, random
 OBJECT: random, random, random
 OBJECT: random, random, random
 OBJECT: random, random, random
+OBJECT: '!', "hydrofluoric acid",random
+OBJECT: '!', "hydrofluoric acid",random
+OBJECT: '!', "hydrofluoric acid",random
 #
 TRAP: random, random
 TRAP: random, random
@@ -388,6 +394,7 @@ MONSTER: '@', "mathie", random, hostile
 MONSTER: '@', "mathie", random, hostile
 MONSTER: '@', "mathie", random, hostile
 MONSTER: '@', "mathie", random, hostile
-MONSTER: '@', "mathie", random, hostile
+MONSTER: 'F', "teflon fungus", random, hostile
+MONSTER: 'F', "teflon fungus", random, hostile
 MONSTER: 'q', "dogcow", random, hostile
 MONSTER: 'n', random, random, hostile
