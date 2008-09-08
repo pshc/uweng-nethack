@@ -248,7 +248,7 @@ falter!"
 %E
 %Cc Arc 00070
 The power of %o flows through your body!  You feel
-as if you could now take on the Wizard of Yendor himself and win, but
+as if you could now take on the Wizzard of Yendor himself and win, but
 you know you must return %o to %l.
 %E
 %Cp Arc 00080
@@ -280,7 +280,7 @@ regain the Amulet of Yendor for %d?"
 %E
 %Cc Arc 00091
 "Congratulations, %p.  I wondered if anyone could prevail against
-the Wizard and the minions of Jarek.  Now, you must embark on one
+the Wizzard and the minions of Jarek.  Now, you must embark on one
 final adventure.
 
 "Take the Amulet, and find your way onto the astral plane.
@@ -999,7 +999,7 @@ to defeat %l."
 not going to live to escape this place."
 %E
 %Cp Hea 00060
-"They might as well give scalpels to wizards as to let you try to
+"They might as well give scalpels to wizzards as to let you try to
 use %o!"
 %E
 %Cp Hea 00061
@@ -3061,7 +3061,7 @@ plane.  There you must offer the Amulet to %d.
 Amulet interferes with mine.  I hope for your success."
 %E
 #
-#	Wizard
+#	Wizzard
 #
 %Cc Wiz 00001
 You are suddenly in familiar surroundings.  You notice what appears to
@@ -3272,7 +3272,7 @@ for dessert!"
 As you touch %o, its comforting power infuses you
 with new energy.  You feel as if you can detect others' thoughts flowing
 through it.  Although you yearn to wear %o
-and attack the Wizard of Yendor, you know you must return it to its
+and attack the Wizzard of Yendor, you know you must return it to its
 rightful owner, %l.
 %E
 %Cc Wiz 00080
@@ -3308,7 +3308,7 @@ So, have you succeeded in your quest for the Amulet of Yendor?"
 %E
 %Cc Wiz 00091
 "Congratulations, %p.  I always knew that if anyone could succeed
-in defeating the Wizard of Yendor and his minions, it would be you.
+in defeating the Wizzard of Yendor and his minions, it would be you.
 
 "Go now, and take the Amulet to the astral plane.  Once there, present
 the Amulet on the altar of %d.  Along the way you shall pass through the

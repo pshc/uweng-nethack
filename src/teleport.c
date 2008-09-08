@@ -479,7 +479,7 @@ dotele()
 	    boolean castit = FALSE;
 	    register int sp_no = 0, energy = 0;
 
-	    if (!Teleportation || (u.ulevel < (Role_if(PM_WIZARD) ? 8 : 12)
+	    if (!Teleportation || (u.ulevel < (Role_if(PM_WIZZARD) ? 8 : 12)
 					&& !can_teleport(youmonst.data))) {
 		/* Try to use teleport away spell. */
 		if (objects[SPE_TELEPORT_AWAY].oc_name_known && !Confusion)

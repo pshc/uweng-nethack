@@ -209,7 +209,7 @@ register boolean special;
 		    if (rn2(2)) weapon = WAR_HAMMER;
 		    if (rn2(2)) armor = rnd_class(PLATE_MAIL, CHAIN_MAIL);
 		    break;
-		case PM_WIZARD:
+		case PM_WIZZARD:
 		    if (rn2(4)) weapon = rn2(2) ? QUARTERSTAFF : ATHAME;
 		    if (rn2(2)) {
 		    	armor = rn2(2) ? BLACK_DRAGON_SCALE_MAIL :
@@ -298,7 +298,7 @@ boolean special;
 		int tryct = 0;
 
 		/* roll for character class */
-		pm = PM_ARCHEOLOGIST + rn2(PM_WIZARD - PM_ARCHEOLOGIST + 1);
+		pm = PM_ARCHEOLOGIST + rn2(PM_WIZZARD - PM_ARCHEOLOGIST + 1);
 		fakemon.data = &mons[pm];
 
 		/* roll for an available location */

@@ -442,7 +442,7 @@ register struct obj *spellbook;
 			    - 2*objects[booktype].oc_level
 			    + ((ublindf && ublindf->otyp == LENSES) ? 2 : 0);
 			/* only wizards know if a spell is too difficult */
-			if (Role_if(PM_WIZARD) && read_ability < 20 &&
+			if (Role_if(PM_WIZZARD) && read_ability < 20 &&
 			    !confused) {
 			    char qbuf[QBUFSZ];
 			    Sprintf(qbuf,
@@ -775,7 +775,7 @@ boolean atme;
 			 * understand quite well how to cast spells.
 			 */
 			intell = acurr(A_INT);
-			if (!Role_if(PM_WIZARD)) intell = 10;
+			if (!Role_if(PM_WIZZARD)) intell = 10;
 			switch (intell) {
 				case 25: case 24: case 23: case 22:
 				case 21: case 20: case 19: case 18:
@@ -862,7 +862,7 @@ boolean atme;
 	case SPE_MAGIC_MISSILE:
 	case SPE_KNOCK:
 	case SPE_SLOW_MONSTER:
-	case SPE_WIZARD_LOCK:
+	case SPE_WIZZARD_LOCK:
 	case SPE_DRILLING:
 	case SPE_TURN_UNDEAD:
 	case SPE_POLYMORPH:

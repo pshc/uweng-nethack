@@ -2369,10 +2369,10 @@ boolean incr;
 				  "You still have the munchies." :
       "The munchies are interfering with your motor capabilities.");
 			else if (incr &&
-				(Role_if(PM_WIZARD) || Race_if(PM_ELF) ||
+				(Role_if(PM_WIZZARD) || Race_if(PM_ELF) ||
 				 Role_if(PM_VALKYRIE)))
 			    pline("%s needs food, badly!",
-				  (Role_if(PM_WIZARD) || Role_if(PM_VALKYRIE)) ?
+				  (Role_if(PM_WIZZARD) || Role_if(PM_VALKYRIE)) ?
 				  urole.name.m : "Elf");
 			else
 			    You((!incr) ? "feel weak now." :

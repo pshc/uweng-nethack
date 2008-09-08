@@ -261,7 +261,7 @@ strategy(mtmp)
 			return(STRAT_HEAL);
 
 	    case 1:	/* the wiz is less cautious */
-			if(mtmp->data != &mons[PM_WIZARD_OF_YENDOR])
+			if(mtmp->data != &mons[PM_WIZZARD_OF_YENDOR])
 			    return(STRAT_HEAL);
 			/* else fall through */
 
@@ -398,7 +398,7 @@ clonewiz()
 {
 	register struct monst *mtmp2;
 
-	if ((mtmp2 = makemon(&mons[PM_WIZARD_OF_YENDOR],
+	if ((mtmp2 = makemon(&mons[PM_WIZZARD_OF_YENDOR],
 				u.ux, u.uy, NO_MM_FLAGS)) != 0) {
 	    mtmp2->msleeping = mtmp2->mtame = mtmp2->mpeaceful = 0;
 	    if (!u.uhave.amulet && rn2(2)) {  /* give clone a fake */
@@ -483,7 +483,7 @@ resurrect()
 	if (!flags.no_of_wizards) {
 	    /* make a new Wizard */
 	    verb = "kill";
-	    mtmp = makemon(&mons[PM_WIZARD_OF_YENDOR], u.ux, u.uy, MM_NOWAIT);
+	    mtmp = makemon(&mons[PM_WIZZARD_OF_YENDOR], u.ux, u.uy, MM_NOWAIT);
 	} else {
 	    /* look for a migrating Wizard */
 	    verb = "elude";

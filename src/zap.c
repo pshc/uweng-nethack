@@ -224,7 +224,7 @@ struct obj *otmp;
 	    }
 	case WAN_IDLING:
 	case WAN_LOCKING:
-	case SPE_WIZARD_LOCK:
+	case SPE_WIZZARD_LOCK:
 		wake = FALSE;
 		break;
 	case WAN_PROBING___:
@@ -1586,7 +1586,7 @@ struct obj *obj, *otmp;
 	case WAN_OPENING:
 	case SPE_KNOCK:
 	case WAN_LOCKING:
-	case SPE_WIZARD_LOCK:
+	case SPE_WIZZARD_LOCK:
 		if(Is_box(obj))
 			res = boxlock(obj, otmp);
 		else
@@ -2108,7 +2108,7 @@ boolean ordinary;
 		case SPE_DETECT_UNSEEN:
 		case WAN_IDLING:
 		case WAN_LOCKING:
-		case SPE_WIZARD_LOCK:
+		case SPE_WIZZARD_LOCK:
 		    break;
 		case WAN_PROBING___:
 		    for (obj = invent; obj; obj = obj->nobj)
@@ -2331,7 +2331,7 @@ struct obj *obj;	/* wand or spell */
 	    striking = TRUE;
 	    /*FALLTHRU*/
 	case WAN_LOCKING:
-	case SPE_WIZARD_LOCK:
+	case SPE_WIZZARD_LOCK:
 	    /* down at open bridge or up or down at open portcullis */
 	    if ((levl[x][y].typ == DRAWBRIDGE_DOWN) ? (u.dz > 0) :
 			(is_drawbridge_wall(x,y) && !is_db_wall(x,y)) &&
@@ -2687,7 +2687,7 @@ struct obj *obj;			/* object tossed/used */
 			}
 			break;
 		    case WAN_LOCKING:
-		    case SPE_WIZARD_LOCK:
+		    case SPE_WIZZARD_LOCK:
 			if ((cansee(x,y) || cansee(bhitpos.x, bhitpos.y))
 			    && levl[x][y].typ == DRAWBRIDGE_DOWN)
 			    makeknown(obj->otyp);
@@ -2762,7 +2762,7 @@ struct obj *obj;			/* object tossed/used */
 		case WAN_LOCKING:
 		case WAN_STRIKING:
 		case SPE_KNOCK:
-		case SPE_WIZARD_LOCK:
+		case SPE_WIZZARD_LOCK:
 		case SPE_FORCE_BOLT:
 		    if (doorlock(obj, bhitpos.x, bhitpos.y)) {
 			if (cansee(bhitpos.x, bhitpos.y) ||

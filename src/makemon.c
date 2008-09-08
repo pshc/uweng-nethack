@@ -1014,7 +1014,7 @@ register int	mmflags;
 			mtmp->cham = mcham;
 			(void) newcham(mtmp, rndmonst(), FALSE, FALSE);
 		}
-	} else if (mndx == PM_WIZARD_OF_YENDOR) {
+	} else if (mndx == PM_WIZZARD_OF_YENDOR) {
 		mtmp->iswiz = TRUE;
 		flags.no_of_wizards++;
 		if (flags.no_of_wizards == 1 && Is_earthlevel(&u.uz))
@@ -1368,11 +1368,11 @@ register struct permonst *ptr;
 {
 	int	tmp, tmp2;
 
-	if (ptr == &mons[PM_WIZARD_OF_YENDOR]) {
+	if (ptr == &mons[PM_WIZZARD_OF_YENDOR]) {
 		/* does not depend on other strengths, but does get stronger
 		 * every time he is killed
 		 */
-		tmp = ptr->mlevel + mvitals[PM_WIZARD_OF_YENDOR].died;
+		tmp = ptr->mlevel + mvitals[PM_WIZZARD_OF_YENDOR].died;
 		if (tmp > 49) tmp = 49;
 		return tmp;
 	}

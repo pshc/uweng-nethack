@@ -783,7 +783,7 @@ static const struct {
   { "#UWEng", &oracle_level },
   { "Medusa's lair", &medusa_level },
   { "a castle", &stronghold_level },
-  { "the Wizard of Yendor's tower", &wiz1_level },
+  { "the Wizzard of Yendor's tower", &wiz1_level },
 };
 
 void
@@ -900,7 +900,7 @@ struct obj *obj;
 
 	if (ret) {
 	    if (!rn2(100))  /* make them nervous */
-		You("see the Wizard of Yendor gazing out at you.");
+		You("see the Wizzard of Yendor gazing out at you.");
 	    else pline_The("vision is unclear.");
 	}
     }

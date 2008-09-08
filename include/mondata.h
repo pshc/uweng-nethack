@@ -130,7 +130,7 @@
 #define infravision(ptr)	((ptr->mflags3 & M3_INFRAVISION))
 #define infravisible(ptr)	((ptr->mflags3 & M3_INFRAVISIBLE))
 #define is_mplayer(ptr)		(((ptr) >= &mons[PM_ARCHEOLOGIST]) && \
-				 ((ptr) <= &mons[PM_WIZARD]))
+				 ((ptr) <= &mons[PM_WIZZARD]))
 #define is_rider(ptr)		((ptr) == &mons[PM_DEATH] || \
 				 (ptr) == &mons[PM_FAMINE] || \
 				 (ptr) == &mons[PM_PESTILENCE])

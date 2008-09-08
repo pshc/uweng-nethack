@@ -310,7 +310,7 @@ Helmet_on()
 		 * about, but it takes trained arrogance to pull it off,
 		 * and the actual enchantment of the hat is irrelevant.
 		 */
-		ABON(A_CHA) += (Role_if(PM_WIZARD) ? 1 : -1);
+		ABON(A_CHA) += (Role_if(PM_WIZZARD) ? 1 : -1);
 		flags.botl = 1;
 		makeknown(uarmh->otyp);
 		break;
@@ -366,7 +366,7 @@ Helmet_off()
 	    break;
 	case CORNUTHAUM:
 	    if (!cancelled_don) {
-		ABON(A_CHA) += (Role_if(PM_WIZARD) ? -1 : 1);
+		ABON(A_CHA) += (Role_if(PM_WIZZARD) ? -1 : 1);
 		flags.botl = 1;
 	    }
 	    break;

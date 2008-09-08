@@ -756,7 +756,7 @@ u_init()
 		knows_class(ARMOR_CLASS);
 		skill_init(Skill_V);
 		break;
-	case PM_WIZARD:
+	case PM_WIZZARD:
 		ini_inv(Wizard);
 		if(!rn2(5)) ini_inv(Magicmarker);
 		if(!rn2(5)) ini_inv(Blindfold);
@@ -794,7 +794,7 @@ u_init()
 	     * Non-warriors get an instrument.  We use a kludge to
 	     * get only non-magic instruments.
 	     */
-	    if (Role_if(PM_PRIEST) || Role_if(PM_WIZARD)) {
+	    if (Role_if(PM_PRIEST) || Role_if(PM_WIZZARD)) {
 		static int trotyp[] = {
 		    WOODEN_FLUTE, TOOLED_HORN, WOODEN_HARP,
 		    BELL, BUGLE, LEATHER_DRUM
@@ -833,7 +833,7 @@ u_init()
 
 	case PM_ORC:
 	    /* compensate for generally inferior equipment */
-	    if (!Role_if(PM_WIZARD))
+	    if (!Role_if(PM_WIZZARD))
 		ini_inv(Xtra_food);
 	    /* Orcs can recognize all orcish objects */
 	    knows_object(ORCISH_SHORT_SWORD);
@@ -915,7 +915,7 @@ int otyp;
      case PM_TOURIST:		skills = Skill_T; break;
 #endif
      case PM_VALKYRIE:		skills = Skill_V; break;
-     case PM_WIZARD:		skills = Skill_W; break;
+     case PM_WIZZARD:		skills = Skill_W; break;
      case PM_ENGINEER:          skills = Skill_Eng; break;
      default:			skills = 0; break;	/* lint suppression */
     }
@@ -987,7 +987,7 @@ register struct trobj *trop;
 				    Role_if(PM_MONK))
 				/* wizard patch -- they already have one */
 				|| (otyp == SPE_FORCE_BOLT &&
-				    Role_if(PM_WIZARD))
+				    Role_if(PM_WIZZARD))
 				/* powerful spells are either useless to
 				   low level players or unbalancing; also
 				   spells in restricted skill categories */

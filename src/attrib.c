@@ -561,7 +561,7 @@ int oldlevel, newlevel;
 	case PM_TOURIST:        abil = tou_abil;	break;
 #endif
 	case PM_VALKYRIE:       abil = val_abil;	break;
-	case PM_WIZARD:         abil = wiz_abil;	break;
+	case PM_WIZZARD:        abil = wiz_abil;	break;
 	case PM_ENGINEER:       abil = eng_abil;        break;
 	default:                abil = 0;		break;
 	}

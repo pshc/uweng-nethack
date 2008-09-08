@@ -363,7 +363,7 @@ const struct Role roles[] = {
 	{"Wizzzard",    0} },
 	"Ptah", "Thoth", "Cantide", /* Egyptian */
 	"Wiz", "the Lonely Tower", "the Tower of Darkness",
-	PM_WIZARD, NON_PM, PM_KITTEN,
+	PM_WIZZARD, NON_PM, PM_KITTEN,
 	PM_NEFERET_THE_GREEN, PM_APPRENTICE, PM_DARK_ONE,
 	PM_VAMPIRE_BAT, PM_XORN, S_BAT, S_WRAITH,
 	ART_EYE_OF_THE_AETHIOPICA,

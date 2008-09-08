@@ -209,7 +209,7 @@ moveloop()
 		    if ((u.uen < u.uenmax) &&
 			((wtcap < MOD_ENCUMBER &&
 			  (!(moves%((MAXULEV + 8 - u.ulevel) *
-				    (Role_if(PM_WIZARD) ? 3 : 4) / 6))))
+				    (Role_if(PM_WIZZARD) ? 3 : 4) / 6))))
 			 || Energy_regeneration)) {
 			u.uen += rn1((int)(ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1,1);
 			if (u.uen > u.uenmax)  u.uen = u.uenmax;

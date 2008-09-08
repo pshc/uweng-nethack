@@ -203,7 +203,7 @@ found:
 	/* can't write if we don't know it - unless we're lucky */
 	if(!(objects[new_obj->otyp].oc_name_known) &&
 	   !(objects[new_obj->otyp].oc_uname) &&
-	   (rnl(Role_if(PM_WIZARD) ? 3 : 15))) {
+	   (rnl(Role_if(PM_WIZZARD) ? 3 : 15))) {
 		You("%s to write that!", by_descr ? "fail" : "don't know how");
 		/* scrolls disappear, spellbooks don't */
 		if (paper->oclass == SPBOOK_CLASS) {

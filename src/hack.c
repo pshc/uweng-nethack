@@ -35,7 +35,7 @@ const char *msg;
 	otmp2 = otmp->nexthere;
 	if (otmp->otyp == CORPSE &&
 	    (is_rider(&mons[otmp->corpsenm]) ||
-	     otmp->corpsenm == PM_WIZARD_OF_YENDOR)) {
+	     otmp->corpsenm == PM_WIZZARD_OF_YENDOR)) {
 	    /* move any living monster already at that location */
 	    if((mtmp = m_at(x,y)) && enexto(&cc, x, y, mtmp->data))
 		rloc_to(mtmp, cc.x, cc.y);
@@ -2102,11 +2102,11 @@ maybe_wail()
     if (moves <= wailmsg + 50) return;
 
     wailmsg = moves;
-    if (Role_if(PM_WIZARD) || Race_if(PM_ELF) || Role_if(PM_VALKYRIE)) {
+    if (Role_if(PM_WIZZARD) || Race_if(PM_ELF) || Role_if(PM_VALKYRIE)) {
 	const char *who;
 	int i, powercnt;
 
-	who = (Role_if(PM_WIZARD) || Role_if(PM_VALKYRIE)) ?
+	who = (Role_if(PM_WIZZARD) || Role_if(PM_VALKYRIE)) ?
 		urole.name.m : "Elf";
 	if (u.uhp == 1) {
 	    pline("%s is about to die.", who);

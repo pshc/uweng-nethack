@@ -1222,7 +1222,7 @@ static const char *epitaphs[] = {
 	"Postman, please note forwarding address: Gehennom, Asmodeus's Fortress, fifth lemure on the left",
 	"Mary had a little lamb/Its fleece was white as snow/When Mary was in trouble/The lamb was first to go",
 	"Be careful, or this could happen to you!",
-	"Soon you'll join this fellow in hell! -- the Wizard of Yendor",
+	"Soon you'll join this fellow in hell! -- the Wizzard of Yendor",
 	"Caution! This grave contains toxic waste",
 	"Sum quod eris",
 	"Here lies an Atheist, all dressed up and no place to go",

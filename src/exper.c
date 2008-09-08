@@ -22,7 +22,7 @@ int en;
 {
 	switch (Role_switch) {
 	case PM_PRIEST:
-	case PM_WIZARD:
+	case PM_WIZZARD:
 	    return(2 * en);
 	case PM_HEALER:
 	case PM_KNIGHT:
@@ -106,7 +106,7 @@ more_experienced(exp, rexp)
 	   || flags.showscore
 #endif
 	   ) flags.botl = 1;
-	if (u.urexp >= (Role_if(PM_WIZARD) ? 1000 : 2000))
+	if (u.urexp >= (Role_if(PM_WIZZARD) ? 1000 : 2000))
 		flags.beginner = 0;
 }
 

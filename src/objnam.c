@@ -2030,7 +2030,7 @@ boolean from_user;
 	}
 	/* Find corpse type w/o "of" (red dragon scale mail, yeti corpse) */
 	if (strncmpi(bp, "samurai sword", 13)) /* not the "samurai" monster! */
-	if (strncmpi(bp, "wizard lock", 11)) /* not the "wizard" monster! */
+	if (strncmpi(bp, "wizzard lock", 11)) /* not the "wizzard" monster! */
 	if (strncmpi(bp, "ninja-to", 8)) /* not the "ninja" rank */
 	if (strncmpi(bp, "master key", 10)) /* not the "master" rank */
 	if (strncmpi(bp, "magenta", 7)) /* not the "mage" rank */

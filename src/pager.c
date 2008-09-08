@@ -82,8 +82,8 @@ lookat(x, y, buf, monbuf)
 	/* file lookup can't distinguish between "gnomish wizard" monster
 	   and correspondingly named player character, always picking the
 	   former; force it to find the general "wizard" entry instead */
-	if (Role_if(PM_WIZARD) && Race_if(PM_GNOME) && !Upolyd)
-	    pm = &mons[PM_WIZARD];
+	if (Role_if(PM_WIZZARD) && Race_if(PM_GNOME) && !Upolyd)
+	    pm = &mons[PM_WIZZARD];
 
 #ifdef STEED
 	if (u.usteed) {

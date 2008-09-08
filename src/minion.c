@@ -22,11 +22,11 @@ struct monst *mon;
 		|| mon->data == &mons[PM_ANGEL])
 		atyp = EPRI(mon)->shralign;
 	} else {
-	    ptr = &mons[PM_WIZARD_OF_YENDOR];
+	    ptr = &mons[PM_WIZZARD_OF_YENDOR];
 	    atyp = (ptr->maligntyp==A_NONE) ? A_NONE : sgn(ptr->maligntyp);
 	}
 	    
-	if (is_dprince(ptr) || (ptr == &mons[PM_WIZARD_OF_YENDOR])) {
+	if (is_dprince(ptr) || (ptr == &mons[PM_WIZZARD_OF_YENDOR])) {
 	    dtype = (!rn2(20)) ? dprince(atyp) :
 				 (!rn2(4)) ? dlord(atyp) : ndemon(atyp);
 	    cnt = (!rn2(4) && is_ndemon(&mons[dtype])) ? 2 : 1;

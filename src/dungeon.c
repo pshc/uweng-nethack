@@ -1360,7 +1360,7 @@ d_level	*lev;
 	    return (boolean)within_bounded_area(x, y, dndest.nlx, dndest.nly,
 						dndest.nhx, dndest.nhy);
 	else
-	    impossible("No boundary for Wizard's Tower?");
+	    impossible("No boundary for Wizzard's Tower?");
 	return FALSE;
 }
 

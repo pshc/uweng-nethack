@@ -815,7 +815,7 @@ SPELL("confuse monster", "orange",      P_ENCHANTMENT_SPELL, 30,  2, 2, 1, IMMED
 SPELL("cure blindness",  "yellow",      P_HEALING_SPELL, 25,  2, 2, 1, IMMEDIATE, CLR_YELLOW),
 SPELL("drain life",      "velvet",      P_ATTACK_SPELL, 10,  2, 2, 1, IMMEDIATE, CLR_MAGENTA),
 SPELL("slow monster",    "light green", P_ENCHANTMENT_SPELL, 30,  2, 2, 1, IMMEDIATE, CLR_BRIGHT_GREEN),
-SPELL("wizard lock",     "dark green",  P_MATTER_SPELL, 30,  3, 2, 1, IMMEDIATE, CLR_GREEN),
+SPELL("wizzard lock",    "dark green",  P_MATTER_SPELL, 30,  3, 2, 1, IMMEDIATE, CLR_GREEN),
 SPELL("create monster",  "turquoise",   P_CLERIC_SPELL, 35,  3, 2, 1, NODIR,     CLR_BRIGHT_CYAN),
 SPELL("detect food",     "electronic",  P_DIVINATION_SPELL, 30,  3, 2, 1, NODIR,     CLR_CYAN),
 SPELL("cause fear",      "light blue",  P_ENCHANTMENT_SPELL, 25,  3, 3, 1, NODIR,     CLR_BRIGHT_BLUE),

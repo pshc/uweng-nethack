@@ -705,7 +705,7 @@ register struct obj *obj, *otmp;	/* obj *is* a box */
 
 	switch(otmp->otyp) {
 	case WAN_LOCKING:
-	case SPE_WIZARD_LOCK:
+	case SPE_WIZZARD_LOCK:
 	    if (!obj->olocked) {	/* lock it; fix if broken */
 		pline("Klunk!");
 		obj->olocked = 1;
@@ -759,7 +759,7 @@ int x, y;
 		    return TRUE;
 		break;		/* striking: continue door handling below */
 	    case WAN_LOCKING:
-	    case SPE_WIZARD_LOCK:
+	    case SPE_WIZZARD_LOCK:
 	    default:
 		return FALSE;
 	    }
@@ -767,7 +767,7 @@ int x, y;
 
 	switch(otmp->otyp) {
 	case WAN_LOCKING:
-	case SPE_WIZARD_LOCK:
+	case SPE_WIZZARD_LOCK:
 #ifdef REINCARNATION
 	    if (Is_rogue_level(&u.uz)) {
 	    	boolean vis = cansee(x,y);

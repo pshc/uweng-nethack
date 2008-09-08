@@ -676,7 +676,7 @@ gcrownu()
     class_gift = STRANGE_OBJECT;
     /* 3.3.[01] had this in the A_NEUTRAL case below,
        preventing chaotic wizards from receiving a spellbook */
-    if (Role_if(PM_WIZARD) &&
+    if (Role_if(PM_WIZZARD) &&
 	    (!uwep || (uwep->oartifact != ART_VORPAL_BLADE &&
 		       uwep->oartifact != ART_STORMBRINGER)) &&
 	    !carrying(SPE_BUSTER_BEAM)) {
