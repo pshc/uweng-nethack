@@ -1115,7 +1115,8 @@ int dieroll; /* needed for Magicbane and vorpal blades */
 			otmp->dknown = TRUE;
 			return TRUE;
 		}
-	    } else if (otmp->oartifact == ART_VORPAL_BLADE &&
+	    } else if ((otmp->oartifact == ART_VORPAL_BLADE
+		        || otmp->oartifact == ART_TOOL) &&
 			(dieroll == 1 || mdef->data == &mons[PM_JABBERWOCK]
 			 || (mdef->data >= &mons[PM_MONKEY] &&
 			     mdef->data <= &mons[PM_THREE_HEADED_MONKEY]))) {
