@@ -457,7 +457,7 @@ domonability()
 	else if (is_hider(youmonst.data)) return dohide();
 	else if (is_mind_flayer(youmonst.data)) return domindblast();
 	else if (youmonst.data->mlet == S_GOOSE)
-		You("poop.");
+		goose_poop(youmonst.mx, youmonst.my);
 	else if (is_unicorn(youmonst.data)) {
 	    use_unicorn_horn((struct obj *)0);
 	    return 1;
