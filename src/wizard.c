@@ -585,6 +585,11 @@ const char * const random_insult[] = {
 	"wittol",
 	"worm",
 	"wretch",
+	"hoser",
+	"brutish oaf",
+	"analrapist",
+	"hippie",
+	"Republican",
 };
 
 const char * const random_malediction[] = {
@@ -598,7 +603,9 @@ const char * const random_malediction[] = {
 	"Thou art as a flea to me,",
 	"Thou art doomed,",
 	"Thy fate is sealed,",
-	"Verily, thou shalt be one dead"
+	"Verily, thou shalt be one dead",
+	"Thou canst comprehend the nature of mine attack,",
+	"Enjoy thine AIDS,",
 };
 
 /* Insult or intimidate the player */
