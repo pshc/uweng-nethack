@@ -842,8 +842,20 @@ register struct monst *mtmp;
 	    }
 	    break;
 	case MS_RIDER:
-	    if (ptr == &mons[PM_DEATH] && !rn2(10))
-		pline_msg = "is busy reading a copy of Sandman #8.";
+	    if (ptr == &mons[PM_DEATH]) {
+		static const char * const death_chat_msg[] = {
+		    "WHO DO YOU THINK YOU ARE, WAR?",
+		    "I DON'T KNOW ABOUT YOU, BUT I COULD MURDER A CURRY.",
+		    "CATS... CATS ARE NICE.",
+		    "I AM DEATH, NOT TAXES. I TURN UP ONLY ONCE.",
+		    "YOU DON'T SEE PEOPLE AT THEIR BEST IN THIS JOB.",
+		    "DO NOT PUT ALL YOUR TRUST IN ROOT VEGETABLES.",
+		    "THERE IS NO MORE TIME, EVEN FOR CAKE. FOR YOU, THE CAKE IS OVER. YOU HAVE REACHED THE END OF CAKE.",
+		};
+		if (!rn2(10))
+		    pline_msg = "is busy reading a copy of Sandman #8.";
+		else verbl_msg = death_chat_msg[rn2(SIZE(death_chat_msg))];
+	    }
 	    else verbl_msg = "Who do you think you are, War?";
 	    break;
     }

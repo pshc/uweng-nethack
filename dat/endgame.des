@@ -547,7 +547,7 @@ MONSTER:'@',"aligned priest",(38,12),noalign,hostile
 MONSTER:'@',"aligned priest",(36,13),noalign,hostile
 MONSTER:'A',"Angel",(38,13),noalign,hostile
 MONSTER:'A',"Angel",(37,13),noalign,hostile
-MONSTER:'&',"Death",place[1],hostile
+MONSTER:'&',"DEATH",place[1],hostile
 # East round room
 MONSTER:'@',"aligned priest",(56,09),noalign,hostile
 MONSTER:'@',"aligned priest",(55,08),noalign,hostile

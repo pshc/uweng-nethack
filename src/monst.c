@@ -2782,7 +2782,7 @@ struct permonst _mons2[] = {
 	M3_WANTSAMUL|M3_INFRAVISIBLE|M3_INFRAVISION, HI_LORD),
 	/* Riders -- the Four Horsemen of the Apocalypse ("War" == player)
 	 */
-    MON("Death", S_DEMON,
+    MON("DEATH", S_DEMON,
 	LVL(30, 12, -5, 100, 0), (G_UNIQ|G_NOGEN),
 	A(ATTK(AT_TUCH, AD_DETH, 8, 8), ATTK(AT_TUCH, AD_DETH, 8, 8),
 	  NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
