@@ -2193,4 +2193,23 @@ do_crwall:
     return idx;
 }
 
+void
+take_snapshot()
+{
+    int x, y, ch, color;
+    unsigned special;
+    /*struct rm *lev;*/
+    FILE *fd;
+
+    fd = fopen("/tmp/snapshot", "w");
+    for (y = 0; y < ROWNO; y++) {
+	for (x = 1; x < COLNO; x++) {
+	    mapglyph(gbuf[y][x].glyph, &ch, &color, &special, x, y);
+	    fputc(ch, fd);
+	}
+	fputc('\n', fd);
+    }
+    fclose(fd);
+}
+
 /*display.c*/

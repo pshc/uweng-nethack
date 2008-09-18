@@ -290,6 +290,7 @@ E int FDECL(back_to_glyph, (XCHAR_P,XCHAR_P));
 E int FDECL(zapdir_to_glyph, (int,int,int));
 E int FDECL(glyph_at, (XCHAR_P,XCHAR_P));
 E void NDECL(set_wall_state);
+E void NDECL(take_snapshot);
 
 /* ### do.c ### */
 
