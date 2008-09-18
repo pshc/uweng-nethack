@@ -632,6 +632,10 @@ register struct	monst	*mtmp;
 		if (ptr == &mons[PM_MORBIDLY_OBESE_GOOSE] && !rn2(5))
 			(void) mongets(mtmp, FOIE_GRAS);
 		break;
+	    case S_LIZARD:
+		if (ptr == &mons[PM_HYPNOTOAD] && !rn2(50))
+			(void) mongets(mtmp, SPE_MIND_CONTROL);
+		break;
 	    case S_LEPRECHAUN:
 #ifndef GOLDOBJ
 		mtmp->mgold = (long) d(level_difficulty(), 30);

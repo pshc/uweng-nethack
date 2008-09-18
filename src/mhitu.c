@@ -2031,7 +2031,6 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		    *(int *)mtmp->mextra = state;
 	        }
 		break;
-#ifdef PM_BEHOLDER /* work in progress */
 	    case AD_SLEE:
 		if(!mtmp->mcan && canseemon(mtmp) &&
 		   couldsee(mtmp->mx, mtmp->my) && mtmp->mcansee &&
@@ -2050,7 +2049,6 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		    u_slow_down();
 		    stop_occupation();
 		break;
-#endif
 	    default: impossible("Gaze attack %d?", mattk->adtyp);
 		break;
 	}
