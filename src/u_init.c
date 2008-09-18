@@ -176,7 +176,7 @@ static struct trobj Engineer[] = {
 	{ LEATHER_JACKET, 1, ARMOR_CLASS, 1, UNDEF_BLESS },
 	{ PLASTIC_HARD_HAT, 1, ARMOR_CLASS, 1, UNDEF_BLESS },
 	{ WAN_CONSTRUCT, 0, WAND_CLASS, 1, 1 },
-	{ UNDEF_TYP, UNDEF_SPE, WAND_CLASS, 3, UNDEF_BLESS },
+	{ UNDEF_TYP, UNDEF_SPE, WAND_CLASS, 2, UNDEF_BLESS },
 	{ UNDEF_TYP, UNDEF_SPE, SCROLL_CLASS, 2, UNDEF_BLESS },
 	{ UNDEF_TYP, UNDEF_SPE, SPBOOK_CLASS, 1, UNDEF_BLESS },
 	{ 0, 0, 0, 0, 0 }
@@ -510,14 +510,15 @@ static const struct def_skill Skill_W[] = {
 static const struct def_skill Skill_Eng[] = {
     { P_DAGGER, P_EXPERT },		{ P_KNIFE,  P_SKILLED },
     { P_AXE, P_BASIC },			{ P_PICK_AXE, P_SKILLED },
-    { P_QUARTERSTAFF, P_EXPERT },	{ P_SHORT_SWORD, P_BASIC },
+    { P_QUARTERSTAFF, P_BASIC },	{ P_SHORT_SWORD, P_SKILLED },
+    { P_BROAD_SWORD, P_SKILLED },	{ P_LONG_SWORD, P_EXPERT },
+    { P_TWO_HANDED_SWORD, P_SKILLED },	{ P_SCIMITAR, P_BASIC },
     { P_BOW, P_BASIC },			{ P_CROSSBOW, P_SKILLED },
     { P_TRIDENT, P_EXPERT },            { P_HAMMER, P_SKILLED },
     { P_WHIP, P_BASIC },		{ P_UNICORN_HORN, P_SKILLED },
     { P_ATTACK_SPELL, P_SKILLED },	{ P_HEALING_SPELL, P_BASIC },
-    { P_DIVINATION_SPELL, P_EXPERT },	{ P_ENCHANTMENT_SPELL, P_EXPERT },
-    /*{ P_CLERIC_SPELL, P_BASIC },*/	{ P_ESCAPE_SPELL, P_SKILLED },
-    { P_MATTER_SPELL, P_EXPERT },
+    { P_DIVINATION_SPELL, P_SKILLED },	{ P_ENCHANTMENT_SPELL, P_SKILLED },
+    { P_ESCAPE_SPELL, P_SKILLED },	{ P_MATTER_SPELL, P_EXPERT },
 #ifdef STEED
     { P_RIDING, P_BASIC },
 #endif
@@ -770,9 +771,12 @@ u_init()
 #endif
 		ini_inv(Engineer);
 		ini_inv(Towel);
-		knows_class(WAND_CLASS);
+		/* Already know all wands */
+		for (i = 1; i < NUM_OBJECTS; i++)
+		    if (objects[i].oc_class == WAND_CLASS)
+			knows_object(i);
 		if(!rn2(4)) ini_inv(Blindfold);
-		if(!rn2(4)) ini_inv(Tinningkit);
+		if(!rn2(10)) ini_inv(Tinningkit);
 		if(!rn2(10)) ini_inv(Magicmarker);
 		skill_init(Skill_Eng);
 		break;

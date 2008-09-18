@@ -396,10 +396,10 @@ const struct Role roles[] = {
 	MH_HUMAN | ROLE_MALE|ROLE_FEMALE |
 	  ROLE_LAWFUL|ROLE_NEUTRAL|ROLE_CHAOTIC,
 	/* Str Int Wis Dex Con Cha */
-	{   7, 10,  7,  7,  7,  7 },    /* Minimum */
+	{  10, 10,  7, 10,  7,  7 },    /* Minimum */
 	{  20, 30,  5, 20, 20,  5 },    /* Distribution at init */
 	/* Init   Lower  Higher */
-	{  10, 3,  1, 8,  1, 3 },	/* Hit points */
+	{  10, 3,  1, 5,  2, 0 },	/* Hit points */
 	{  10, 5,  0, 2,  0, 3 },	/* Energy */
 	/* first is fixed amount gained, second is random amount gained */
 	/* when level is this or higher, use the "higher" column instead */
