@@ -171,6 +171,12 @@ struct obj *otmp;
 			}
 		}
 		break;
+	case WAN_EVOLUTION:
+		if (resists_magm(mtmp))
+		    shieldeff(mtmp->mx, mtmp->my);
+		else
+		    evolve_mon(mtmp, otmp->cursed);
+		break;
 	case WAN_POLYMORPH:
 	case SPE_POLYMORPH:
 	case POT_POLYMORPH:
@@ -1327,7 +1333,8 @@ poly_obj(obj, id)
 	    break;
 
 	case WAND_CLASS:
-	    while (otmp->otyp == WAN_WISHING || otmp->otyp == WAN_POLYMORPH)
+	    while (otmp->otyp == WAN_WISHING || otmp->otyp == WAN_POLYMORPH
+			|| otmp->otyp == WAN_EVOLUTION)
 		otmp->otyp = rnd_class(WAN_LIGHT, WAN_LIGHTNING);
 	    /* altering the object tends to degrade its quality
 	       (analogous to spellbook `read count' handling) */
@@ -1504,6 +1511,7 @@ struct obj *obj, *otmp;
 		if (obj->otyp == WAN_POLYMORPH ||
 			obj->otyp == SPE_POLYMORPH ||
 			obj->otyp == POT_POLYMORPH ||
+			obj->otyp == WAN_EVOLUTION ||
 			obj_resists(obj, 5, 95)) {
 		    res = 0;
 		    break;
@@ -1521,6 +1529,10 @@ struct obj *obj, *otmp;
 		}
 		obj = poly_obj(obj, STRANGE_OBJECT);
 		newsym(obj->ox,obj->oy);
+		break;
+	case WAN_EVOLUTION:
+		obj = evolve_obj(obj, otmp->cursed);
+		newsym(obj->ox, obj->oy);
 		break;
 	case WAN_PROBING___:
 		res = !obj->dknown;
@@ -1974,6 +1986,11 @@ boolean ordinary;
 		    	polyself(FALSE);
 		    break;
 
+		case WAN_EVOLUTION:
+		    if (!Unchanging)
+			evolveself(obj->cursed);
+		    break;
+
 		case WAN_CANCELLATION:
 		case SPE_CANCELLATION:
 		    (void) cancel_monst(&youmonst, obj, TRUE, FALSE, TRUE);
@@ -2190,6 +2207,7 @@ struct obj *obj;	/* wand or spell */
 		case WAN_MAKE_INVISIBLE:
 		case WAN_CANCELLATION:
 		case SPE_CANCELLATION:
+		case WAN_EVOLUTION:
 		case WAN_POLYMORPH:
 		case SPE_POLYMORPH:
 		case WAN_STRIKING:
@@ -2288,7 +2306,7 @@ zap_updown(obj)
 struct obj *obj;	/* wand or spell */
 {
 	boolean striking = FALSE, disclose = FALSE;
-	int x, y, xx, yy, ptmp;
+	int x, y, xx, yy, ptmp, len;
 	struct obj *otmp;
 	struct engr *e;
 	struct trap *ttmp;
@@ -2405,6 +2423,11 @@ struct obj *obj;	/* wand or spell */
 	    /* subset of engraving effects; none sets `disclose' */
 	    if ((e = engr_at(x, y)) != 0 && e->engr_type != HEADSTONE) {
 		switch (obj->otyp) {
+		case WAN_EVOLUTION:
+		    len = strlen(e->engr_txt);
+		    for (ptmp = 0; ptmp <= len; ptmp++)
+			    e->engr_txt[ptmp] = highc(e->engr_txt[ptmp]);
+		    break;
 		case WAN_POLYMORPH:
 		case SPE_POLYMORPH:
 		    del_engr(e);

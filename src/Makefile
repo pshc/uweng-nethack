@@ -328,7 +328,7 @@ HACKCSRC = allmain.c alloc.c apply.c artifact.c attrib.c ball.c bones.c \
 	   rnd.c role.c rumors.c save.c shk.c shknam.c sit.c sounds.c sp_lev.c \
 	   spell.c steal.c steed.c teleport.c timeout.c topten.c track.c trap.c \
 	   u_init.c uhitm.c vault.c version.c vision.c weapon.c were.c wield.c \
-	   windows.c wizard.c worm.c worn.c write.c zap.c construct.c
+	   windows.c wizard.c worm.c worn.c write.c zap.c construct.c evolve.c
 
 # all operating-system-dependent .c (for dependencies and such)
 SYSCSRC = ../sys/atari/tos.c ../sys/share/pcmain.c ../sys/share/pcsys.c \
@@ -386,7 +386,7 @@ HOBJ = $(FIRSTOBJ) allmain.o alloc.o apply.o artifact.o attrib.o ball.o \
 	role.o rumors.o save.o shk.o shknam.o sit.o sounds.o sp_lev.o spell.o \
 	steal.o steed.o teleport.o timeout.o topten.o track.o trap.o u_init.o \
 	uhitm.o vault.o vision.o vis_tab.o weapon.o were.o wield.o windows.o \
-	wizard.o worm.o worn.o write.o zap.o construct.o \
+	wizard.o worm.o worn.o write.o zap.o construct.o evolve.o \
 	$(RANDOBJ) $(SYSOBJ) $(WINOBJ) version.o
 # the .o files from the HACKCSRC, SYSSRC, and WINSRC lists
 
@@ -727,6 +727,7 @@ dungeon.o: dungeon.c $(HACK_H) ../include/dgn_file.h ../include/dlb.h
 eat.o: eat.c $(HACK_H)
 end.o: end.c $(HACK_H) ../include/eshk.h ../include/dlb.h ../include/socket.h
 engrave.o: engrave.c $(HACK_H) ../include/lev.h
+evolve.o: evolve.c $(HACK_H)
 exper.o: exper.c $(HACK_H)
 explode.o: explode.c $(HACK_H)
 extralev.o: extralev.c $(HACK_H)

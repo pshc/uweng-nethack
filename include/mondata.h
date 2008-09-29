@@ -190,4 +190,6 @@
 #define befriend_with_obj(ptr, obj) ((obj)->oclass == FOOD_CLASS && \
 				     is_domestic(ptr))
 
+extern const short grownups[][2];
+
 #endif /* MONDATA_H */

@@ -561,7 +561,7 @@ struct monst *mtmp;
 				(!mtmp->mflee || u.uhave.amulet));
 }
 
-static const short grownups[][2] = {
+const short grownups[][2] = {
 	{PM_CHICKATRICE, PM_COCKATRICE},
 	{PM_LITTLE_DOG, PM_DOG}, {PM_DOG, PM_LARGE_DOG},
 	{PM_HELL_HOUND_PUP, PM_HELL_HOUND},

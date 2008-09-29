@@ -587,6 +587,14 @@ E void FDECL(del_engr, (struct engr *));
 E void FDECL(rloc_engr, (struct engr *));
 E void FDECL(make_grave, (int,int,const char *));
 
+/* ### evolve.c ### */
+
+E struct permonst *FDECL(mon_evolves_into, (struct monst *, BOOLEAN_P));
+E short FDECL(obj_evolves_into, (struct obj *, BOOLEAN_P));
+E boolean FDECL(evolve_mon, (struct monst *, BOOLEAN_P));
+E struct obj *FDECL(evolve_obj, (struct obj *, BOOLEAN_P));
+E void FDECL(evolveself, (BOOLEAN_P));
+
 /* ### exper.c ### */
 
 E int FDECL(experience, (struct monst *,int));

@@ -2678,6 +2678,7 @@ do_break_wand(obj)
 	dmg = d(1 + obj->spe,6);	/* normally 2d12 */
     case WAN_CANCELLATION:
     case WAN_POLYMORPH:
+    case WAN_EVOLUTION:
     case WAN_TELEPORTATION:
     case WAN_UNDEAD_TURNING:
 	affects_objects = TRUE;

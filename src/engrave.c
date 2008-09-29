@@ -458,6 +458,7 @@ doengrave()
 				/* The current engraving */
 	struct obj *otmp;	/* Object selected with which to engrave */
 	char *writer;
+	int i;
 
 	multi = 0;		/* moves consumed */
 	nomovemsg = (char *)0;	/* occupation end message */
@@ -643,6 +644,19 @@ doengrave()
 			    if (!Blind) {
 				type = (xchar)0;	/* random */
 				(void) random_engraving(buf);
+			    }
+			    dengr = TRUE;
+			}
+			break;
+		    case WAN_EVOLUTION:
+			if(oep) {
+			    if (!Blind) {
+				len = strlen(oep->engr_txt);
+				/* uppercase existing, copying the null */
+				for (i = 0; i <= len; i++)
+				    buf[i] = otmp->cursed ?
+					    lowc(oep->engr_txt[i]) :
+					    highc(oep->engr_txt[i]);
 			    }
 			    dengr = TRUE;
 			}
