@@ -1000,7 +1000,32 @@ boolean your_fault;
 	boolean isyou = (mon == &youmonst);
 	int distance;
 
-	if(isyou) {
+	/* For some reason only plastic hard hats protect against thrown
+	 * potions. Don't question my logic! */
+	if (isyou && uarmh && is_plastic(uarmh)) {
+		distance = 0;
+		pline_The("%s crashes on your %s and breaks into shards.",
+			botlnam, xname(uarmh));
+		switch (obj->otyp) {
+		    case POT_HYDROFLUORIC_ACID:
+			destroy_arm(uarmh);
+			losehp(rnd(5), "melting plastic hard hat",
+					KILLED_BY_AN);
+			break;
+		    case POT_ACID:
+			/* Plastic hard hats resist acid anyway... */
+			erode_obj(uarmh, TRUE, FALSE);
+			break;
+		    case POT_POLYMORPH:
+			poly_obj(uarmh, STRANGE_OBJECT);
+			break;
+		    case POT_OIL:
+			if (obj->lamplit)
+			    splatter_burning_oil(u.ux, u.uy);
+			break;
+		}
+		return;
+	} else if(isyou) {
 		distance = 0;
 		pline_The("%s crashes on your %s and breaks into shards.",
 			botlnam, body_part(HEAD));
@@ -1049,9 +1074,9 @@ boolean your_fault;
 		}
 		break;
 	case POT_HYDROFLUORIC_ACID:
-		potrustobj(uwep);
+		if (!rn2(2))
+		    potrustobj(uwep);
 		if (!Disint_resistance) {
-		    /* TODO: Labcoats etc? */
 		    pline("This burns your %s off!", body_part(FACE));
 		    hf_death("being splashed with hydrofluoric acid");
 		}
