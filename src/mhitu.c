@@ -2194,6 +2194,11 @@ register struct monst *mon;
 		return 0;
 	}
 
+	if (Frigid) {
+		verbalize("Frigid %s!", flags.female ? "BITCH" : "BASTARD");
+		return 0;
+	}
+
 	if (Blind) pline("It caresses you...");
 	else You_feel("very attracted to %s.", mon_nam(mon));
 

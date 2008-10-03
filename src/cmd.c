@@ -902,6 +902,8 @@ int final;	/* 0 => still in progress; 1 => over, survived; 2 => dead */
 		you_have(buf);
 	}
 	if (Fumbling) enl_msg("You fumble", "", "d", "");
+	if (Frigid) you_are(flags.female ? "a frigid bitch"
+	                                 : "a frigid bastard");
 	if (Wounded_legs
 #ifdef STEED
 	    && !u.usteed

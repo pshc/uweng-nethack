@@ -338,5 +338,8 @@
 
 #define Lifesaved		u.uprops[LIFESAVED].extrinsic
 
+#define HFrigid			u.uprops[FRIGID].intrinsic
+#define EFrigid			u.uprops[FRIGID].extrinsic
+#define Frigid			(HFrigid || EFrigid)
 
 #endif /* YOUPROP_H */

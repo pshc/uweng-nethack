@@ -1587,6 +1587,9 @@ struct obj *otmp;
 		    rehumanize();
 		}
 		break;
+	    case AMULET_OF_FRIGIDITY:
+		HFrigid |= FROMOUTSIDE;
+		break;
 	    case AMULET_OF_STRANGULATION: /* bad idea! */
 		/* no message--this gives no permanent effect */
 		choke(otmp);
