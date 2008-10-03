@@ -89,10 +89,11 @@ const struct innate {
 		     {  17, &(HTeleport_control), "controlled","uncontrolled" },
 		     {	 0, 0, 0, 0 } },
 	eng_abil[] = { {   1, &(HSearching), "", "" },
-		     {   3, &(HShock_resistance), "insulated", "conductive" },
-		     {   6, &(HSleep_resistance), "awake", "permatired" },
-		     {   9, &(HWarning), "sensitive", "blunted" },
-		     {  15, &(HTeleport_control), "controlled","uncontrolled" },
+		     {   3, &(HSleep_resistance), "awake", "permatired" },
+		     {   6, &(HShock_resistance), "insulated", "zappy" },
+		     {  10, &(HWarning), "sensitive", "blunted" },
+		     {  20, &(HTeleport_control), "controlled","uncontrolled" },
+		     {  30, &(HFrigid), "frigid", "" }, /* :D */
 		     {   0, 0, 0, 0 } },
 
 	/* Intrinsics conferred by race */
