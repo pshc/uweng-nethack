@@ -1,28 +1,7 @@
-/*	SCCS Id: @(#)dig.c	3.4	2003/03/23	*/
-/* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
-/* NetHack may be freely redistributed.  See license for details. */
-
 #include "hack.h"
-#include "edog.h"
-/* #define DEBUG */	/* turn on for diagnostics */
 
-/*
-boolean
-is_constructing()
-{
-	if (occupation == construct) {
-	    return TRUE;
-	}
-	return FALSE;
-}
-*/
-
-#define BY_YOU		(&youmonst)
-#define BY_OBJECT	((struct monst *)0)
-
-boolean
-construct_check(madeby, verbose, x, y)
-	struct monst	*madeby;
+static boolean
+construct_check(verbose, x, y)
 	boolean		verbose;
 	int		x, y;
 {
@@ -33,11 +12,10 @@ construct_check(madeby, verbose, x, y)
 	    if (x == xdnladder || x == xupladder) {
 		if(verbose) pline_The("ladder resists your effort.");
 	    } else if(verbose) pline_The("stairs resist your effort.");
-	} else if (IS_THRONE(lev->typ)) /* && madeby != BY_OBJECT)*/ {
+	} else if (IS_THRONE(lev->typ)) {
 	    if(verbose) pline_The("throne resists!");
 	    exercise(A_INT, FALSE);
-	} else if (IS_ALTAR(lev->typ)) /* && (madeby != BY_OBJECT ||
-				Is_astralevel(&u.uz) || Is_sanctum(&u.uz)))*/ {
+	} else if (IS_ALTAR(lev->typ)) {
 	    if(verbose) pline_The("altar resists!");
 	    exercise(A_WIS, FALSE);
 	} else if (Is_airlevel(&u.uz)) {
@@ -50,83 +28,58 @@ construct_check(madeby, verbose, x, y)
 	    if(verbose) pline("There's no room to do that!");
 	} else if (ttmp && ttmp->ttyp == MAGIC_PORTAL) {
 	    if(verbose) pline("A portal is in the way.");
+	} else if (In_sokoban(&u.uz)) {
+	    if(verbose) pline("A mysterious force prevents construction!");
 	}
-	else {
-		return(TRUE);
+	else if (lev->typ == CORR || lev->typ == ROOM || lev->typ == TREE) {
+	    return TRUE; /* Just allow these types for now */
 	}
-	return(FALSE);
+	else if (verbose) {
+	    You("cannot construct there.");
+	}
+	return FALSE;
 }
 
-/* When will hole be finished? Very rough indication used by shopkeeper. */
-int
-constructtime()
+static boolean
+construct_door_ok(x, y)
+	int x, y;
 {
-	/*if(occupation != construct || !*u.ushops) return(-1);
-	return ((250 - digging.effort) / 20);*/
-	return 20;
+    if (levl[x][y].typ == CORR) {
+	return TRUE;
+    }
+    else if (x > 0 && x < COLNO-1 && IS_STWALL(levl[x-1][y].typ)
+		    && IS_STWALL(levl[x+1][y].typ)) {
+	return TRUE;
+    }
+    else if (y > 0 && y < ROWNO-1 && IS_STWALL(levl[x][y-1].typ)
+		    && IS_STWALL(levl[x][y+1].typ)) {
+	return TRUE;
+    }
+    return FALSE;
 }
 
-/*
- * Town Watchmen frown on damage to the town walls, trees or fountains.
- * It's OK to dig holes in the ground, however.
- * If mtmp is assumed to be a watchman, a watchman is found if mtmp == 0
- * zap == TRUE if wand/spell of digging, FALSE otherwise (chewing)
- */
-/*
-void
-watch_dig(mtmp, x, y, zap)
-    struct monst *mtmp;
-    xchar x, y;
-    boolean zap;
-{
-	struct rm *lev = &levl[x][y];
+struct constructed_trap {
+    int kind;
+    const char *name;
+};
 
-	if (in_town(x, y) &&
-	    (closed_door(x, y) || lev->typ == SDOOR ||
-	     IS_WALL(lev->typ) || IS_FOUNTAIN(lev->typ) || IS_TREE(lev->typ))) {
-	    if (!mtmp) {
-		for(mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
-		    if (DEADMONSTER(mtmp)) continue;
-		    if ((mtmp->data == &mons[PM_WATCHMAN] ||
-			 mtmp->data == &mons[PM_WATCH_CAPTAIN]) &&
-			mtmp->mcansee && m_canseeu(mtmp) &&
-			couldsee(mtmp->mx, mtmp->my) && mtmp->mpeaceful)
-			break;
-		}
-	    }
+static const struct constructed_trap up_traps[] = {
+	/*{DART_TRAP, "dart trap"}, {ARROW_TRAP, "arrow trap"},*/
+	{ROCKTRAP, "falling rock trap"},
+	};
+/* Holes are not a good idea for certain levels... */
+static const struct constructed_trap down_traps[] = {
+	{PIT, "pit"}, {SPIKED_PIT, "spiked pit"},
+	};
 
-	    if (mtmp) {
-		if(zap || digging.warned) {
-		    verbalize("Halt, vandal!  You're under arrest!");
-		    (void) angry_guards(!(flags.soundok));
-		} else {
-		    const char *str;
-
-		    if (IS_DOOR(lev->typ))
-			str = "door";
-		    else if (IS_TREE(lev->typ))
-			str = "tree";
-		    else if (IS_ROCK(lev->typ))
-			str = "wall";
-		    else
-			str = "fountain";
-		    verbalize("Hey, stop damaging that %s!", str);
-		    digging.warned = TRUE;
-		}
-		if (is_digging())
-		    stop_occupation();
-	    }
-	}
-}
-*/
-
-/* digging via wand zap or spell cast */
+/* TODO: Don't use a charge for failed attempts */
 void
 zap_construct()
 {
 	struct rm *room;
 	struct monst *mtmp;
 	struct obj *otmp;
+	const struct constructed_trap *trap;
 	int zx, zy;
 
 	if (u.uswallow) {
@@ -145,89 +98,153 @@ zap_construct()
 
 
 	if (u.dz) {
-	    /* make a staircase in the given direction*/
-	    /*if (!Is_airlevel(&u.uz) && !Is_waterlevel(&u.uz) && !Underwater) {*/
-	    /*if (On_stairs(u.ux, u.uy)) {
-	    	if(cansee(u.ux, u.uy))
-	    	    pline_The("beam hits the %s and is absorbed.",
-			(u.ux == xdnladder || u.ux == xupladder)
-			? "ladder" : "stairs");
-		return;
-	    }*/
-	    if (!construct_check(BY_YOU, TRUE, u.ux, u.uy))
+
+	    if (!construct_check(TRUE, u.ux, u.uy))
 	    	return;
-	    /*pline_The("beam deflects harmlessly off the %s.",
-	    		u.dz < 0 ? "floor" : "ceiling");
-	    pline("Looks like that doesn't work yet.");*/
-	    room = &levl[u.ux][u.uy];
-	    room->typ = STAIRS;
-	    room->ladder = u.dz < 0 ? LA_DOWN : LA_UP;
-	    newsym(u.ux, u.uy);
-	    /*otmp = mksobj_at(ROCK, u.ux, u.uy, FALSE, FALSE);
-		    if (otmp) {
-			(void)xname(otmp);
-			stackobj(otmp);
-		    }*/
+
+	    trap = u.dz < 0 ? &up_traps[rn2(SIZE(up_traps))]
+	                    : &down_traps[rn2(SIZE(down_traps))];
+	    seetrap(maketrap(u.ux, u.uy, trap->kind));
+	    You("construct a %s in the %s.", trap->name,
+		    u.dz < 0 ? ceiling(u.ux, u.uy) : surface(u.ux, u.uy));
 	    return;
 	} /* up or down */
 
 	/* normal case: construct next to you */
 	zx = u.ux + u.dx;
 	zy = u.uy + u.dy;
-	if (!construct_check(BY_YOU, TRUE, zx, zy))
+	if (!construct_check(TRUE, zx, zy))
 		return;
 	room = &levl[zx][zy];
 	/* Pretty display */
-	tmp_at(DISP_BEAM, cmap_to_glyph(S_digbeam)); /* TODO */
+	tmp_at(DISP_BEAM, cmap_to_glyph(S_digbeam));
 	delay_output();
 	tmp_at(zx, zy);
-	if (IS_TREE(room->typ)) {
+	otmp = level.objects[zx][zy];
+	if (otmp) {
+	    if (otmp->nexthere) {
+		pline("You're not sure what to do with these objects.");
+	    } else switch (otmp->otyp) {
+	    case BOULDER:
+		if(!cansee(zx, zy))
+			You_hear("rumbling.");
+		else
+			pline_The(room->typ == CORR ? "%s the hallway."
+				: "%s and connects to the ceiling.",
+				aobjnam(otmp, room->typ ==
+					CORR ? "fill" : "expand"));
+		remove_object(otmp);
+		room->typ = STONE;
+		break;
+	    case IRON_CHAIN:
+		if (otmp == uchain) {
+			pline("%s but nothing happens.",
+				The(aobjnam(otmp, "shudder")));
+			break;
+		}
+		if (!cansee(zx, zy))
+			You_hear("clanging metal.");
+		else
+			pline("%s and the links morph into bars.",
+				The(aobjnam(otmp, "unravel")));
+		remove_object(otmp);
+		room->typ = IRONBARS;
+		break;
+	    case DART:
+		remove_object(otmp);
+		seetrap(maketrap(zx, zy, DART_TRAP));
+		You("assemble a dart trap.");
+		break;
+	    case ARROW:
+	    case ELVEN_ARROW:
+	    case ORCISH_ARROW:
+	    case SILVER_ARROW:
+	    case YA:
+	    case CROSSBOW_BOLT:
+		remove_object(otmp);
+		seetrap(maketrap(zx, zy, ARROW_TRAP));
+		You("assemble an arrow trap.");
+		break;
+	    case WAN_SLEEP:
+		if (!otmp->spe) goto no_charges;
+	    case POT_SLEEPING:
+	    case SPE_SLEEP:
+	    case AMULET_OF_RESTFUL_SLEEP:
+		remove_object(otmp);
+		seetrap(maketrap(zx, zy, SLP_GAS_TRAP));
+		You("set up a sleeping gas trap.");
+		break;
+	    case FIRE_HORN:
+	    case WAN_FIRE:
+		if (!otmp->spe) goto no_charges;
+	    case SCR_FIRE:
+	    case SPE_FIREBALL:
+		remove_object(otmp);
+		seetrap(maketrap(zx, zy, FIRE_TRAP));
+		You("set up a fire trap.");
+		break;
+	    case WAN_POLYMORPH:
+		if (!otmp->spe) goto no_charges;
+	    case POT_POLYMORPH:
+	    case RIN_POLYMORPH:
+	    case SPE_POLYMORPH:
+		remove_object(otmp);
+		seetrap(maketrap(zx, zy, POLY_TRAP));
+		You("set up a polymorph trap.");
+		break;
+	    case WAN_TELEPORTATION:
+		if (!otmp->spe) goto no_charges;
+	    case SCR_TELEPORTATION:
+	    case RIN_TELEPORTATION:
+	    case SPE_TELEPORT_AWAY:
+		remove_object(otmp);
+		seetrap(maketrap(zx, zy, TELEP_TRAP));
+		You("set up a teleportation trap.");
+		break;
+	    case WAN_CANCELLATION:
+		if (!otmp->spe) goto no_charges;
+	    case SPE_CANCELLATION:
+		remove_object(otmp);
+		seetrap(maketrap(zx, zy, ANTI_MAGIC));
+		You("set up an anti-magic trap.");
+		break;
+	    default:
+		You("cannot decide what to make with %s.", the(xname(otmp)));
+		break;
+	    no_charges:
+		pline("%s has no charges! Your trap fails.", The(xname(otmp)));
+	    }
+	} else if (construct_door_ok(zx, zy)) {
+		/* make a door */
+		room->typ = DOOR;
+		room->doormask = D_CLOSED;
+		if (cansee(zx, zy))
+			pline("A door suddenly appears!");
+		else
+			You_hear("a door close.");
+	} else if (IS_TREE(room->typ)) {
 		/* Turn trees into a chest */
 		room->typ = ROOM;
 		otmp = mksobj_at(CHEST, zx, zy, FALSE, FALSE);
 		if(otmp) {
 			(void)xname(otmp);
 			stackobj(otmp);
-			mkbox_cnts(otmp);
+			mkbox_cnts(otmp); /* Too nice? */
+			if (cansee(zx, zy))
+			    pline_The("tree becomes %s!", an(xname(otmp)));
+			else
+			    You_hear("a loud clunk.");
 		}
-		if(!cansee(zx, zy))
-			pline("You hear a loud clunk.");
-		else
-			pline("The tree becomes a wooden chest!");
-	} else if ((otmp = sobj_at(BOULDER, zx, zy)) != 0) {
-		if(!cansee(zx, zy))
-			pline("You hear rumbling.");
-		else if(room->typ == CORR)
-			pline("The boulder fills the hallway.");
-		else
-			pline("The boulder expands and connects to the ceiling.");
-		remove_object(otmp);
-		room->typ = STONE;
 	} else {
-		if(OBJ_AT(zx, zy)) {
-			pline("Something is in the way!");
-			return;
-		}
 		/* default case */
-		if(rnd(10) > 5) {
-			/* make a door */
-			room->typ = DOOR;
-			room->doormask = D_CLOSED;
-			if (cansee(zx, zy))
-				pline("A door suddenly appears!");
-			else
-				pline("You hear a door close.");
-		} else {
-			room->typ = FOUNTAIN;
-			level.flags.nfountains++;
-			/* TODO: set fountain status */
-			if (cansee(zx, zy))
-				pline("A fountain suddenly appears!");
-			else
-				pline("You hear bubbling water.");
-		}
+		room->typ = FOUNTAIN;
+		room->blessedftn = 0;
+		level.flags.nfountains++;
+		if (cansee(zx, zy))
+			pline("A fountain suddenly appears!");
+		else
+			You_hear("bubbling water.");
 	}
-	unblock_point(zx,zy); /* vision */
 	tmp_at(DISP_END,0);	/* closing call */
 	newsym(zx, zy);
 }

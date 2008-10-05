@@ -2125,6 +2125,7 @@ boolean ordinary;
 		case SPE_DETECT_UNSEEN:
 		case WAN_IDLING:
 		case WAN_LOCKING:
+		case WAN_CONSTRUCT:
 		case SPE_WIZZARD_LOCK:
 		    break;
 		case WAN_PROBING___:
