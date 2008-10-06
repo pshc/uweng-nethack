@@ -1299,6 +1299,15 @@ dopois:
 		    break;
 		}
 		buf[0] = '\0';
+		if (Frigid) {
+		    verbalize("Frigid %s!", flags.female ? "BITCH" : "BASTARD");
+		    if (!tele_restrict(mtmp)) {
+			(void) rloc(mtmp, FALSE);
+			return 3;
+		    }
+		    monflee(mtmp, 0, FALSE, FALSE);
+		    break;
+		}
 		switch (steal(mtmp, buf)) {
 		  case -1:
 			return 2;
