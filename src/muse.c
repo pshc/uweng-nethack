@@ -1569,6 +1569,7 @@ struct monst *mtmp;
 #define MUSE_WAN_SPEED_MONSTER 7
 #define MUSE_BULLWHIP 8
 #define MUSE_POT_POLYMORPH 9
+#define MUSE_WAN_EVOLUTION 10
 
 boolean
 find_misc(mtmp)
@@ -1675,6 +1676,17 @@ struct monst *mtmp;
 				&& monstr[monsndx(mdat)] < 6) {
 			m.misc = obj;
 			m.has_misc = MUSE_POT_POLYMORPH;
+		}
+		nomore(MUSE_WAN_EVOLUTION);
+		/* Never zap unless non-cursed and the monster is already at
+		 * its evolutionary lowest, except once in a while */
+		if(obj->otyp == WAN_EVOLUTION && obj->spe > 0
+				&& mon_evolves_into(mtmp, obj->cursed)
+				&& ((!obj->cursed &&
+				     !mon_evolves_into(mtmp, TRUE))
+				    || !rn2(100))) {
+			m.misc = obj;
+			m.has_misc = MUSE_WAN_EVOLUTION;
 		}
 	}
 	return((boolean)(!!m.has_misc));
@@ -1795,6 +1807,12 @@ skipmsg:
 		otmp->spe--;
 		(void) newcham(mtmp, muse_newcham_mon(mtmp), TRUE, FALSE);
 		if (oseen) makeknown(WAN_POLYMORPH);
+		return 2;
+	case MUSE_WAN_EVOLUTION:
+		mzapmsg(mtmp, otmp, TRUE);
+		otmp->spe--;
+		evolve_mon(mtmp, otmp->cursed);
+		if (oseen) makeknown(WAN_EVOLUTION);
 		return 2;
 	case MUSE_POT_POLYMORPH:
 		mbhavmsg(mtmp, otmp);
@@ -1977,6 +1995,7 @@ struct obj *obj;
 	    if (objects[typ].oc_dir == RAY ||
 		    typ == WAN_STRIKING ||
 		    typ == WAN_TELEPORTATION ||
+		    typ == WAN_EVOLUTION ||
 		    typ == WAN_CREATE_MONSTER)
 		return TRUE;
 	    break;
