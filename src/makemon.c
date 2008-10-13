@@ -358,6 +358,10 @@ register struct monst *mtmp;
 		else
 		    (void) mongets(mtmp, CLUB);
 		break;
+	    case S_QUANTMECH:
+		if (!rn2(5))
+		    (void) mongets(mtmp, CRESCENT_WRENCH);
+		break;
 	    case S_TROLL:
 		if (!rn2(2)) switch (rn2(4)) {
 		    case 0: (void)mongets(mtmp, RANSEUR); break;
