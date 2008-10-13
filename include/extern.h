@@ -221,6 +221,7 @@ E void FDECL(find_trap, (struct trap *));
 E int FDECL(dosearch0, (int));
 E int NDECL(dosearch);
 E void NDECL(sokoban_detect);
+E void NDECL(altar_detect);
 
 /* construct.c */
 E void NDECL(zap_construct);

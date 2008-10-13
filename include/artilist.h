@@ -25,6 +25,7 @@ static const char *artifact_names[] = {
 #define     FIRE(a,b)	{0,AD_FIRE,a,b}
 #define     ELEC(a,b)	{0,AD_ELEC,a,b}		/* electrical shock */
 #define     STUN(a,b)	{0,AD_STUN,a,b}		/* magical attack */
+#define     ACID(a,b)	{0,AD_ACID,a,b}
 
 STATIC_OVL NEARDATA struct artifact artilist[] = {
 #endif	/* MAKEDEFS_C */
@@ -236,6 +237,11 @@ A("The Tool",	CRESCENT_WRENCH,
 	(SPFX_WARN|SPFX_HALRES|SPFX_SEARCH|SPFX_SEEK|SPFX_REFLECT), 0,
 	PHYS(5,2),	DRLI(0,0),	NO_CARY,
 	LEV_MAPPING,	A_NEUTRAL, PM_ENGINEER, NON_PM, 6000L ),
+
+A("Showalter",	SHORT_SWORD,
+	(SPFX_WARN|SPFX_DFLAG2), 0, M2_MERC,
+	ACID(5,0), NO_DFNS, NO_CARY,
+	SHOW_ALTAR, A_CHAOTIC, NON_PM, NON_PM, 100L ),
 /* TEMP #define A(nam,typ,s1,s2,mt,atk,dfn,cry,inv,al,cl,rac,cost) */
 
 /*

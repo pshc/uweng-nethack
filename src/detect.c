@@ -744,6 +744,35 @@ outtrapmap:
     return(0);
 }
 
+void
+altar_detect()
+{
+    int uw = u.uinwater;
+    int x, y, n = 0;
+    int glyph;
+
+    cls();
+    u.uinwater = 0;
+
+    for (x = 0; x < COLNO; x++)
+	for (y = 0; y < ROWNO; y++)
+	    if (levl[x][y].typ == ALTAR) {
+		glyph = back_to_glyph(x, y);
+		if (level.flags.hero_memory)
+		    levl[x][y].glyph = glyph;
+		show_glyph(x, y, glyph);
+		n++;
+	    }
+
+    newsym(u.ux,u.uy);
+    pline("You %sfeel that an altar is nearby.", n ? "" : "don't ");
+    display_nhwindow(WIN_MAP, TRUE);
+    docrt();
+    u.uinwater = uw;
+    if (Underwater) under_water(2);
+    if (u.uburied) under_ground(2);
+}
+
 const char *
 level_distance(where)
 d_level *where;

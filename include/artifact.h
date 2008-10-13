@@ -61,5 +61,6 @@ struct artifact {
 #define ENLIGHTENING	(LAST_PROP+8)
 #define CREATE_AMMO	(LAST_PROP+9)
 #define LEV_MAPPING     (LAST_PROP+10)
+#define SHOW_ALTAR	(LAST_PROP+11)
 
 #endif /* ARTIFACT_H */

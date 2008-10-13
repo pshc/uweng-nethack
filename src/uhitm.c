@@ -194,7 +194,8 @@ struct obj *wep;	/* uwep for attack(), null for kick_monster() */
 	if (flags.confirm && mtmp->mpeaceful
 	    && !Confusion && !Hallucination && !Stunned) {
 		/* Intelligent chaotic weapons (Stormbringer) want blood */
-		if (wep && wep->oartifact == ART_STORMBRINGER) {
+		if (wep && (wep->oartifact == ART_STORMBRINGER
+			    || wep->oartifact == ART_SHOWALTER)) {
 			override_confirmation = TRUE;
 			return(FALSE);
 		}
@@ -408,6 +409,42 @@ atk_done:
 	return(TRUE);
 }
 
+STATIC_OVL void
+showalter_apologise(mon, mhit, mdied)
+	struct monst *mon;
+	boolean mhit;
+	boolean mdied;
+{
+    // Crappy ripoff state field
+    if (uwep->obroken) {
+	// This message after the first time
+	verbalize("I thought %s was a %s, I swear to %s!",
+			genders[gender(mon)].he, rndmonnam(),
+			align_gname(A_CHAOTIC));
+	return;
+    }
+    // First time message
+    char buf[BUFSZ] = " ";
+    strcpy(buf + 1, Adjmonnam(mon, "innocent"));
+    if (!strncmpi(" the ", buf, 5))
+	memcpy(buf, "that", 4);
+    if (mhit) {
+	verbalize("I just stabbed... %s in the %s...",
+			buf, mbodypart(mon, STOMACH));
+	verbalize("and %s%s, and that was WRONG OF ME",
+			genders[gender(mon)].he,
+			mdied ? " died" : "'ll probably die from it");
+	verbalize("and I'll be the first one to admit it.");
+    }
+    else {
+	verbalize("I just tried to stab... %s...", buf);
+	verbalize("and %s'll probably hate you forever for it,",
+			genders[gender(mon)].he);
+	verbalize("and that was WRONG OF ME, and I'll be the first one to admit it.");
+    }
+    uwep->obroken++;
+}
+
 STATIC_OVL boolean
 known_hitum(mon, mhit, uattk)	/* returns TRUE if monster still lives */
 register struct monst *mon;
@@ -465,6 +502,9 @@ struct attack *uattk;
 		    cutworm(mon, x, y, uwep);
 	    }
 	}
+
+	if (override_confirmation && uwep->oartifact == ART_SHOWALTER)
+	    showalter_apologise(mon, *mhit, !malive);
 	return(malive);
 }
 

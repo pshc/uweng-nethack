@@ -1417,6 +1417,9 @@ arti_invoke(obj)
 	    do_mapping();
 	    break;
 	  }
+	case SHOW_ALTAR:
+	    altar_detect();
+	    break;
 	}
     } else {
 	long eprop = (u.uprops[oart->inv_prop].extrinsic ^= W_ARTI),
