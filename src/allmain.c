@@ -525,6 +525,7 @@ newgame()
 	 */
 	if(MON_AT(u.ux, u.uy)) mnexto(m_at(u.ux, u.uy));
 	(void) makedog();
+	(void) make_coat_rack();
 	docrt();
 
 	if (flags.legacy) {

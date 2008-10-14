@@ -2603,6 +2603,9 @@ xchar x, y;
 		continue;		/* Immune */
 		/*NOTREACHED*/
 		break;
+	    case COAT_RACK:
+		chance = 50;
+		break;
 	    case CHEST:
 		chance = 40;
 		break;

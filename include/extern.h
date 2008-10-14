@@ -1026,6 +1026,7 @@ E void FDECL(dodoor, (int,int,struct mkroom *));
 E void FDECL(mktrap, (int,int,struct mkroom *,coord*));
 E void FDECL(mkstairs, (XCHAR_P,XCHAR_P,CHAR_P,struct mkroom *));
 E void NDECL(mkinvokearea);
+E void NDECL(make_coat_rack);
 
 /* ### mkmap.c ### */
 

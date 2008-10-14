@@ -496,8 +496,11 @@ int trap_type;
 		dosdoor(xx, yy, aroom, SDOOR);
 	    } else {
 		rm->typ = CORR;
-		if(rn2(7))
+		if(rn2(7)) {
 		    dosdoor(xx, yy, aroom, rn2(5) ? SDOOR : DOOR);
+		    if (!rn2(5))
+			(void) mksobj_at(COAT_RACK, xx, yy+dy, TRUE, FALSE);
+		}
 		else {
 		    if (!level.flags.noteleport)
 			(void) mksobj_at(SCR_TELEPORTATION,
@@ -1587,6 +1590,16 @@ xchar x, y;
 	pline("Made knox portal.");
 #endif
 	place_branch(br, x, y);
+}
+
+void
+make_coat_rack() {
+    coord pos;
+    if (!enexto(&pos, u.ux, u.uy, &mons[PM_LICHEN])) {
+	pos.x = u.ux;
+	pos.y = u.uy;
+    }
+    mksobj_at(COAT_RACK, pos.x, pos.y, TRUE, FALSE);
 }
 
 /*mklev.c*/

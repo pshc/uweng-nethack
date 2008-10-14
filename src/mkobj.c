@@ -144,6 +144,7 @@ struct obj *box;
 
 	switch (box->otyp) {
 	case ICE_BOX:		n = 20; break;
+	case COAT_RACK:
 	case CHEST:		n = 5; break;
 	case LARGE_BOX:		n = 3; break;
 	case SACK:
@@ -166,6 +167,8 @@ struct obj *box;
 		    (void) stop_timer(ROT_CORPSE, (genericptr_t)otmp);
 		    (void) stop_timer(REVIVE_MON, (genericptr_t)otmp);
 		}
+	    } else if (box->otyp == COAT_RACK) {
+		otmp = mksobj(COATHANGER, TRUE, FALSE);
 	    } else {
 		register int tprob;
 		const struct icp *iprobs = boxiprobs;
@@ -484,6 +487,7 @@ boolean artif;
 		case LARGE_BOX:		otmp->olocked = !!(rn2(5));
 					otmp->otrapped = !(rn2(10));
 		case ICE_BOX:
+		case COAT_RACK:
 		case SACK:
 		case OILSKIN_SACK:
 		case BAG_OF_HOLDING:	mkbox_cnts(otmp);

@@ -340,6 +340,8 @@ struct mkroom *sroom;
 			if(!rn2(20))	/* the payroll and some loot */
 			    (void) mksobj_at((rn2(3)) ? LARGE_BOX : CHEST,
 					     sx, sy, TRUE, FALSE);
+			else if (!rn2(20))
+			    (void) mksobj_at(COAT_RACK, sx, sy, TRUE, FALSE);
 			break;
 		    case COCKNEST:
 			if(!rn2(3)) {

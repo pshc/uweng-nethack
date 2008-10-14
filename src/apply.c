@@ -2830,6 +2830,7 @@ doapply()
 	case LARGE_BOX:
 	case CHEST:
 	case ICE_BOX:
+	case COAT_RACK:
 	case SACK:
 	case BAG_OF_HOLDING:
 	case OILSKIN_SACK:

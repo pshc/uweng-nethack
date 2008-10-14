@@ -1561,7 +1561,8 @@ lootcont:
 		    continue;
 		}
 
-		You("carefully open %s...", the(xname(cobj)));
+		if (cobj->otyp != COAT_RACK)
+		    You("carefully open %s...", the(xname(cobj)));
 		timepassed |= use_container(cobj, 0);
 		if (multi < 0) return 1;		/* chest trap */
 	    }
@@ -1836,6 +1837,7 @@ register struct obj *obj;
 
 	/* boxes, boulders, and big statues can't fit into any container */
 	if (obj->otyp == ICE_BOX || Is_box(obj) || obj->otyp == BOULDER ||
+		obj->otyp == COAT_RACK ||
 		(obj->otyp == STATUE && bigmonst(&mons[obj->corpsenm]))) {
 		/*
 		 *  xname() uses a static result array.  Save obj's name
@@ -1898,7 +1900,9 @@ register struct obj *obj;
 
 	if (current_container) {
 	    Strcpy(buf, the(xname(current_container)));
-	    You("put %s into %s.", doname(obj), buf);
+	    You("put %s %s %s.", doname(obj),
+			current_container->otyp == COAT_RACK ? "on" : "into",
+			buf);
 
 	    /* gold in container always needs to be added to credit */
 	    if (floor_container && obj->oclass == COIN_CLASS)
@@ -2076,7 +2080,7 @@ register int held;
 #ifndef GOLDOBJ
 	struct obj *u_gold = (struct obj *)0;
 #endif
-	boolean one_by_one, allflag, quantum_cat = FALSE,
+	boolean one_by_one, allflag, quantum_cat = FALSE, coat_rack,
 		loot_out = FALSE, loot_in = FALSE;
 	char select[MAXOCLASSES+1];
 	char qbuf[BUFSZ], emptymsg[BUFSZ], pbuf[QBUFSZ];
@@ -2107,6 +2111,7 @@ register int held;
 	    return 1;
 	}
 	current_container = obj;	/* for use by in/out_container */
+	coat_rack = obj->otyp == COAT_RACK;
 
 	if (obj->spe == 1) {
 	    observe_quantum_cat(obj);
@@ -2135,7 +2140,8 @@ register int held;
 		    quantum_cat ? "now " : "");
 
 	if (cnt || flags.menu_style == MENU_FULL) {
-	    Strcpy(qbuf, "Do you want to take something out of ");
+	    Strcpy(qbuf, coat_rack ? "Do you want to take something off of "
+	                           : "Do you want to take something out of ");
 	    Sprintf(eos(qbuf), "%s?",
 		    safe_qbuf(qbuf, 1, yname(obj), ysimple_name(obj), "it"));
 	    if (flags.menu_style != MENU_TRADITIONAL) {
@@ -2150,7 +2156,8 @@ register int held;
 #endif
 		    if (!outokay && !inokay) {
 			pline("%s", emptymsg);
-			You("don't have anything to put in.");
+			You("don't have anything to put %s.",
+					coat_rack ? "on" : "in");
 			return used;
 		    }
 		    menuprompt[0] = '\0';
@@ -2180,7 +2187,8 @@ ask_again2:
 		    goto ask_again2;
 		case 'y':
 		    if (query_classes(select, &one_by_one, &allflag,
-				      "take out", current_container->cobj,
+				      coat_rack ? "take off" : "take out",
+				      current_container->cobj,
 				      FALSE,
 #ifndef GOLDOBJ
 				      FALSE,
@@ -2218,11 +2226,12 @@ ask_again2:
 	if (!invent) {
 #endif
 	    /* nothing to put in, but some feedback is necessary */
-	    You("don't have anything to put in.");
+	    You("don't have anything to put %s.", coat_rack ? "on" : "in");
 	    return used;
 	}
 	if (flags.menu_style != MENU_FULL) {
-	    Sprintf(qbuf, "Do you wish to put %s in?", something);
+	    Sprintf(qbuf, "Do you wish to put %s %s?", something,
+			    coat_rack ? "on" : "in");
 	    Strcpy(pbuf, ynqchars);
 	    if (flags.menu_style == MENU_TRADITIONAL && invent && inv_cnt() > 0)
 		Strcat(pbuf, "m");
@@ -2267,7 +2276,8 @@ ask_again2:
 	    } else {
 		/* traditional code */
 		menu_on_request = 0;
-		if (query_classes(select, &one_by_one, &allflag, "put in",
+		if (query_classes(select, &one_by_one, &allflag,
+				   coat_rack ? "put on" : "put in",
 				   invent, FALSE,
 #ifndef GOLDOBJ
 				   (u.ugold != 0L),
@@ -2312,6 +2322,10 @@ boolean put_in;
     int mflags, res;
     long count;
 
+    if (container->otyp == COAT_RACK) {
+	takeout = "Take off";
+	putin = "Put on";
+    }
     if (retry) {
 	all_categories = (retry == -2);
     } else if (flags.menu_style == MENU_FULL) {
@@ -2382,20 +2396,23 @@ boolean outokay, inokay;
     char buf[BUFSZ];
     int n;
     const char *menuselector = iflags.lootabc ? "abc" : "oib";
+    boolean coat_rack = obj->otyp == COAT_RACK;
 
     any.a_void = 0;
     win = create_nhwindow(NHW_MENU);
     start_menu(win);
     if (outokay) {
 	any.a_int = 1;
-	Sprintf(buf,"Take %s out of %s", something, the(xname(obj)));
+	Sprintf(buf,"Take %s %s %s", something, coat_rack ? "off" : "out of",
+			the(xname(obj)));
 	add_menu(win, NO_GLYPH, &any, *menuselector, 0, ATR_NONE,
 			buf, MENU_UNSELECTED);
     }
     menuselector++;
     if (inokay) {
 	any.a_int = 2;
-	Sprintf(buf,"Put %s into %s", something, the(xname(obj)));
+	Sprintf(buf,"Put %s %s %s", something, coat_rack ? "on" : "into",
+			the(xname(obj)));
 	add_menu(win, NO_GLYPH, &any, *menuselector, 0, ATR_NONE, buf, MENU_UNSELECTED);
     }
     menuselector++;
