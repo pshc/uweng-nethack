@@ -90,20 +90,20 @@ MONSTER: 'x',"zapada",random
 # Friendlies
 MONSTER:'@',"Dong Ting",(26,18)
 OBJECT:'(',"chest",(27,18)
-MONSTER:'@',"student",(25,13)
-MONSTER:'@',"student",(26,13)
-MONSTER:'@',"student",(22,14)
-MONSTER:'@',"student",(35,13)
-MONSTER:'@',"student",(34,18)
-MONSTER:'@',"student",(30,16)
-MONSTER:'@',"student",(21,18)
-MONSTER:'@',"student",(34,11)
-MONSTER:'@',"student",(41,09)
-MONSTER:'@',"student",(29,19)
-MONSTER:'@',"student",(12,06)
+MONSTER:'@',"nano",(25,13)
+MONSTER:'@',"nano",(26,13)
+MONSTER:'@',"nano",(22,14)
+MONSTER:'@',"nano",(35,13)
+MONSTER:'@',"nano",(34,18)
+MONSTER:'@',"nano",(30,16)
+MONSTER:'@',"nano",(21,18)
+MONSTER:'@',"nano",(34,11)
+MONSTER:'@',"nano",(41,09)
+MONSTER:'@',"nano",(29,19)
+MONSTER:'@',"nano",(12,06)
 # path guards
-MONSTER:'@',"student",(16,14)
-MONSTER:'@',"student",(18,14)
+MONSTER:'@',"nano",(16,14)
+MONSTER:'@',"nano",(18,14)
 # Random traps
 TRAP:random,random
 TRAP:random,random

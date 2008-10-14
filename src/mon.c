@@ -111,6 +111,7 @@ int mndx, mode;
 #endif
 	case PM_APPRENTICE:  mndx = mode ? PM_WIZZARD    : PM_HUMAN; break;
 	case PM_WARRIOR:     mndx = mode ? PM_VALKYRIE  : PM_HUMAN; break;
+        case PM_NANO:        mndx = mode ? PM_ENGINEER  : PM_HUMAN; break;
 	default:
 		if (mndx >= LOW_PM && mndx < NUMMONS) {
 			struct permonst *ptr = &mons[mndx];
@@ -1846,7 +1847,7 @@ xkilled(mtmp, dest)
 cleanup:
 	/* punish bad behaviour */
 	if(is_human(mdat) && (!always_hostile(mdat) && mtmp->malign <= 0) &&
-	   (mndx < PM_ARCHEOLOGIST || mndx > PM_WIZZARD) &&
+	   (mndx < PM_ARCHEOLOGIST || mndx > PM_ENGINEER) &&
 	   u.ualign.type != A_CHAOTIC) {
 		HTelepat &= ~INTRINSIC;
 		change_luck(-2);
@@ -2330,7 +2331,7 @@ struct monst *mon;
 		break;
 	    case CHAM_DOPPELGANGER:
 		if (!rn2(7)) mndx = pick_nasty();
-		else if (rn2(3)) mndx = rn1(PM_WIZZARD - PM_ARCHEOLOGIST + 1,
+		else if (rn2(3)) mndx = rn1(PM_ENGINEER - PM_ARCHEOLOGIST + 1,
 					    PM_ARCHEOLOGIST);
 		break;
 	    case CHAM_CHAMELEON:

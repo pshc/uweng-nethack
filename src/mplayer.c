@@ -219,6 +219,10 @@ register boolean special;
 		    if (rn2(4)) helm = HELM_OF_BRILLIANCE;
 		    shield = STRANGE_OBJECT;
 		    break;
+                case PM_ENGINEER:
+                    if (rn2(2)) weapon = CRESCENT_WRENCH;
+                    if (rn2(2)) helm = PLASTIC_HARD_HAT;
+                    break;
 		default: impossible("bad mplayer monster");
 		    weapon = 0;
 		    break;
@@ -298,7 +302,7 @@ boolean special;
 		int tryct = 0;
 
 		/* roll for character class */
-		pm = PM_ARCHEOLOGIST + rn2(PM_WIZZARD - PM_ARCHEOLOGIST + 1);
+		pm = PM_ARCHEOLOGIST + rn2(PM_ENGINEER - PM_ARCHEOLOGIST + 1);
 		fakemon.data = &mons[pm];
 
 		/* roll for an available location */

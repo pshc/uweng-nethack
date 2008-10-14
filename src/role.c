@@ -390,7 +390,7 @@ const struct Role roles[] = {
 	"Science", "Opera", "Eris", /* UWEng */
 	"Eng", "CPH", "the University of Toronto",
 	PM_ENGINEER, NON_PM, PM_GOSLING,
-	PM_DONG_TING, PM_STUDENT, PM_MACGREGOR,
+	PM_DONG_TING, PM_NANO, PM_MACGREGOR,
 	PM_QUANTUM_MECHANIC, PM_MATHIE, S_XAN, S_ELEMENTAL,
 	ART_TOOL,
 	MH_HUMAN | ROLE_MALE|ROLE_FEMALE |
