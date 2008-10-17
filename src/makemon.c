@@ -569,6 +569,8 @@ register struct	monst	*mtmp;
 		    case 2: (void) mongets(mtmp, POT_HEALING);
 		    case 3: (void) mongets(mtmp, WAN_STRIKING);
 		    }
+		} else if (ptr == &mons[PM_J__WALTER_WEATHERMAN]) {
+		    (void) mongets(mtmp, PROSTHETIC_ARM);
 		} else if (ptr->msound == MS_PRIEST ||
 			quest_mon_represents_role(ptr,PM_PRIEST)) {
 		    (void) mongets(mtmp, rn2(7) ? ROBE :

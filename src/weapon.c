@@ -208,6 +208,7 @@ struct monst *mon;
 		case RUNESWORD:
 		case ELVEN_BROADSWORD:
 		case CRESCENT_WRENCH:
+		case PROSTHETIC_ARM:
 		case BROADSWORD:	tmp++; break;
 
 		case FLAIL:
@@ -251,6 +252,7 @@ struct monst *mon;
 		case RUNESWORD:
 		case CRESCENT_WRENCH:
 		case ART_TOOL:
+		case PROSTHETIC_ARM:
 		case VOULGE:		tmp += rnd(4); break;
 
 		case ACID_VENOM:	tmp += rnd(6); break;

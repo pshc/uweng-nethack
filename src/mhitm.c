@@ -442,6 +442,10 @@ gazemm(magr, mdef, mattk)
 {
 	char buf[BUFSZ];
 
+	/* TODO: Sing at other enemies */
+	if (mattk->adtyp == AD_SING || mattk->adtyp == AD_LESS)
+	    return MM_MISS;
+
 	if(vis) {
 		Sprintf(buf,"%s gazes at", Monnam(magr));
 		pline("%s %s...", buf, mon_nam(mdef));

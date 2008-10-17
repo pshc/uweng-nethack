@@ -434,6 +434,7 @@ register struct monst *priest;
 	    }
 	    priest->mpeaceful = 0;
 	    verbalize(cranky_msg[rn2(3)]);
+	    send_weatherman(priest);
 	    return;
 	}
 
@@ -442,6 +443,7 @@ register struct monst *priest;
 		  !has_shrine(priest)) {
 	    verbalize("Begone!  Thou desecratest this holy place with thy presence.");
 	    priest->mpeaceful = 0;
+	    send_weatherman(priest);
 	    return;
 	}
 #ifndef GOLDOBJ
@@ -659,6 +661,7 @@ struct monst *priest;
 
 	buzz(-10-(AD_ELEC-1), 6, x, y, sgn(tbx), sgn(tby)); /* bolt of lightning */
 	exercise(A_WIS, FALSE);
+	send_weatherman(priest);
 }
 
 void
@@ -685,6 +688,7 @@ angry_priest()
 		/* this overloads the `shroom' field, which is now clobbered */
 		EPRI(priest)->renegade = 0;
 	    }
+	    send_weatherman(priest);
 	}
 }
 
@@ -714,6 +718,23 @@ boolean ghostly;
 	if (ghostly)
 	    assign_level(&(EPRI(mtmp)->shrlevel), &u.uz);
     }
+}
+
+boolean
+send_weatherman(priest)
+struct monst *priest;
+{
+    struct permonst *ww = &mons[PM_J__WALTER_WEATHERMAN];
+    /* Seem to be getting more than one even though he's G_UNIQ...
+     * Extra safety. */
+    if (priest && p_coaligned(priest)
+		    && !(mvitals[monsndx(ww)].mvflags & G_EXTINCT)) {
+	if (makemon(ww, 0, 0, MM_ANGRY)) {
+	    mvitals[monsndx(ww)].mvflags |= G_EXTINCT;
+	    return TRUE;
+	}
+    }
+    return FALSE;
 }
 
 #endif /* OVLB */

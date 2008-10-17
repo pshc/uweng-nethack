@@ -2040,6 +2040,30 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		    *(int *)mtmp->mextra = state;
 	        }
 		break;
+	    case AD_LESS: {
+		struct obj *arm;
+		if (!cansee(mtmp->mx, mtmp->my))
+		    break;
+		for (arm = mtmp->minvent; arm; arm = arm->nobj)
+		    if (arm->otyp == PROSTHETIC_ARM)
+			break;
+		if (arm) {
+		    verbalize("And that's why...");
+		    pline("%s chucks %s!", Monnam(mtmp), singular(arm, doname));
+		    m_throw(mtmp, mtmp->mx, mtmp->my, sgn(mtmp->mux-mtmp->mx),
+			sgn(mtmp->muy-mtmp->my),
+			distmin(mtmp->mx,mtmp->my,mtmp->mux,mtmp->muy), arm);
+		    verbalize("... you don't betray a friendly priest.");
+		    if (!Free_action) {
+			You("are frozen with terror!");
+			nomul(-40);
+		    }
+		}
+		pline("%s escapes!", Monnam(mtmp));
+		/* Might as well give a credit for vanquishing */
+		mondied(mtmp);
+		break;
+	    }
 	    case AD_SLEE:
 		if(!mtmp->mcan && canseemon(mtmp) &&
 		   couldsee(mtmp->mx, mtmp->my) && mtmp->mcansee &&

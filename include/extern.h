@@ -1620,6 +1620,7 @@ E void FDECL(ghod_hitsu, (struct monst *));
 E void NDECL(angry_priest);
 E void NDECL(clearpriests);
 E void FDECL(restpriest, (struct monst *,BOOLEAN_P));
+E boolean FDECL(send_weatherman,(struct monst *));
 
 /* ### quest.c ### */
 

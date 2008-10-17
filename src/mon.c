@@ -1884,6 +1884,7 @@ cleanup:
 		if (p_coaligned(mtmp)) u.ublessed = 0;
 		if (mdat->maligntyp == A_NONE)
 			adjalign((int)(ALIGNLIM / 4));		/* BIG bonus */
+		send_weatherman(mtmp);
 	} else if (mtmp->mtame) {
 		adjalign(-15);	/* bad!! */
 		/* your god is mighty displeased... */
@@ -2101,6 +2102,7 @@ register struct monst *mtmp;
 	if(mtmp->ispriest) {
 		if(p_coaligned(mtmp)) adjalign(-5); /* very bad */
 		else adjalign(2);
+		send_weatherman(mtmp);
 	} else
 		adjalign(-1);		/* attacking peaceful monsters is bad */
 	if (couldsee(mtmp->mx, mtmp->my)) {
