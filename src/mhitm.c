@@ -442,8 +442,12 @@ gazemm(magr, mdef, mattk)
 {
 	char buf[BUFSZ];
 
-	/* TODO: Sing at other enemies */
-	if (mattk->adtyp == AD_SING || mattk->adtyp == AD_LESS)
+	if (mattk->adtyp == AD_SING) {
+	    if (!magr->mcan && cansee(magr->mx, magr->my))
+		shark_sing(magr);
+	    return MM_MISS;
+	}
+	else if (mattk->adtyp == AD_LESS)
 	    return MM_MISS;
 
 	if(vis) {

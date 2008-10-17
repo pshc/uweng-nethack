@@ -2033,21 +2033,8 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		}
 		break;
 	    case AD_SING:
-		if (!mtmp->mcan && couldsee(mtmp->mx, mtmp->my)) {
-		    static const char *verses[4] = {"I'm a shark!",
-						    "I'm a shaaaaaaark!",
-						    "Suck my diiiiick!",
-						    "I'M A SHAAAAAAAARK!"};
-		    int state = *(int *)mtmp->mextra;
-		    if (state >= 0 && state < 4 && !rn2(4))
-			pline("%s sings, \"%s\"", Monnam(mtmp),
-					verses[state++]);
-		    else if (state >= 4)
-			state = -10 - rn2(10); /* Cool off a bit */
-		    else if (state < 0)
-			state++;
-		    *(int *)mtmp->mextra = state;
-	        }
+		if (!mtmp->mcan && couldsee(mtmp->mx, mtmp->my))
+		    shark_sing(mtmp);
 		break;
 	    case AD_LESS: {
 		struct obj *arm;
@@ -2695,6 +2682,25 @@ cloneu()
 	u.mh -= mon->mhp;
 	flags.botl = 1;
 	return(mon);
+}
+
+void
+shark_sing(mtmp)
+struct monst *mtmp;
+{
+    static const char *verses[4] = {"I'm a shark!",
+				    "I'm a shaaaaaaark!",
+				    "Suck my diiiiick!",
+				    "I'M A SHAAAAAAAARK!"};
+    int state = *(int *)mtmp->mextra;
+    if (state >= 0 && state < 4 && !rn2(4))
+	pline("%s sings, \"%s\"", Monnam(mtmp),
+			verses[state++]);
+    else if (state >= 4)
+	state = -10 - rn2(10); /* Cool off a bit */
+    else if (state < 0)
+	state++;
+    *(int *)mtmp->mextra = state;
 }
 
 #endif /* OVLB */

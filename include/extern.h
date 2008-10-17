@@ -989,6 +989,7 @@ E int FDECL(could_seduce, (struct monst *,struct monst *,struct attack *));
 #ifdef SEDUCE
 E int FDECL(doseduce, (struct monst *));
 #endif
+E void FDECL(shark_sing, (struct monst *));
 
 /* ### minion.c ### */
 
