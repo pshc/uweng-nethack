@@ -1413,6 +1413,7 @@ struct obj *otmp;
 		    pline("Aah, dessert! Chilled monkey brains.");
 		    break;
 		}
+	    case PLACENTA: /* TODO: Cannibalism? */
 	    case MEATBALL:
 	    case MEAT_STICK:
 	    case HUGE_CHUNK_OF_MEAT:

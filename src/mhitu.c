@@ -1461,6 +1461,10 @@ dopois:
 		    if (Acid_resistance) {
 			pline("You're covered in acid, but it seems harmless.");
 			dmg = 0;
+		    } else if (mdat == &mons[PM_WHALE_SPERM]) {
+			/* TODO: Salt attack&resistance instead */
+			pline("You're covered in salty goop!  It burns!");
+			exercise(A_STR, FALSE);
 		    } else {
 			pline("You're covered in acid!	It burns!");
 			exercise(A_STR, FALSE);
@@ -1562,6 +1566,11 @@ dopois:
 		break;
 	    case AD_MOOF:
 		pline("%s moofs.", Monnam(mtmp));
+		dmg = 0;
+		break;
+	    case AD_PREG:
+		if (rn2(2))
+		    make_pregnant(9 * 30, TRUE);
 		dmg = 0;
 		break;
 	    default:	dmg = 0;
@@ -2459,6 +2468,10 @@ register struct monst *mon;
 	}
 	if (!rn2(25)) mon->mcan = 1; /* monster is worn out */
 	if (!tele_restrict(mon)) (void) rloc(mon, FALSE);
+
+	if (flags.female && !rn2(3))
+	    make_pregnant(9 * 30, TRUE);
+
 	return 1;
 }
 

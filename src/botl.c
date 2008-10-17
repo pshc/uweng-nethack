@@ -30,7 +30,7 @@ STATIC_DCL void NDECL(bot2);
  *
  * longest practical second status line at the moment is
  *	Astral Plane $:12345 HP:700(700) Pw:111(111) AC:-127 Xp:30/123456789
- *	T:123456 Satiated Conf FoodPois Ill Blind Stun Hallu Overloaded
+ *	T:123456 Satiated Conf FoodPois Ill Blind Stun Hallu Overloaded Preg
  * -- or somewhat over 130 characters
  */
 #if COLNO <= 140
@@ -342,6 +342,7 @@ bot2()
 	if(Slimed)         Sprintf(nb = eos(nb), " Slime");
 	if(cap > UNENCUMBERED)
 		Sprintf(nb = eos(nb), " %s", enc_stat[cap]);
+	if(Pregnant)       Sprintf(nb = eos(nb), " Preg");
 	curs(WIN_STATUS, 1, 1);
 	putstr(WIN_STATUS, 0, newbot2);
 }

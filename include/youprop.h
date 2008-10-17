@@ -342,4 +342,6 @@
 #define EFrigid			u.uprops[FRIGID].extrinsic
 #define Frigid			(HFrigid || EFrigid)
 
+#define Pregnant		u.uprops[PREGNANT].intrinsic
+
 #endif /* YOUPROP_H */

@@ -2827,6 +2827,14 @@ doapply()
 	case GRAPPLING_HOOK:
 		res = use_grapple(obj);
 		break;
+	case COATHANGER:
+		/* Classy! */
+		if (Pregnant)
+		    useup(obj);
+		else
+		    res = 0;
+		make_pregnant(0, TRUE);
+		break;
 	case LARGE_BOX:
 	case CHEST:
 	case ICE_BOX:

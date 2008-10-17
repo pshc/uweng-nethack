@@ -347,6 +347,22 @@ nh_timeout()
 		case DETECT_MONSTERS:
 			see_monsters();
 			break;
+		case PREGNANT: {
+			char buf[BUFSZ];
+			if (!flags.female) {
+			    strcpy(buf, body_part(STOMACH));
+			    if (!strcmp(buf, "stomach"))
+				strcpy(buf, "belly");
+			    pline("Something bursts out of your %s!");
+			    killer_format = KILLED_BY;
+			    killer = "male childbirth";
+			    done(DIED);
+			}
+			mksobj_at(PLACENTA, u.ux, u.uy, FALSE, FALSE);
+			pline("BABIES!"); /* TODO */
+			stop_occupation();
+			break;
+		    }
 		}
 	}
 

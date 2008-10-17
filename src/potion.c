@@ -299,6 +299,28 @@ long mask;	/* nonzero if resistance status should change by mask */
 	return changed;
 }
 
+void
+make_pregnant(xtime, talk)
+long xtime;
+boolean talk;
+{
+    char buf[BUFSZ];
+    /* TODO: Encumberance as time goes on */
+    if ((!xtime && !Pregnant) || (xtime && Pregnant))
+	return;
+    if (xtime && !is_human(youmonst.data))
+	return;
+    if (talk) {
+	/* Well this isn't crass... */
+	strcpy(buf, body_part(STOMACH));
+	if (!strcmp(buf, "stomach"))
+	    strcpy(buf, "belly");
+	You(xtime ? "are impregnated!"
+	          : "feel a great weight lifted from your %s.", buf);
+    }
+    set_itimeout(&Pregnant, xtime);
+}
+
 STATIC_OVL void
 ghost_from_bottle()
 {

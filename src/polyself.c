@@ -423,6 +423,7 @@ int	mntmp;
 	    }
 	}
 	if (nohands(youmonst.data)) Glib = 0;
+	make_pregnant(0, TRUE);
 
 	/*
 	mlvl = adj_lev(&mons[mntmp]);

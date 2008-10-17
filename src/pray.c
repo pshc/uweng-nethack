@@ -70,19 +70,20 @@ static int p_type; /* (-1)-3: (-1)=really naughty, 3=really good */
  * order to have the values be meaningful.
  */
 
-#define TROUBLE_STONED			13
-#define TROUBLE_SLIMED			12
-#define TROUBLE_STRANGLED		11
-#define TROUBLE_LAVA			10
-#define TROUBLE_SICK			 9
-#define TROUBLE_STARVING		 8
-#define TROUBLE_HIT			 7
-#define TROUBLE_LYCANTHROPE		 6
-#define TROUBLE_COLLAPSING		 5
-#define TROUBLE_STUCK_IN_WALL		 4
-#define TROUBLE_CURSED_LEVITATION	 3
-#define TROUBLE_UNUSEABLE_HANDS		 2
-#define TROUBLE_CURSED_BLINDFOLD	 1
+#define TROUBLE_STONED			14
+#define TROUBLE_SLIMED			13
+#define TROUBLE_STRANGLED		12
+#define TROUBLE_LAVA			11
+#define TROUBLE_SICK			10
+#define TROUBLE_STARVING		 9
+#define TROUBLE_HIT			 8
+#define TROUBLE_LYCANTHROPE		 7
+#define TROUBLE_COLLAPSING		 6
+#define TROUBLE_STUCK_IN_WALL		 5
+#define TROUBLE_CURSED_LEVITATION	 4
+#define TROUBLE_UNUSEABLE_HANDS		 3
+#define TROUBLE_CURSED_BLINDFOLD	 2
+#define TROUBLE_MALE_PREGNANCY		 1
 
 #define TROUBLE_PUNISHED	       (-1)
 #define TROUBLE_FUMBLING	       (-2)
@@ -170,6 +171,7 @@ in_trouble()
 		return TROUBLE_UNUSEABLE_HANDS;
 	}
 	if(Blindfolded && ublindf->cursed) return(TROUBLE_CURSED_BLINDFOLD);
+	if(Pregnant && !flags.female) return TROUBLE_MALE_PREGNANCY;
 
 	/*
 	 * minor troubles
@@ -365,6 +367,9 @@ register int trouble;
 	    case TROUBLE_CURSED_BLINDFOLD:
 		    otmp = ublindf;
 		    goto decurse;
+	    case TROUBLE_MALE_PREGNANCY:
+		    make_pregnant(0, TRUE);
+		    break;
 	    case TROUBLE_LYCANTHROPE:
 		    you_unwere(TRUE);
 		    break;
