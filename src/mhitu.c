@@ -317,7 +317,7 @@ mattacku(mtmp)
 		 * invisible, or you might be blind....
 		 */
 	
-	if(!ranged) nomul(0);
+	if(!ranged) nomul(0, 0);
 	if(mtmp->mhp <= 0 || (Underwater && !is_swimmer(mtmp->data)))
 	    return(0);
 
@@ -1122,7 +1122,7 @@ dopois:
 			if (Blind) You("are frozen!");
 			else You("are frozen by %s!", mon_nam(mtmp));
 			nomovemsg = 0;	/* default: "you can move again" */
-			nomul(-rnd(10));
+			nomul(-rnd(10), "paralyzed by a monster");
 			exercise(A_DEX, FALSE);
 		    }
 		}
@@ -2052,7 +2052,7 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 		    verbalize("... you don't betray a friendly priest.");
 		    if (!Free_action) {
 			You("are frozen with terror!");
-			nomul(-40);
+			nomul(-10 - rn2(20), "being taught a lesson");
 		    }
 		}
 		pline("%s escapes!", Monnam(mtmp));
