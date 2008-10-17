@@ -2296,7 +2296,7 @@ boolean force_touch;
 			You("touched the %s corpse with your bare %s.",
 				mons[otmp->corpsenm].mname, makeplural(body_part(HAND)));
 	    else
-			pline("Touching the %s corpse is a fatal mistake...",
+			pline("Touching the %s corpse is a huge mistake...",
 				mons[otmp->corpsenm].mname);
 		Sprintf(kbuf, "%s corpse", an(mons[otmp->corpsenm].mname));
 		instapetrify(kbuf);

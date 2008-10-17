@@ -1400,7 +1400,7 @@ register struct obj *obj;
 		You("tin %s without wearing gloves.",
 			an(mons[corpse->corpsenm].mname));
 	    else {
-		pline("Tinning %s without wearing gloves is a fatal mistake...",
+		pline("Tinning %s without wearing gloves is a huge mistake...",
 			an(mons[corpse->corpsenm].mname));
 		Sprintf(kbuf, "trying to tin %s without gloves",
 			an(mons[corpse->corpsenm].mname));
@@ -2314,7 +2314,7 @@ struct obj *obj;
 
 			Sprintf(kbuf, "%s corpse",
 				an(mons[otmp->corpsenm].mname));
-			pline("Snatching %s is a fatal mistake.", kbuf);
+			pline("Snatching %s is a huge mistake.", kbuf);
 			instapetrify(kbuf);
 		    }
 		    otmp = hold_another_object(otmp, "You drop %s!",

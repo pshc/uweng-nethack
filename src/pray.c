@@ -1302,8 +1302,8 @@ verbalize("In return for thy service, I grant thee the gift of Buttsecks!");
 	    if (flags.soundok)
 		You_hear("a nearby thunderclap.");
 	    if (!otmp->known) {
-		You("realize you have made a %s.",
-		    Hallucination ? "boo-boo" : "mistake");
+		You("realize you've made a %s.",
+		    Hallucination ? "boo-boo" : "huge tiny mistake");
 		otmp->known = TRUE;
 		change_luck(-1);
 		return 1;
