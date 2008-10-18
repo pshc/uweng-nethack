@@ -343,6 +343,7 @@ typedef unsigned char	uchar;
 #define EXP_ON_BOTL	/* Show experience on bottom line */
 #define SCORE_ON_BOTL	/* added by Gary Erickson (erickson@ucivax) */
 
+#define SORTLOOT
 /*
  * Section 5:  EXPERIMENTAL STUFF
  *
