@@ -82,6 +82,9 @@
 #define AD_SING         44      /* sharks */
 #define AD_LESS		45	/* teaches a lesson */
 #define AD_PREG		46	/* causes pregnancy (in males too) */
+#ifdef MENTALPLYS
+#define AD_PLYM		47	/* paralyses (mentally) */
+#endif
 
 #define AD_CLRC		240	/* random clerical spell */
 #define AD_SPEL		241	/* random magic spell */

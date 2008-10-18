@@ -2329,6 +2329,28 @@ uchar aatyp;
 		    exercise(A_DEX, FALSE);
 		}
 		break;
+#ifdef MENTALPLYS
+		case AD_PLYM:
+		    /* This is a mental paralysis - distinct from the physical AD_PLYS
+		     *
+		     * free action and cancellation does not help here - this is intentional
+		     * only takes effect if you can see the monster, the monster can see you and
+		     * you aren't already paralysed - player has a (potentially) modified
+		     * WIS saving throw (mental) based on damd
+		     * If successful, the monster is paralysed for d(damn) turns
+		     *
+		     * This relies on the fact that PLYM attacks do *no* physical damage
+		     *
+		     * Note that AD_PLYM should never be a *physical* attack (bite, claw etc)
+		     * as it simply makes no sense - use AD_PLYS instead */
+		if(!mon->mcan && canseemon(mon) && (multi >= 0) && mon->mcansee && (rnd(20) > (ACURR(A_WIS) - (int)ptr->mattk[i].damn))) {
+		    You("are mesmerised by %s gaze!", s_suffix(Monnam(mon)));
+		    nomovemsg = 0;	/* default: "you can move again" */
+		    nomul(-rnd(((int)ptr->mattk[i].damd)+1), "mesmerised");
+		    exercise(A_DEX, FALSE);
+		}
+		break;
+#endif
 	      case AD_COLD:		/* brown mold or blue jelly */
 		if(monnear(mon, u.ux, u.uy)) {
 		    if(Cold_resistance) {

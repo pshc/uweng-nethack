@@ -894,6 +894,30 @@ mdamagem(magr, mdef, mattk)
 		    mdef->mstrategy &= ~STRAT_WAITFORU;
 		}
 		break;
+#ifdef MENTALPLYS
+			/* mental paralysis attack - CWC */
+	    case AD_PLYM:
+		if(!magr->mcan && mdef->mcanmove) {
+		    if (vis && !mindless(mdef->data) && !is_covetous(mdef->data)) {
+				/* mental paralysis does not work against mindless creatures
+				 * Also does not work against covetous monsters - inelegant hack to
+				 * disallow paralysis of certain "strong" monsters such as the Wiz
+				 * Ideally this would want a WIS saving throw but...
+				 *
+				 * If successful, the monster is paralysed for rnd(damn) turns
+				 * This relies on the fact that PLYM attacks do *no* physical damage
+				 *
+				 * Note that AD_PLYM should never be a *physical* attack (bite, claw etc)
+				 * as it simply makes no sense - use AD_PLYS instead
+				 */
+			Strcpy(buf, Monnam(mdef));
+			pline("%s is frozen by %s.", buf, mon_nam(magr));
+		    }
+		    mdef->mcanmove = 0;
+		    mdef->mfrozen = rnd(((int)mattk->damd)+1);
+		}
+		break;
+#endif
 	    case AD_SLOW:
 		if (!cancelled && mdef->mspeed != MSLOW) {
 		    unsigned int oldspeed = mdef->mspeed;
@@ -1361,6 +1385,26 @@ int mdead;
 		    return (mdead|mhit);
 		}
 		return 1;
+
+#ifdef MENTALPLYS
+		case AD_PLYM: /* Floating eyes */
+		    if (magr->mcansee && haseyes(madat) && mdef->mcansee &&
+			(perceives(madat) || !mdef->minvis)) {
+			Sprintf(buf, "%s gaze is reflected by %%s %%s.",
+				s_suffix(mon_nam(mdef)));
+			if (mon_reflects(magr,
+					 canseemon(magr) ? buf : (char *)0))
+				return(mdead|mhit);
+			Strcpy(buf, Monnam(magr));
+			if(canseemon(magr))
+			    pline("%s is mesmerised by %s gaze!",
+				  buf, s_suffix(mon_nam(mdef)));
+			magr->mcanmove = 0;
+			magr->mfrozen = rnd(((int)mddat->mattk[i].damd)+1);
+			return (mdead|mhit);
+		}
+		return 1;
+#endif
 	    case AD_COLD:
 		if (resists_cold(magr)) {
 		    if (canseemon(magr)) {
