@@ -120,6 +120,7 @@ register struct monst *mtmp;
 		if(otmp->otyp == AMULET_OF_YENDOR ||
 			is_quest_artifact(otmp) ||
 			otmp->otyp == BELL_OF_OPENING ||
+			otmp->otyp == CLAPPER_OF_OPENING ||
 			otmp->otyp == CANDELABRUM_OF_INVOCATION ||
 			otmp->otyp == SPE_BOOK_OF_THE_DESU) return(1);
 	return(0);
@@ -143,6 +144,7 @@ which_arti(mask)
 	switch(mask) {
 	    case M3_WANTSAMUL:	return(AMULET_OF_YENDOR);
 	    case M3_WANTSBELL:	return(BELL_OF_OPENING);
+	    /* TODO: Clapper? */
 	    case M3_WANTSCAND:	return(CANDELABRUM_OF_INVOCATION);
 	    case M3_WANTSBOOK:	return(SPE_BOOK_OF_THE_DESU);
 	    default:		break;	/* 0 signifies quest artifact */

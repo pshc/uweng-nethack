@@ -109,6 +109,10 @@ boolean restore;
 			    curse(otmp);
 			} else if (otmp->otyp == BELL_OF_OPENING) {
 			    otmp->otyp = BELL;
+			    otmp->obroken = FALSE;
+			    curse(otmp);
+			} else if (otmp->otyp == CLAPPER_OF_OPENING) {
+			    otmp->otyp = BELL;
 			    curse(otmp);
 			} else if (otmp->otyp == SPE_BOOK_OF_THE_DESU) {
 			    otmp->otyp = SPE_BLANK_PAPER;

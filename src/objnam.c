@@ -2474,6 +2474,7 @@ typfnd:
 		    typ = rnd_class(TALLOW_CANDLE, WAX_CANDLE);
 		    break;
 		case BELL_OF_OPENING:
+		case CLAPPER_OF_OPENING:
 		    typ = BELL;
 		    break;
 		case SPE_BOOK_OF_THE_DESU:

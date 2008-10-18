@@ -751,6 +751,10 @@ struct obj **optr;
 		invoking = (obj->otyp == BELL_OF_OPENING &&
 			 invocation_pos(u.ux, u.uy) && !On_stairs(u.ux, u.uy));
 
+	if (obj->obroken) {
+	    You("notice %s has no bell clapper!", the(xname(obj)));
+	    return;
+	}
 	You("ring %s.", the(xname(obj)));
 
 	if (Underwater || (u.uswallow && ordinary)) {
@@ -856,6 +860,28 @@ struct obj **optr;
 	    obj->known = 1;
 	}
 	if (wakem) wake_nearby();
+}
+
+STATIC_OVL void
+use_clapper(obj)
+struct obj *obj;
+{
+    struct obj *bell;
+    char buf[BUFSZ];
+    if (u.uhave.bell) {
+	if ((bell = carrying(BELL_OF_OPENING))) {
+	    pline("It takes a little while to attach %s to %s...",
+			    the(xname(obj)), the(xname(bell)));
+	    Sprintf(buf, "fixing %s", the(xname(obj)));
+	    nomul(25 - ACURR(A_INT), buf);
+	    bell->obroken = FALSE;
+	    /* Can't destroy the clapper by regular means... */
+	    obj_extract_self(obj);
+	    obfree(obj, (struct obj *) 0);
+	    return;
+	}
+    }
+    You("have nothing to attach %s to.", the(xname(obj)));
 }
 
 STATIC_OVL void
@@ -2908,6 +2934,9 @@ doapply()
 	case BELL:
 	case BELL_OF_OPENING:
 		use_bell(&obj);
+		break;
+	case CLAPPER_OF_OPENING:
+		use_clapper(obj);
 		break;
 	case CANDELABRUM_OF_INVOCATION:
 		use_candelabrum(obj);

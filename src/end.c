@@ -512,7 +512,7 @@ winid endwin;
 
     for (otmp = list; otmp; otmp = otmp->nobj) {
 	if (otmp->oartifact ||
-			otmp->otyp == BELL_OF_OPENING ||
+			(otmp->otyp == BELL_OF_OPENING && !otmp->obroken) ||
 			otmp->otyp == SPE_BOOK_OF_THE_DESU ||
 			otmp->otyp == CANDELABRUM_OF_INVOCATION) {
 	    value = arti_cost(otmp);	/* zorkmid value */

@@ -995,6 +995,7 @@ int ochance, achance;	/* percent chance for ordinary objects, artifacts */
 	    obj->otyp == SPE_BOOK_OF_THE_DESU ||
 	    obj->otyp == CANDELABRUM_OF_INVOCATION ||
 	    obj->otyp == BELL_OF_OPENING ||
+	    obj->otyp == CLAPPER_OF_OPENING ||
 	    (obj->otyp == CORPSE && is_rider(&mons[obj->corpsenm]))) {
 		return TRUE;
 	} else {

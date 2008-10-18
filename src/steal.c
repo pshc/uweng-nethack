@@ -489,6 +489,9 @@ struct monst *mtmp;
     } else if(u.uhave.bell) {
 	real = BELL_OF_OPENING;
 	fake = BELL;
+    } else if(u.uhave.clapper) {
+	real = CLAPPER_OF_OPENING;
+	fake = BELL;
     } else if(u.uhave.book) {
 	real = SPE_BOOK_OF_THE_DESU;
     } else if(u.uhave.menorah) {

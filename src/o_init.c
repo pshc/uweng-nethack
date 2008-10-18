@@ -362,6 +362,7 @@ static short uniq_objs[] = {
 	SPE_BOOK_OF_THE_DESU,
 	CANDELABRUM_OF_INVOCATION,
 	BELL_OF_OPENING,
+	CLAPPER_OF_OPENING,
 };
 
 int

@@ -1525,6 +1525,7 @@ register int otyp;
 		otmp->blessed = otmp->cursed = FALSE;
 	    } else if (otmp->otyp == BELL_OF_OPENING) {
 		otmp->blessed = otmp->cursed = FALSE;
+		otmp->obroken = TRUE;
 	    } else if (otmp->otyp == SPE_BOOK_OF_THE_DESU) {
 		otmp->blessed = FALSE;
 		otmp->cursed = TRUE;

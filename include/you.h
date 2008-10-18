@@ -29,10 +29,11 @@ struct RoleAdvance {
 struct u_have {
 	Bitfield(amulet,1);	/* carrying Amulet	*/
 	Bitfield(bell,1);	/* carrying Bell	*/
+	Bitfield(clapper,1);	/* carrying Clapper	*/
 	Bitfield(book,1);	/* carrying Book	*/
 	Bitfield(menorah,1);	/* carrying Candelabrum */
 	Bitfield(questart,1);	/* carrying the Quest Artifact */
-	Bitfield(unused,3);
+	Bitfield(unused,2);
 };
 
 struct u_event {

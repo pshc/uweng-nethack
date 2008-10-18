@@ -670,6 +670,10 @@ OBJECT(OBJ("Candelabrum of Invocation", "candelabrum"),
 OBJECT(OBJ("Bell of Opening", "silver bell"),
 		BITS(0,0,1,0,1,1,1,1,0,0,0,P_NONE,SILVER), 0,
 		TOOL_CLASS, 0, 0,10, 5000, 0, 0, 0, 0, 50, HI_SILVER),
+OBJECT(OBJ("Clapper of Opening", "bell clapper"),
+		BITS(0,0,1,0,1,0,1,1,0,0,0,P_NONE,SILVER), 0,
+		TOOL_CLASS, 0, 0, 5, 2500, 0, 0, 0, 0, 25, HI_SILVER),
+
 #undef TOOL
 #undef WEPTOOL
 

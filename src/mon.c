@@ -962,7 +962,8 @@ struct obj *otmp;
 	if (otyp == CORPSE && is_rider(&mons[otmp->corpsenm]))
 	    return FALSE;
 	if (objects[otyp].oc_material == SILVER && hates_silver(mdat) &&
-		(otyp != BELL_OF_OPENING || !is_covetous(mdat)))
+		((otyp != BELL_OF_OPENING && otyp != CLAPPER_OF_OPENING)
+		 || !is_covetous(mdat)))
 	    return FALSE;
 
 #ifdef STEED
