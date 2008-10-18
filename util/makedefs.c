@@ -782,7 +782,8 @@ static const char *build_opts[] = {
 		"zero-compressed save files",
 #endif
 		save_bones_compat_buf,
-		"basic NetHack features"
+		"basic NetHack features",
+		"UWEng-themed additions",
 	};
 
 static const char *window_opts[] = {
