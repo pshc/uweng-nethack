@@ -418,8 +418,8 @@ showalter_apologise(mon, mhit, mdied)
     // Crappy ripoff state field
     if (uwep->obroken) {
 	// This message after the first time
-	verbalize("I thought %s was a %s, I swear to %s!",
-			genders[gender(mon)].he, rndmonnam(),
+	verbalize("I thought %s was %s, I swear to %s!",
+			genders[gender(mon)].he, an(rndmonnam()),
 			align_gname(A_CHAOTIC));
 	return;
     }
