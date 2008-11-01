@@ -133,15 +133,15 @@ MAP
 |...|..S.....--...--...|.|..| |...--...--...|.|..| .|.....|..|.....--...--.|
 |...----......-----....---...--....-----....-S-...---.....----......---S-..|
 |..........................................................................|
---------------------------------------------------------------------------+|
-            |....                  .....                ....              . 
-  ..........S....                ...........................              . 
-            |....               ...     ...             ....              . 
-            |....              ...       ...            ....              . 
-            |....              ...       ...            ....              . 
-            |....               ...     ...             ....      |       . 
-            |.............................              ..........+........ 
-            |.........             .....                ..........|         
+-S------------------------------------------------------------------------+|
+ .           |....                 .....                ....              . 
+             |....               ...........................              . 
+             |....              ...     ...             ....              . 
+             |....             ...       ...            ....              . 
+             |....             ...       ...            ....              . 
+             |....              ...     ...             ....      |       . 
+             |............................              ..........+........ 
+             |.........            .....                ..........|         
                                                         -----------         
 ENDMAP
 # Dungeon Description
@@ -149,13 +149,13 @@ REGION:(00,00,75,19),lit,"ordinary"
 NON_DIGGABLE:(00,00,75,19)
 
 REGION:(02,12,12,12),unlit,"ordinary"
-REGION:(22,17,32,17),unlit,"ordinary"
+REGION:(23,17,33,17),unlit,"ordinary"
 REGION:(42,12,55,12),unlit,"ordinary"
 REGION:(66,17,74,17),unlit,"ordinary"
 REGION:(74,10,74,16),unlit,"ordinary"
 # Stairs
-STAIR:(01,01),up
-STAIR:(02,12),down
+STAIR:(17,15),up
+STAIR:(01,11),down
 DOOR:closed,(07,07)
 DOOR:closed,(16,02)
 DOOR:closed,(23,05)
@@ -165,7 +165,7 @@ DOOR:closed,(51,02)
 DOOR:closed,(58,02)
 DOOR:closed,(71,08)
 DOOR:closed,(74,10)
-DOOR:locked,(12,12)
+DOOR:locked,(01,10)
 
 # Objects
 OBJECT:random,random,(03,03)
@@ -179,7 +179,7 @@ OBJECT:random,random,(69,05)
 OBJECT:random,random,(59,11)
 OBJECT:random,random,(40,16)
 OBJECT:random,random,(34,13)
-OBJECT:random,random,(13,18)
+OBJECT:random,random,(14,18)
 # Random traps
 TRAP:random,random
 TRAP:random,random
@@ -271,7 +271,7 @@ REGION:(48,00,53,03),unlit,"ordinary"
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Stairs
-STAIR:(00,10),up
+STAIR:(01,11),up
 # Doors
 DOOR:locked,(04,12)
 DOOR:locked,(09,09)
