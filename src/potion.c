@@ -1228,9 +1228,24 @@ boolean your_fault;
 		break;
 	case POT_HYDROFLUORIC_ACID:
 		if (!resists_disint(mon) && !resist(mon, POTION_CLASS, 0, NOTELL)) {
-		    pline("%s %s in dire pain!", Monnam(mon),
-			  is_silent(mon->data) ? "writhes" : "shrieks");
-		    mon->mhp = -1;
+		    struct obj *otmp = which_armor(mon, W_ARMH);
+		    if (otmp && otmp->otyp == PLASTIC_HARD_HAT) {
+			if (cansee(mon->mx, mon->my))
+			    pline("%s %s off!", s_suffix(Monnam(mon)),
+				    aobjnam(otmp, "melt"));
+			else
+			    You_hear("hissing.");
+			obj_extract_self(otmp);
+			obfree(otmp, (struct obj *)0);
+			mon->mhp -= rn2(5);
+		    }
+		    else {
+			pline("%s %s in dire pain!", Monnam(mon),
+					is_silent(mon->data) ? "writhes" : "shrieks");
+			mon->mhp = -1;
+		    }
+		    if (mon->mhp > 0)
+			break;
 		    if (your_fault)
 			killed(mon);
 		    else
