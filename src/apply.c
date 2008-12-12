@@ -2855,11 +2855,16 @@ doapply()
 		break;
 	case COATHANGER:
 		/* Classy! */
-		if (Pregnant)
+		if (Pregnant) {
+		    if (rn2(obj->oeroded) >= 1) {
+			pline("This is highly unhygienic!");
+			losehp(rn2(30), "a rusty coathanger", KILLED_BY);
+		    }
 		    useup(obj);
+		    make_pregnant(0, TRUE);
+		}
 		else
 		    res = 0;
-		make_pregnant(0, TRUE);
 		break;
 	case LARGE_BOX:
 	case CHEST:
