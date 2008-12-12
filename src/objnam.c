@@ -1770,11 +1770,14 @@ struct alt_spellings {
 	{ "spellbook of finger of death", SPE_BUSTER_BEAM },
 	{ "spellbook of penis of death", SPE_BUSTER_BEAM },
 	{ "spellbook of charm monster", SPE_MIND_CONTROL },
+	{ "amulet of change", AMULET_OF_RANMA____ },
+	{ "amulet of changing", AMULET_OF_RANMA____ },
 	{ "ring of adornment", RIN_HAWTNESS },
 	{ "ring of conflict", RIN_FLAMEBAIT },
 	{ "credit card", WATCARD },
 	{ "potion of hallucination", POT_LSD },
 	{ "potion of booze", POT_VODKA },
+	{ "potion of HF", POT_HYDROFLUORIC_ACID },
 	{ (const char *)0, 0 },
 };
 
