@@ -2106,7 +2106,7 @@ register struct monst *mtmp;
 		send_weatherman(mtmp);
 	} else
 		adjalign(-1);		/* attacking peaceful monsters is bad */
-	if (couldsee(mtmp->mx, mtmp->my) && mtmp->hp > 0) {
+	if (couldsee(mtmp->mx, mtmp->my) && mtmp->mhp > 0) {
 		if (humanoid(mtmp->data) || mtmp->isshk || mtmp->isgd)
 		    pline("%s gets angry!", Monnam(mtmp));
 		else if (flags.verbose && flags.soundok) growl(mtmp);
