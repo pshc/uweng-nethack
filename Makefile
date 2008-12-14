@@ -278,5 +278,5 @@ jail: $(GAME) recover Guidebook $(VARDAT) dungeon spec_levs check-dlb
 	cp -f /bin/{bash,bzip2,gzip,ls,sh} jail/bin
 	cp -f {src/nethack,dat/nhdat,dat/license} jail/
 	cp -f /etc/{passwd,group,localtime} jail/etc/
-	cp -f /lib/{ld-linux.so.*,libacl.so.*,libattr.so.*,libbz2.so.*,libcrypt.so.*,libc.so.*,libdl.so.*,libhistory.so.*,libncurses.so.*,libpam_misc.so.*,libpam.so.*,libpthread.so.*,libreadline.so.*,librt.so.*} jail/lib/
+	cp -f /lib/{ld-linux.so.*,libacl.so.*,libattr.so.*,libbz2.so.*,libcrypt.so.*,libc.so.*,libdl.so.*,libhistory.so.*,libncurses*,libpam_misc.so.*,libpam.so.*,libpthread.so.*,libreadline.so.*,librt.so.*} jail/lib/
 
