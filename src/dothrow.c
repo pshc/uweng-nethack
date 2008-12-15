@@ -10,12 +10,12 @@
 STATIC_DCL int FDECL(throw_obj, (struct obj *,int));
 STATIC_DCL void NDECL(autoquiver);
 STATIC_DCL int FDECL(gem_accept, (struct monst *, struct obj *));
-STATIC_DCL void FDECL(tmiss, (struct obj *, struct monst *));
+STATIC_DCL void FDECL(tmiss, (struct obj *, struct monst *, const char *));
 STATIC_DCL int FDECL(throw_gold, (struct obj *));
 STATIC_DCL void FDECL(check_shop_obj, (struct obj *,XCHAR_P,XCHAR_P,BOOLEAN_P));
 STATIC_DCL void FDECL(breakobj, (struct obj *,XCHAR_P,XCHAR_P,BOOLEAN_P,BOOLEAN_P));
 STATIC_DCL void FDECL(breakmsg, (struct obj *,BOOLEAN_P));
-STATIC_DCL boolean FDECL(toss_up,(struct obj *, BOOLEAN_P));
+STATIC_DCL boolean FDECL(toss_up,(struct obj *, BOOLEAN_P, const char *));
 STATIC_DCL boolean FDECL(throwing_weapon, (struct obj *));
 STATIC_DCL void FDECL(sho_obj_return_to_u, (struct obj *obj));
 STATIC_DCL boolean FDECL(mhurtle_step, (genericptr_t,int,int));
@@ -719,32 +719,38 @@ register boolean broken;
  * Returns FALSE if the object is gone.
  */
 STATIC_OVL boolean
-toss_up(obj, hitsroof)
+toss_up(obj, hitsroof, squirted_name)
 struct obj *obj;
 boolean hitsroof;
+const char *squirted_name;
 {
     const char *almost;
+    const char *name = squirted_name ? The(squirted_name) : Doname2(obj);
+
     /* note: obj->quan == 1 */
 
     if (hitsroof) {
-	if (breaktest(obj)) {
-		pline("%s hits the %s.", Doname2(obj), ceiling(u.ux, u.uy));
-		breakmsg(obj, !Blind);
-		breakobj(obj, u.ux, u.uy, TRUE, TRUE);
-		return FALSE;
+	if (squirted_name || breaktest(obj)) {
+		pline("%s hits the %s.", name, ceiling(u.ux, u.uy));
+		if (!squirted_name) {
+		    breakmsg(obj, !Blind);
+		    breakobj(obj, u.ux, u.uy, TRUE, TRUE);
+		}
+		return !!squirted_name;
 	}
 	almost = "";
     } else {
 	almost = " almost";
     }
     pline("%s%s hits the %s, then falls back on top of your %s.",
-	  Doname2(obj), almost, ceiling(u.ux,u.uy), body_part(HEAD));
+	  name, almost, ceiling(u.ux,u.uy), body_part(HEAD));
 
     /* object now hits you */
 
     if (obj->oclass == POTION_CLASS) {
-	potionhit(&youmonst, obj, TRUE);
-    } else if (breaktest(obj)) {
+	potionhit(&youmonst, obj, TRUE, squirted_name ? squirted_name : NULL);
+	return !!squirted_name;
+    } else if (squirted_name || breaktest(obj)) {
 	int otyp = obj->otyp, ocorpsenm = obj->corpsenm;
 	int blindinc;
 
@@ -753,9 +759,11 @@ boolean hitsroof;
 		   /* AT_WEAP is ok here even if attack type was AT_SPIT */
 		   can_blnd(&youmonst, &youmonst, AT_WEAP, obj) ? rnd(25) : 0;
 
-	breakmsg(obj, !Blind);
-	breakobj(obj, u.ux, u.uy, TRUE, TRUE);
-	obj = 0;	/* it's now gone */
+	if (!squirted_name) {
+	    breakmsg(obj, !Blind);
+	    breakobj(obj, u.ux, u.uy, TRUE, TRUE);
+	    obj = 0;	/* it's now gone */
+	}
 	switch (otyp) {
 	case EGG:
 		if (touch_petrifies(&mons[ocorpsenm]) &&
@@ -777,7 +785,7 @@ boolean hitsroof;
 	default:
 		break;
 	}
-	return FALSE;
+	return !!squirted_name;
     } else {		/* neither potion nor other breaking object */
 	boolean less_damage = uarmh && (is_metallic(uarmh) || is_plastic(uarmh)), artimsg = FALSE;
 	int dmg = dmgval(obj, &youmonst);
@@ -918,7 +926,7 @@ boolean twoweap; /* used to restore twoweapon mode if wielded weapon returns */
 		u.twoweap = twoweap;
 	    } else if (u.dz < 0 && !Is_airlevel(&u.uz) &&
 		    !Underwater && !Is_waterlevel(&u.uz)) {
-		(void) toss_up(obj, rn2(5));
+		(void) toss_up(obj, rn2(5), NULL);
 	    } else {
 		hitfloor(obj);
 	    }
@@ -1001,7 +1009,7 @@ boolean twoweap; /* used to restore twoweapon mode if wielded weapon returns */
 		}
 		(void) snuff_candle(obj);
 		notonhead = (bhitpos.x != mon->mx || bhitpos.y != mon->my);
-		obj_gone = thitmonst(mon, obj);
+		obj_gone = thitmonst(mon, obj, NULL);
 		/* Monster may have been tamed; this frees old mon */
 		mon = m_at(bhitpos.x, bhitpos.y);
 
@@ -1105,6 +1113,118 @@ boolean twoweap; /* used to restore twoweapon mode if wielded weapon returns */
 	}
 }
 
+#ifdef TOURIST
+/* For magician's shirt */
+void
+squirtit(shirt, obj)
+struct obj *shirt;
+struct obj *obj;
+{
+	register struct monst *mon;
+	register int range;
+	boolean impaired = (Confusion || Stunned || Blind ||
+			   Hallucination || Fumbling);
+	char buf[BUFSZ];
+	struct objclass *typ;
+
+	if (shirt->cursed && (u.dx || u.dy) && !rn2(7)) {
+	    pline("%s!", Tobjnam(shirt, "misfire"));
+	    u.dx = rn2(3)-1;
+	    u.dy = rn2(3)-1;
+	    if (!u.dx && !u.dy) u.dz = 1;
+	    impaired = TRUE;
+	}
+
+	/* Not actually thrown, but... */
+	thrownobj = obj;
+
+	typ = &objects[obj->otyp];
+	if (typ->oc_name_known || !OBJ_DESCR(*typ)) {
+	    switch (obj->otyp) {
+		case POT_WATER:
+		    strcpy(buf, xname(obj));
+		    break;
+		case POT_ACID:
+		case POT_LSD:
+		case POT_FRUIT_JUICE:
+		case POT_OIL:
+		case POT_HYDROFLUORIC_ACID:
+		    strcpy(buf, OBJ_NAME(*typ));
+		    break;
+		default:
+		    strcpy(buf, OBJ_NAME(*typ));
+		    strcat(buf, " potion");
+	    }
+	}
+	else {
+	    strcpy(buf, OBJ_DESCR(*typ));
+	    strcat(buf, " potion");
+	}
+	if (obj->lamplit) {
+	    memmove(buf + 8, buf, strlen(buf) + 1);
+	    memcpy(buf, "burning ", 8);
+	}
+	memmove(buf + 10, buf, strlen(buf) + 1);
+	memcpy(buf, "stream of ", 10);
+
+	if (u.uswallow) {
+	    mon = u.ustuck;
+	    bhitpos.x = mon->mx;
+	    bhitpos.y = mon->my;
+	}
+	else if (u.dz || !(u.dx | u.dy | u.dz)) {
+	    if (u.dz <= 0 && !Is_airlevel(&u.uz) &&
+		    !Underwater && !Is_waterlevel(&u.uz)) {
+		if(!toss_up(obj, rn2(5), buf))
+		    impossible("squirt: toss_up should never lose potion");
+		thrownobj = (struct obj*)0;
+		return;
+	    }
+	    mon = NULL;
+	    bhitpos.x = u.ux;
+	    bhitpos.y = u.uy;
+	}
+	else {
+	    range = shirt->blessed ? 3 : 2;
+	    if (Is_airlevel(&u.uz))
+		range = 1;
+	    else if (Underwater) {
+		if (obj->odiluted) {
+		    pline(nothing_happens);
+		    return;
+		}
+		snuff_candle(obj);
+		obj->odiluted = TRUE; /* What about acids? */
+		range = 1;
+	    }
+	    mon = bhit(u.dx, u.dy, range, SQUIRTED,
+	               (int FDECL((*),(MONST_P,OBJ_P)))0,
+	               (int FDECL((*),(OBJ_P,OBJ_P)))0,
+	               obj);
+	}
+
+	if (mon) {
+	    notonhead = (bhitpos.x != mon->mx || bhitpos.y != mon->my);
+	    if (thitmonst(mon, obj, buf)) {
+		impossible("squirt: thitmonst should never lose potion");
+	    }
+
+	    /* [perhaps this should be moved into thitmonst or hmon] */
+	    if (mon && mon->isshk &&
+	            (!inside_shop(u.ux, u.uy) ||
+	            !index(in_rooms(mon->mx, mon->my, SHOPBASE), *u.ushops)))
+		hot_pursuit(mon);
+	}
+	else if (obj->otyp == POT_OIL && obj->lamplit) {
+	    explode(bhitpos.x, bhitpos.y, 11, d(6,6), 0, EXPL_FIERY);
+	}
+	else if (Blind)
+	    You_hear("a splash.");
+	else
+	    pline_The("%s hits the %s.", buf, surface(u.ux,u.uy));
+}
+#endif /* TOURIST */
+
 /* an object may hit a monster; various factors adjust the chance of hitting */
 int
 omon_adj(mon, obj, mon_notices)
@@ -1148,9 +1268,10 @@ boolean mon_notices;
 
 /* thrown object misses target monster */
 STATIC_OVL void
-tmiss(obj, mon)
+tmiss(obj, mon, squirted_name)
 struct obj *obj;
 struct monst *mon;
+const char *squirted_name;
 {
     const char *missile = mshot_xname(obj);
 
@@ -1159,10 +1280,14 @@ struct monst *mon;
        An attentive player will still notice that this is different from
        an arrow just landing short of any target (no message in that case),
        so will realize that there is a valid target here anyway. */
-    if (!canseemon(mon) || (mon->m_ap_type && mon->m_ap_type != M_AP_MONSTER))
-	pline("%s %s.", The(missile), otense(obj, "miss"));
+    if (!canseemon(mon) || (mon->m_ap_type && mon->m_ap_type != M_AP_MONSTER)) {
+	if (squirted_name)
+	    pline("%s misses.", The(squirted_name));
+	else
+	    pline("%s %s.", The(missile), otense(obj, "miss"));
+    }
     else
-	miss(missile, mon);
+	miss(squirted_name ? squirted_name : missile, mon);
     if (!rn2(3)) wakeup(mon);
     return;
 }
@@ -1176,9 +1301,10 @@ struct monst *mon;
  * 0 if caller must take care of it.
  */
 int
-thitmonst(mon, obj)
+thitmonst(mon, obj, squirted_name)
 register struct monst *mon;
 register struct obj   *obj;
+const char *squirted_name;
 {
 	register int	tmp; /* Base chance to hit */
 	register int	disttmp; /* distance modifier */
@@ -1342,7 +1468,7 @@ register struct obj   *obj;
 		}
 		passive_obj(mon, obj, (struct attack *)0);
 	    } else {
-		tmiss(obj, mon);
+		tmiss(obj, mon, NULL);
 	    }
 
 	} else if (otyp == HEAVY_IRON_BALL) {
@@ -1356,7 +1482,7 @@ register struct obj   *obj;
 			return 1;	/* already did placebc() */
 		}
 	    } else {
-		tmiss(obj, mon);
+		tmiss(obj, mon, NULL);
 	    }
 
 	} else if (otyp == BOULDER) {
@@ -1365,7 +1491,7 @@ register struct obj   *obj;
 		exercise(A_DEX, TRUE);
 		(void) hmon(mon,obj,1);
 	    } else {
-		tmiss(obj, mon);
+		tmiss(obj, mon, NULL);
 	    }
 
 	} else if ((otyp == EGG || otyp == CREAM_PIE || otyp == GOOSE_POOP ||
@@ -1376,8 +1502,8 @@ register struct obj   *obj;
 
 	} else if (obj->oclass == POTION_CLASS &&
 		(guaranteed_hit || ACURR(A_DEX) > rnd(25))) {
-	    potionhit(mon, obj, TRUE);
-	    return 1;
+	    potionhit(mon, obj, TRUE, squirted_name);
+	    return !squirted_name;
 
 	} else if (befriend_with_obj(mon->data, obj) ||
 		   (mon->mtame && dogfood(mon, obj) <= ACCFOOD)) {
@@ -1402,11 +1528,12 @@ register struct obj   *obj;
 			}
 	    	}
 	    }
-	    pline("%s into %s %s.",
-		Tobjnam(obj, "vanish"), s_suffix(mon_nam(mon)),
+	    pline("%s%s into %s %s.",
+		squirted_name ? The(squirted_name) : Tobjnam(obj, "vanish"),
+		squirted_name ? " vanishes" : "", s_suffix(mon_nam(mon)),
 		is_animal(u.ustuck->data) ? "entrails" : "currents");
 	} else {
-	    tmiss(obj, mon);
+	    tmiss(obj, mon, squirted_name);
 	}
 
 	return 0;

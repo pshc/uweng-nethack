@@ -48,6 +48,9 @@ E boolean FDECL(tinnable, (struct obj *));
 E void NDECL(reset_trapset);
 E void FDECL(fig_transform, (genericptr_t, long));
 E int FDECL(unfixable_trouble_count,(BOOLEAN_P));
+#ifdef TOURIST
+E int FDECL(use_magicians_shirt, (struct obj *));
+#endif
 
 /* ### artifact.c ### */
 
@@ -448,12 +451,15 @@ E void FDECL(hurtle, (int,int,int,BOOLEAN_P));
 E void FDECL(mhurtle, (struct monst *,int,int,int));
 E void FDECL(throwit, (struct obj *,long,BOOLEAN_P));
 E int FDECL(omon_adj, (struct monst *,struct obj *,BOOLEAN_P));
-E int FDECL(thitmonst, (struct monst *,struct obj *));
+E int FDECL(thitmonst, (struct monst *,struct obj *,const char *));
 E int FDECL(hero_breaks, (struct obj *,XCHAR_P,XCHAR_P,BOOLEAN_P));
 E int FDECL(breaks, (struct obj *,XCHAR_P,XCHAR_P));
 E boolean FDECL(breaktest, (struct obj *));
 E boolean FDECL(walk_path, (coord *, coord *, boolean (*)(genericptr_t,int,int), genericptr_t));
 E boolean FDECL(hurtle_step, (genericptr_t, int, int));
+#ifdef TOURIST
+E void FDECL(squirtit, (struct obj *, struct obj *));
+#endif
 
 /* ### drawing.c ### */
 #endif /* !MAKEDEFS_C && !LEV_LEX_C */
@@ -1579,7 +1585,7 @@ E int FDECL(dopotion, (struct obj *));
 E int FDECL(peffects, (struct obj *));
 E void FDECL(healup, (int,int,BOOLEAN_P,BOOLEAN_P));
 E void FDECL(strange_feeling, (struct obj *,const char *));
-E void FDECL(potionhit, (struct monst *,struct obj *,BOOLEAN_P));
+E void FDECL(potionhit, (struct monst *,struct obj *,BOOLEAN_P,const char *));
 E void FDECL(potionbreathe, (struct obj *));
 E boolean FDECL(get_wet, (struct obj *));
 E int NDECL(dodip);

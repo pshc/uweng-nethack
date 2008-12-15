@@ -2597,7 +2597,11 @@ xchar x, y;
 	if (catch_lit(obj))
 	    continue;
 
-	if (Is_container(obj)) {
+	if (Is_container(obj)
+#ifdef TOURIST
+	    || obj->otyp == MAGICIAN_S_SHIRT
+#endif
+	   ) {
 	    switch (obj->otyp) {
 	    case ICE_BOX:
 		continue;		/* Immune */

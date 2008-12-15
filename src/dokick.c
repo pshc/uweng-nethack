@@ -349,7 +349,11 @@ struct obj *obj;
 	xchar x = obj->ox, y = obj->oy;
 
 	/* only consider normal containers */
-	if (!Is_container(obj) || Is_mbag(obj)) return;
+	if ((!Is_container(obj)
+#ifdef TOURIST
+	    && obj->otyp != MAGICIAN_S_SHIRT
+#endif
+	    ) || Is_mbag(obj)) return;
 
 	costly = ((shkp = shop_keeper(*in_rooms(x, y, SHOPBASE))) &&
 		  costly_spot(x, y));
@@ -528,6 +532,12 @@ xchar x, y;
 		if(range < 2) return(1);
 		/* else let it fall through to the next cases... */
 	}
+#ifdef TOURIST
+	else if (kickobj->otyp == MAGICIAN_S_SHIRT) {
+	    /* Oh COME ON! */
+	    container_impact_dmg(kickobj);
+	}
+#endif
 
 	/* fragile objects should not be kicked */
 	if (hero_breaks(kickobj, kickobj->ox, kickobj->oy, FALSE)) return 1;
@@ -561,7 +571,7 @@ xchar x, y;
 		return 1;	/* alert shk caught it */
 	    notonhead = (mon->mx != bhitpos.x || mon->my != bhitpos.y);
 	    if (isgold ? ghitm(mon, kickobj) :	/* caught? */
-		    thitmonst(mon, kickobj))	/* hit && used up? */
+		    thitmonst(mon, kickobj, NULL))	/* hit && used up? */
 		return(1);
 	}
 

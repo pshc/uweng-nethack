@@ -99,6 +99,7 @@ NEARDATA extern coord bhitpos;	/* place where throw or zap hits or stops */
 #define KICKED_WEAPON	2
 #define FLASHED_LIGHT	3
 #define INVIS_BEAM	4
+#define SQUIRTED	5
 
 #define MATCH_WARN_OF_MON(mon)	 (Warn_of_mon && flags.warntype && \
 		   		 (flags.warntype & (mon)->data->mflags2))

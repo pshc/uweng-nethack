@@ -1533,7 +1533,7 @@ STATIC_OVL NEARDATA const struct o_range o_ranges[] = {
 	{ "shoes",	ARMOR_CLASS,  LOW_BOOTS,      IRON_SHOES },
 	{ "cloak",	ARMOR_CLASS,  MUMMY_WRAPPING, CLOAK_OF_DISPLACEMENT },
 #ifdef TOURIST
-	{ "shirt",	ARMOR_CLASS,  HAWAIIAN_SHIRT, T_SHIRT },
+	{ "shirt",	ARMOR_CLASS,  HAWAIIAN_SHIRT, MAGICIAN_S_SHIRT },
 #endif
 	{ "dragon scales",
 			ARMOR_CLASS,  GRAY_DRAGON_SCALES, YELLOW_DRAGON_SCALES },
@@ -2039,10 +2039,17 @@ boolean from_user;
 		bp += 8;
 	}
 
+	/* Really need to integrate these better */
 	if (!strncmpi(bp, "goose poop", 10)) {
 		typ = GOOSE_POOP;
 		goto typfnd;
 	}
+#ifdef TOURIST
+	else if (!strncmpi(bp, "magician's shirt", 10)) {
+		typ = MAGICIAN_S_SHIRT;
+		goto typfnd;
+	}
+#endif
 
 	/*
 	 * Find corpse type using "of" (figurine of an orc, tin of orc meat)

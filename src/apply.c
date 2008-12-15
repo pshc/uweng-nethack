@@ -2443,7 +2443,7 @@ use_pole (obj)
 
 	    bhitpos = cc;
 	    check_caitiff(mtmp);
-	    (void) thitmonst(mtmp, uwep);
+	    (void) thitmonst(mtmp, uwep, NULL);
 	    /* check the monster's HP because thitmonst() doesn't return
 	     * an indication of whether it hit.  Not perfect (what if it's a
 	     * non-silver weapon on a shade?)
@@ -2593,7 +2593,7 @@ use_grapple (obj)
 		return (1);
 	    } else if ((!bigmonst(mtmp->data) && !strongmonst(mtmp->data)) ||
 		       rn2(4)) {
-		(void) thitmonst(mtmp, uwep);
+		(void) thitmonst(mtmp, uwep, NULL);
 		return (1);
 	    }
 	    /* FALL THROUGH */
@@ -2618,6 +2618,145 @@ use_grapple (obj)
 	return (1);
 }
 
+#ifdef TOURIST
+STATIC_OVL int
+load_magicians_shirt(obj)
+    struct obj *obj;
+{
+    struct obj *otmp, *pickup = 0;
+    int count = 0;
+    char class_list[] = { ALL_CLASSES, POTION_CLASS, 0, 0 };
+    if (uhave_graystone())
+	class_list[2] = GEM_CLASS;
+    struct obj *ammo = getobj(class_list, "install");
+    if (!ammo)
+	return 0;
+    if (u.uswallow) {
+	You(no_elbow_room);
+	return 0;
+    }
+    if (!freehand()) {
+	You("have no free hand with which to install that!");
+	return 0;
+    }
+    if (ammo->oclass != POTION_CLASS && !is_graystone(ammo)
+        || ammo->otyp == LOADSTONE) {
+	You("aren't sure how to install that.");
+	return 0;
+    }
+    if (ammo->unpaid && *u.ushops && shop_keeper(*u.ushops)) {
+	verbalize(Hallucination ?
+		"A trick is something a whore does for money!" :
+		"I don't have time for your magic tricks!");
+	return 0;
+    }
+    /* OK, install it */
+    if (is_graystone(ammo)) {
+	if (ammo->quan > 1)
+	    ammo = splitobj(ammo, 1);
+	for (otmp = obj->cobj; otmp; otmp = otmp->nobj)
+	    if (is_graystone(otmp)) {
+		/* Swap it out */
+		You("take %s out of the cuff of %s and put in %s.",
+			an(xname(otmp)), yname(obj), the(xname(ammo)));
+		display_nhwindow(WIN_MESSAGE, TRUE);	/* --More-- */
+		pickup = otmp;
+		break;
+	    }
+	if (!otmp)
+	    You("put %s in the cuff of %s.", the(xname(ammo)), yname(obj));
+    }
+    else {
+	for (otmp = obj->cobj; otmp; otmp = otmp->nobj)
+	    if (!is_graystone(otmp))
+		count++;
+	if (count >= 3) {
+	    pline("There are no more empty compartments in %s.", yname(obj));
+	    return 0;
+	}
+	if (ammo->quan > 1)
+	    ammo = splitobj(ammo, 1);
+	if (ammo->lamplit) {
+	    pline("%s is on fire!", The(xname(ammo)));
+	    rust_dmg(obj, xname(obj), 0, TRUE, &youmonst);
+	    snuff_candle(ammo);
+	}
+	You("slide %s inside %s.", an(xname(ammo)), yname(obj));
+    }
+    obj_extract_self(ammo);
+    /* Don't want to merge, so no add_to_container */
+    ammo->where = OBJ_CONTAINED;
+    ammo->ocontainer = obj;
+    ammo->nobj = 0;
+    if (!obj->cobj)
+	obj->cobj = ammo;
+    else { /* Add to end of list (FIFO) */
+	otmp = obj->cobj;
+	while (otmp->nobj)
+	    otmp = otmp->nobj;
+	otmp->nobj = ammo;
+    }
+
+    if (pickup)
+	pickup_object(pickup, 1, FALSE);
+    obj->owt = weight(obj);
+    update_inventory();
+    return 1;
+}
+
+int
+use_magicians_shirt(obj)
+    struct obj *obj;
+{
+    struct obj *otmp, *ammo = NULL;
+    boolean flint = FALSE;
+    if (!(obj->owornmask & W_ARMU)) {
+	You("must be wearing %s to use it.", yname(obj));
+	return 0;
+    }
+    if (!getdir((char *)0))
+	return 0;
+
+    /* So whaddya got? */
+    for (otmp = obj->cobj; otmp; otmp = otmp->nobj) {
+	if (otmp->otyp == FLINT)
+	    flint = Underwater ? FALSE : (otmp->cursed ? rn2(2) : TRUE);
+	else if (!ammo && otmp->oclass == POTION_CLASS)
+	    ammo = otmp;
+    }
+
+    You("gesture %s!", Confusion ? "drunkenly" :
+		       Stunned ? "stunningly" :
+		       Blind ? "blindly" :
+		       Hallucination ? "at the multiverse" :
+		       Fumbling ? "inaccurately" :
+		       Underwater ? "in slow motion" : "dramatically");
+    if (flint) {
+	if (Blind)
+	    You_hear("metal scraping on rock.");
+	else
+	    pline("Sparks fly from your sleeve!");
+    }
+    display_nhwindow(WIN_MESSAGE, TRUE);	/* --More-- */
+
+    if (!ammo) {
+	pline("... but nothing else happens.");
+	return 1;
+    }
+
+    if (ammo->otyp == POT_OIL && flint) {
+	makeknown(ammo->otyp);
+	begin_burn(ammo, FALSE);
+    }
+    squirtit(obj, ammo);
+    /* Two uses per potion. */
+    if (ammo->oeroded2)
+	delobj(ammo);
+    else
+	ammo->oeroded2 = 1;
+    return 1;
+}
+#endif /* TOURIST */
 
 #define BY_OBJECT	((struct monst *)0)
 
@@ -2820,6 +2959,10 @@ doapply()
 	if (carrying(CREAM_PIE) || carrying(EUCALYPTUS_LEAF)
 			|| carrying(GOOSE_POOP))
 		add_class(class_list, FOOD_CLASS);
+#ifdef TOURIST
+	if (carrying(MAGICIAN_S_SHIRT))
+		add_class(class_list, ARMOR_CLASS);
+#endif
 
 	obj = getobj(class_list, "use or apply");
 	if(!obj) return 0;
@@ -2961,6 +3104,9 @@ doapply()
 #ifdef TOURIST
 	case PR_N_CAMERA:
 		res = use_camera(obj);
+		break;
+	case MAGICIAN_S_SHIRT:
+		res = load_magicians_shirt(obj);
 		break;
 #endif
 	case TOWEL:

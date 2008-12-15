@@ -1013,21 +1013,34 @@ struct obj *obj;
 }
 
 void
-potionhit(mon, obj, your_fault)
+potionhit(mon, obj, your_fault, squirted_name)
 register struct monst *mon;
 register struct obj *obj;
 boolean your_fault;
+const char *squirted_name;
 {
-	register const char *botlnam = bottlename();
+	register const char *botlnam = squirted_name ? squirted_name
+	                                             : bottlename();
 	boolean isyou = (mon == &youmonst);
 	int distance;
+	const char *botl_crashes_head = "%s crashes on %s%s and breaks into shards.";
+	const char *botl_sound = "Crash!";
+	if (squirted_name) {
+	    if (strstr(squirted_name, "burning")) {
+		botl_crashes_head = "%s explodes on %s%s!";
+		botl_sound = "Boom!";
+	    }
+	    else {
+		botl_crashes_head = "%s splashes on %s%s.";
+		botl_sound = "Splash!";
+	    }
+	}
 
 	/* For some reason only plastic hard hats protect against thrown
 	 * potions. Don't question my logic! */
 	if (isyou && uarmh && is_plastic(uarmh)) {
 		distance = 0;
-		pline_The("%s crashes on your %s and breaks into shards.",
-			botlnam, xname(uarmh));
+		pline_The(botl_crashes_head, botlnam, "your ", xname(uarmh));
 		switch (obj->otyp) {
 		    case POT_HYDROFLUORIC_ACID:
 			destroy_arm(uarmh);
@@ -1046,15 +1059,16 @@ boolean your_fault;
 			    splatter_burning_oil(u.ux, u.uy);
 			break;
 		}
+		if (!squirted_name)
+		    obfree(obj, (struct obj *)0);
 		return;
 	} else if(isyou) {
 		distance = 0;
-		pline_The("%s crashes on your %s and breaks into shards.",
-			botlnam, body_part(HEAD));
+		pline_The(botl_crashes_head, botlnam, "your ", body_part(HEAD));
 		losehp(rnd(2), "thrown potion", KILLED_BY_AN);
 	} else {
 		distance = distu(mon->mx,mon->my);
-		if (!cansee(mon->mx,mon->my)) pline("Crash!");
+		if (!squirted_name && !cansee(mon->mx,mon->my)) pline(botl_sound);
 		else {
 		    char *mnam = mon_nam(mon);
 		    char buf[BUFSZ];
@@ -1066,15 +1080,15 @@ boolean your_fault;
 		    } else {
 			Strcpy(buf, mnam);
 		    }
-		    pline_The("%s crashes on %s and breaks into shards.",
-			   botlnam, buf);
+		    pline_The(botl_crashes_head, botlnam, "", buf);
 		}
 		if(rn2(5) && mon->mhp > 1)
 			mon->mhp--;
 	}
 
 	/* oil doesn't instantly evaporate */
-	if (obj->otyp != POT_OIL && cansee(mon->mx,mon->my))
+	if (obj->otyp != POT_OIL && cansee(mon->mx,mon->my)
+	    && !squirted_name)
 		pline("%s.", Tobjnam(obj, "evaporate"));
 
     if (isyou) {
@@ -1289,7 +1303,8 @@ boolean your_fault;
 		    subfrombill(obj, shkp);
 		}
 	}
-	obfree(obj, (struct obj *)0);
+	if (!squirted_name)
+	    obfree(obj, (struct obj *)0);
 }
 
 /* vapors are inhaled or get in your eyes */

@@ -808,7 +808,11 @@ register struct obj *obj;
 
 	if (obj->otyp == LARGE_BOX && obj->spe == 1) /* Schroedinger's Cat */
 		wt += mons[PM_HOUSECAT].cwt;
-	if (Is_container(obj) || obj->otyp == STATUE) {
+	if (Is_container(obj) || obj->otyp == STATUE
+#ifdef TOURIST
+	    || obj->otyp == MAGICIAN_S_SHIRT
+#endif
+	   ) {
 		struct obj *contents;
 		register int cwt = 0;
 

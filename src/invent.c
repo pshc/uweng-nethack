@@ -898,10 +898,16 @@ register const char *let,*word;
 		     (otmp->oclass == FOOD_CLASS &&
 		      otyp != CREAM_PIE && otyp != EUCALYPTUS_LEAF
 		      && otyp != GOOSE_POOP) ||
+#ifdef TOURIST
+		     (otmp->oclass == ARMOR_CLASS && otyp!=MAGICIAN_S_SHIRT) ||
+#endif
 		     (otmp->oclass == GEM_CLASS && !is_graystone(otmp))))
 		|| (!strcmp(word, "invoke") &&
 		    (!otmp->oartifact && !objects[otyp].oc_unique &&
 		     (otyp != FAKE_AMULET_OF_YENDOR || otmp->known) &&
+#ifdef TOURIST
+		     otyp != MAGICIAN_S_SHIRT &&
+#endif
 		     otyp != CRYSTAL_BALL &&	/* #invoke synonym for apply */
 		   /* note: presenting the possibility of invoking non-artifact
 		      mirrors and/or lamps is a simply a cruel deception... */
@@ -910,6 +916,10 @@ register const char *let,*word;
 		      (otmp->dknown && objects[OIL_LAMP].oc_name_known))))
 		|| (!strcmp(word, "untrap with") &&
 		    (otmp->oclass == TOOL_CLASS && otyp != CAN_OF_GREASE))
+#ifdef TOURIST
+		|| (!strcmp(word, "install") &&
+		    (otmp->oclass == GEM_CLASS && !is_graystone(otmp)))
+#endif
 		|| (!strcmp(word, "charge") && !is_chargeable(otmp))
 		    )
 			foo--;

@@ -167,7 +167,7 @@ boolean verbose;  /* give message(s) even when you can't see what happened */
 	    if (ismimic) seemimic(mtmp);
 	    mtmp->msleeping = 0;
 	    if (vis) otmp->dknown = 1;
-	    potionhit(mtmp, otmp, FALSE);
+	    potionhit(mtmp, otmp, FALSE, NULL);
 	    return 1;
 	} else {
 	    damage = dmgval(otmp, mtmp);
@@ -346,7 +346,7 @@ m_throw(mon, x, y, dx, dy, range, obj)
 		    }
 		    if (singleobj->oclass == POTION_CLASS) {
 			if (!Blind) singleobj->dknown = 1;
-			potionhit(&youmonst, singleobj, FALSE);
+			potionhit(&youmonst, singleobj, FALSE, NULL);
 			break;
 		    }
 		    switch(singleobj->otyp) {

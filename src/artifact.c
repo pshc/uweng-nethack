@@ -1245,6 +1245,10 @@ arti_invoke(obj)
     if(!oart || !oart->inv_prop) {
 	if(obj->otyp == CRYSTAL_BALL)
 	    use_crystal_ball(obj);
+#ifdef TOURIST
+	else if (obj->otyp == MAGICIAN_S_SHIRT)
+	    return use_magicians_shirt(obj);
+#endif
 	else
 	    pline(nothing_happens);
 	return 1;
