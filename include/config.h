@@ -344,6 +344,8 @@ typedef unsigned char	uchar;
 #define SCORE_ON_BOTL	/* added by Gary Erickson (erickson@ucivax) */
 
 #define SORTLOOT
+#define SHOW_BORN
+#define SHOW_EXTINCT
 /*
  * Section 5:  EXPERIMENTAL STUFF
  *
