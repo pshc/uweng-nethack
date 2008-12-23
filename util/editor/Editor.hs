@@ -2,28 +2,19 @@ import Control.Monad.State
 import Control.Exception
 import Data.Array
 import Data.Char
+import Level
 import UI.HSCurses.Curses
 import UI.HSCurses.CursesHelper (start, end, getKey)
 
--- Model
-type Rect = (Int, Int, Int, Int)
-type Pos = (Int, Int)
+data Editor = Editor { edRunning :: Bool, edCursor :: Pos,
+                       edFilename :: Maybe String }
 
-data Map = Map { mapName :: String, mapTiles :: Array Pos Char }
+initEditor = Editor { edRunning  = True,
+                      edCursor   = (0, 0),
+                      edFilename = Nothing }
+
 type MapIO = StateT Map IO
-
-mapSize :: Map -> (Int, Int)
-mapSize (Map { mapTiles = ts }) = let (_, (x, y)) = bounds ts
-                                  in (x + 1, y + 1)
-
-initMap = Map { mapName = "test",
-                mapTiles = listArray ((0, 0), (79, 21)) (repeat ' ') }
-
-data Editor = Editor { edRunning :: Bool, edCursor :: Pos }
 type EditorIO = StateT Editor MapIO
-
-initEditor = Editor { edRunning = True,
-                      edCursor  = (0, 0) }
 
 -- View
 inDisplay :: IO a -> IO a
