@@ -2620,6 +2620,26 @@ use_grapple (obj)
 
 #ifdef TOURIST
 STATIC_OVL int
+is_magicians_shirt_ammo(obj)
+    struct obj *obj;
+{
+    int typ = obj->otyp;
+    switch (obj->oclass) {
+    case POTION_CLASS:
+	return 1;
+    case GEM_CLASS:
+	if (is_graystone(obj) && typ != LOADSTONE)
+	    return 1;
+	break;
+    case FOOD_CLASS:
+	if (typ == CREAM_PIE || typ == EGG)
+	    return 1;
+	break;
+    }
+    return 0;
+}
+
+STATIC_OVL int
 load_magicians_shirt(obj)
     struct obj *obj;
 {
@@ -2639,8 +2659,7 @@ load_magicians_shirt(obj)
 	You("have no free hand with which to install that!");
 	return 0;
     }
-    if (ammo->oclass != POTION_CLASS && !is_graystone(ammo)
-        || ammo->otyp == LOADSTONE) {
+    if (!is_magicians_shirt_ammo(ammo)) {
 	You("aren't sure how to install that.");
 	return 0;
     }
