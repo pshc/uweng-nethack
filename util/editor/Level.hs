@@ -68,6 +68,7 @@ class Save a where
 
 commas :: (a -> ShowS) -> [a] -> ShowS
 commas f (x:xs) = foldl (\ss y -> ss . comma . f y) (f x) xs
+commas f []     = id
 
 comma = showString ", "
 newline = showString "\n"
@@ -78,9 +79,10 @@ instance Save Level where
 
 instance Save Map where
     save mp = showString "MAZE: " . save (mapName mp)
-              . showString ",' '\nFLAGS: " . commas save (mapFlags mp)
+              . (if null (mapFlags mp) then id else
+                 showString ",' '\nFLAGS: " . commas save (mapFlags mp))
               . showString "\nGEOMETRY: center,center"
-              . ("\nMAP\n" ++) . showTiles (mapSize mp) (elems (mapTiles mp))
+              . ("\nMAP\n" ++) . (showTiles (mapSize mp) (mapTiles mp) ++)
               . showString "ENDMAP\n"
               . permute "RANDOM_PLACES: " mapRandomPlaces
               . permute "RANDOM_MONSTERS: " mapRandomMons
@@ -89,9 +91,12 @@ instance Save Map where
               . foldl (\ss o -> ss . save o) (showString "# Objects\n")
                       (concat sortedObjs)
       where
-        showTiles (w, 0) es = id
-        showTiles (w, h) es = let (b, a) = splitAt w es
-                              in (b ++) . newline . showTiles (w, h-1) a
+        -- Unfortunately `elems` is top-to-bottom, left-to-right
+        showTiles (w, h) ts = go (0, 0)
+          where
+            go (x, y) | x < w && y < h = ts ! (x, y) : go (x+1, y)
+                      | y < h          = '\n' : go (0, y+1)
+                      | otherwise      = []
 
         permute nm f | null (f mp) = id
                      | otherwise   = showString nm . commas save (f mp)
