@@ -8,11 +8,12 @@ import UI.HSCurses.Curses
 import UI.HSCurses.CursesHelper
 
 data Editor = Editor { edRunning :: Bool, edCursor :: Pos,
-                       edFilename :: String }
+                       edFilename :: String, edSaved :: Bool }
 
 initEditor = Editor { edRunning  = True,
                       edCursor   = (0, 0),
-                      edFilename = "" }
+                      edFilename = "",
+                      edSaved    = True }
 
 type MapIO = StateT Map IO
 type EditorIO = StateT Editor MapIO
@@ -35,18 +36,12 @@ movementKeys = zip "hjkl" [(-1, 0), (0, 1), (0, -1), (1, 0)]
 
 tileKeys = " .-|+<>#\\S"
 
--- There's gotta be a better way to do this:
-snapshotEditorIO :: EditorIO a -> EditorIO (IO a)
-snapshotEditorIO f = do snapEd <- get; snapMap <- lift get
-                        return $ evalStateT (evalStateT f snapEd) snapMap
-
 runEditor :: EditorIO ()
 runEditor = do drawStatus
                editMap
 
 editMap :: EditorIO ()
-editMap = do liftIO refresh
-             k <- liftIO . getKey =<< snapshotEditorIO redraw
+editMap = do k <- liftIO $ refresh >> getKey refresh
              case k of KeyChar c   -> cmd c
                        _           -> return ()
              running <- gets edRunning
@@ -54,13 +49,22 @@ editMap = do liftIO refresh
   where
     cmd :: Char -> EditorIO ()
     cmd 'Q' = do ed <- get
-                 put $ ed { edRunning = False }
+                 quit <- if edSaved ed then return True
+                         else fmap (== 'y') $ liftIO $ promptChar $
+                              "You have not saved! "
+                              ++ "Are you sure you want to quit?"
+                 if quit then put $ ed { edRunning = False }
+                         else drawStatus
     cmd 'S' = do ed <- get
                  fnm <- liftIO $ prompt "Filename: " (edFilename ed)
-                 b <- if null fnm then return False else lift $ saveLevel fnm
-                 when b $ put (ed { edFilename = fnm })
+                 when (not (null fnm)) $ do
+                     b <- lift $ saveLevel fnm
+                     if b then put (ed { edFilename = fnm, edSaved = True })
+                          else liftIO (promptChar "Unable to save!")
+                               >> return ()
                  drawStatus
     cmd c | c `elem` tileKeys = do gets edCursor >>= lift . flip setTile c
+                                   modified
                                    moveCursor (1, 0)
           | otherwise         = case lookup c movementKeys of
                                     Just dir -> moveCursor dir
@@ -81,42 +85,56 @@ setTile (x, y) c = do mp <- get
 
 toChType = fromIntegral . ord
 
+modified :: EditorIO ()
+modified = do ed <- get
+              put $ ed { edSaved = False }
+
 saveLevel :: String -> MapIO Bool
 saveLevel fnm = do lev <- get
                    liftIO $ catch (writeFile fnm (save lev "") >> return True)
                                   (const $ return False)
 
-prompt :: String -> String -> IO String
-prompt q initial = do (y, x) <- getYX stdScr
-                      statusLine1 (q ++ initial ++ repeat ' ')
-                      nl True
-                      b <- promptChar (length q) (reverse initial)
-                      nl False
-                      wMove stdScr y x
-                      return b
-
-promptChar nq s = do drawCursor (22, nq) (0, length s)
-                     refresh
-                     getKey refresh >>= gotKey
+promptChar :: String -> IO Char
+promptChar msg = do (y, x) <- getYX stdScr
+                    statusLine1 (msg ++ repeat ' ')
+                    drawCursor (22, length msg) (0, 0)
+                    refresh
+                    go
   where
-    gotKey KeyEnter                 = return (reverse s)
-    gotKey KeyBackspace | null s    = next ""
-                        | otherwise = do let x = nq + length s - 1
-                                         mvWAddStr stdScr 22 x " "
-                                         next (tail s)
-    gotKey (KeyChar c) | c `elem` "\r\n"      = gotKey KeyEnter
-                       | c == '\DEL'          = gotKey KeyBackspace
-                       | c >= ' ' && c <= '~' = do waddch stdScr (toChType c)
-                                                   next (c:s)
-    gotKey otherwise                = next s
+    go = do k <- getKey refresh
+            case k of KeyChar c -> return c
+                      otherwise -> go
 
-    next = promptChar nq
+prompt :: String -> String -> IO String
+prompt q initial = do statusLine1 (q ++ initial ++ repeat ' ')
+                      nl True
+                      b <- getChars (length q) (reverse initial)
+                      nl False
+                      return b
+  where
+    getChars nq s = do drawCursor (22, nq) (0, length s)
+                       refresh
+                       getKey refresh >>= gotKey
+      where
+        gotKey KeyEnter                      = return (reverse s)
+        gotKey KeyBackspace | null s         = next ""
+                            | otherwise      = do let x = nq + length s - 1
+                                                  mvWAddStr stdScr 22 x " "
+                                                  next (tail s)
+        gotKey (KeyChar c) | c `elem` "\r\n" = gotKey KeyEnter
+                           | c == '\DEL'     = gotKey KeyBackspace
+                           | c >= ' ' &&
+                             c <= '~'        = do waddch stdScr (toChType c)
+                                                  next (c:s)
+        gotKey otherwise                     = next s
+
+        next = getChars nq
 
 drawStatus :: EditorIO ()
 drawStatus = do nm <- lift $ gets mapName
                 fnm <- ((" (" ++) . (++ ")")) `fmap` gets edFilename
-                liftIO $ do (y, x) <- getYX stdScr
-                            statusLine1 $ "Level \"" ++ nm ++ "\""
+                (x, y) <- gets edCursor
+                liftIO $ do statusLine1 $ "Level \"" ++ nm ++ "\""
                                           ++ fnm ++ repeat '-'
                             wMove stdScr y x
 
