@@ -8,26 +8,35 @@ import UI.HSCurses.Curses
 import UI.HSCurses.CursesHelper
 
 data Editor = Editor { edRunning :: Bool, edCursor :: Pos,
-                       edFilename :: String, edSaved :: Bool }
+                       edFilename :: String, edSaved :: Bool,
+                       edHistory, edFuture :: [(Level, Pos)] }
 
 initEditor = Editor { edRunning  = True,
                       edCursor   = (0, 0),
-                      edFilename = "",
-                      edSaved    = True }
+                      edFilename = "", edSaved  = True,
+                      edHistory  = [], edFuture = [] }
 
-type MapIO = StateT Map IO
-type EditorIO = StateT Editor MapIO
+type LevelIO = StateT Level IO
+type EditorIO = StateT Editor LevelIO
 
 -- View
 inDisplay :: IO a -> IO a
 inDisplay f = bracket_ (start >> startColor) end f
 
-renderMap :: Map -> IO ()
-renderMap mp = return ()
+renderLevel :: Level -> IO ()
+renderLevel mp = let ts = levelTiles mp in go ts (snd $ bounds ts)
+  where
+    go ts (w, h) = renderRow 0
+      where
+        renderRow y | y < h     = do mvWAddStr stdScr y 0
+                                               (map (\x -> ts ! (x,y)) [0..w])
+                                     renderRow (y+1)
+                    | otherwise = return ()
 
 redraw :: EditorIO ()
 redraw = do mp <- lift get
-            liftIO $ renderMap mp
+            liftIO $ renderLevel mp
+            drawStatus
 
 -- Control
 movementKeys = zip "hjkl" [(-1, 0), (0, 1), (0, -1), (1, 0)]
@@ -38,14 +47,14 @@ tileKeys = " .-|+<>#\\S"
 
 runEditor :: EditorIO ()
 runEditor = do drawStatus
-               editMap
+               editLevel
 
-editMap :: EditorIO ()
-editMap = do k <- liftIO $ refresh >> getKey refresh
-             case k of KeyChar c   -> cmd c
-                       _           -> return ()
-             running <- gets edRunning
-             if running then editMap else return ()
+editLevel :: EditorIO ()
+editLevel = do k <- liftIO $ refresh >> getKey refresh
+               case k of KeyChar c   -> cmd c
+                         _           -> return ()
+               running <- gets edRunning
+               if running then editLevel else return ()
   where
     cmd :: Char -> EditorIO ()
     cmd 'Q' = do ed <- get
@@ -57,42 +66,66 @@ editMap = do k <- liftIO $ refresh >> getKey refresh
                          else drawStatus
     cmd 'S' = do ed <- get
                  fnm <- liftIO $ prompt "Filename: " (edFilename ed)
-                 when (not (null fnm)) $ do
+                 unless (null fnm) $ do
                      b <- lift $ saveLevel fnm
                      if b then put (ed { edFilename = fnm, edSaved = True })
                           else liftIO (promptChar "Unable to save!")
                                >> return ()
                  drawStatus
-    cmd c | c `elem` tileKeys = do gets edCursor >>= lift . flip setTile c
-                                   modified
+    cmd 'z' = do ed <- get
+                 let (hist, futr) = (edHistory ed, edFuture ed)
+                 unless (null hist) $ do
+                     nowLevel <- lift get
+                     let now           = (nowLevel, edCursor ed)
+                         (old, oldPos) = head hist
+                     lift $ put old
+                     put $ ed { edHistory = tail hist, edFuture = now:futr,
+                                edSaved = False, edCursor = oldPos }
+                     redraw
+    cmd 'x' = do ed <- get
+                 let (hist, futr) = (edHistory ed, edFuture ed)
+                 unless (null futr) $ do
+                     nowLevel <- lift get
+                     let now           = (nowLevel, edCursor ed)
+                         (new, newPos) = head futr
+                     lift $ put new
+                     put $ ed { edFuture = tail futr, edHistory = now:hist,
+                                edSaved = False, edCursor = newPos }
+                     redraw
+    cmd c | c `elem` tileKeys = do modifying
+                                   gets edCursor >>= lift . flip setTile c
                                    moveCursor (1, 0)
           | otherwise         = case lookup c movementKeys of
                                     Just dir -> moveCursor dir
                                     Nothing  -> return ()
 
-moveCursor :: (Int, Int) -> EditorIO ()
+moveCursor :: Pos -> EditorIO ()
 moveCursor (dx, dy) = do ed <- get
-                         (w, h) <- lift $ gets mapSize
+                         (w, h) <- lift $ gets levelSize
                          let (x, y)   = edCursor ed
                              (x', y') = (clamp 0 w (x+dx), clamp 0 h (y+dy))
                          put $ ed { edCursor = (x', y') }
                          liftIO $ move y' x'
 
-setTile :: (Int, Int) -> Char -> MapIO ()
+setTile :: Pos -> Char -> LevelIO ()
 setTile (x, y) c = do mp <- get
-                      put $ mp { mapTiles = (mapTiles mp) // [((x, y), c)] }
+                      put $ mp { levelTiles = (levelTiles mp) // [((x,y), c)] }
                       lift $ mvAddCh y x (toChType c)
 
 toChType = fromIntegral . ord
 
-modified :: EditorIO ()
-modified = do ed <- get
-              put $ ed { edSaved = False }
+-- Should be called *before* any modification
+modifying :: EditorIO ()
+modifying = do ed <- get
+               lev <- lift get
+               let now = (lev, edCursor ed)
+               put $ ed { edHistory = take 20 (now : edHistory ed),
+                          edSaved = False, edFuture = [] }
 
-saveLevel :: String -> MapIO Bool
-saveLevel fnm = do lev <- get
-                   liftIO $ catch (writeFile fnm (save lev "") >> return True)
-                                  (const $ return False)
+saveLevel :: String -> LevelIO Bool
+saveLevel f = do lev <- get
+                 liftIO $ catch (writeFile f (saveLevels lev) >> return True)
+                                (const $ return False)
 
 promptChar :: String -> IO Char
 promptChar msg = do (y, x) <- getYX stdScr
@@ -131,7 +164,7 @@ prompt q initial = do statusLine1 (q ++ initial ++ repeat ' ')
         next = getChars nq
 
 drawStatus :: EditorIO ()
-drawStatus = do nm <- lift $ gets mapName
+drawStatus = do nm <- lift $ gets levelName
                 fnm <- ((" (" ++) . (++ ")")) `fmap` gets edFilename
                 (x, y) <- gets edCursor
                 liftIO $ do statusLine1 $ "Level \"" ++ nm ++ "\""
@@ -142,6 +175,6 @@ statusLine1 = mvWAddStr stdScr 22 0 . take 80
 
 clamp lower upperPlusOne = max lower . min (upperPlusOne - 1)
 
-main = inDisplay $ execStateT (execStateT runEditor initEditor) initMap
+main = inDisplay $ execStateT (execStateT runEditor initEditor) initLevel
 
 -- vi: set sw=4 ts=4 sts=4 tw=79 ai et nocindent:
