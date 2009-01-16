@@ -2,6 +2,8 @@
 module Level where
 
 import Data.Array
+import qualified Data.Map as Map
+import Data.Map (Map)
 
 -- Model
 type Rect = (Int, Int, Int, Int)
@@ -9,7 +11,7 @@ type Pos = (Int, Int)
 
 data Level = Level { levelName :: String, levelTiles :: Array Pos Char,
                      prevLevels, nextLevels :: [Level],
-                     levelObjs :: [(Obj, ObjPos)],
+                     levelObjs :: Map ObjPos [Obj],
                      levelRegions :: [(Region, Rect)],
                      levelFlags :: [LevelFlag], levelRandomPlaces :: [Pos],
                      levelRandomObjs, levelRandomMons :: [Char],
@@ -18,7 +20,7 @@ data Level = Level { levelName :: String, levelTiles :: Array Pos Char,
 initLevel = Level { levelName = "untitled",
                     levelTiles = listArray ((0, 0), (79, 21)) (repeat ' '),
                     prevLevels = [], nextLevels = [],
-                    levelObjs = [], levelRegions = [], levelFlags = [],
+                    levelObjs = Map.empty, levelRegions = [], levelFlags = [],
                     levelRandomPlaces = [], levelRandomObjs = [],
                     levelRandomMons = [], levelContainer = Nothing }
 
@@ -32,6 +34,7 @@ data Fill = Filled | Unfilled
 data RegionType = Ordinary | Morgue | Barracks | Throne
 
 data ObjPos = ObjPos Pos | RandomPos | RandomPosIndex Int | Contained
+              deriving (Eq, Ord)
 data Obj = Obj ObjSym (Rand String)
                (Maybe (Rand Blessing, Maybe (Spe, Maybe String)))
            | Monst MonstSym (Rand String) [Behaviour]
@@ -47,6 +50,12 @@ objCtor (Engraving _ _)  = 5
 objCtor (Door _)         = 6
 objCtor (Drawbridge _ _) = 7
 objCtorCount = 8
+
+objChar (Obj ch _ _)    = case ch of ObjChar c -> c; otherwise -> 'R'
+objChar (Monst sym _ _) = case sym of MonstChar c -> c; otherwise -> 'M'
+objChar (Stair dir)     = case dir of UpStair -> '<'; DownStair -> '>'
+objChar o               = "  ^{ ~++" !! objCtor o
+
 -- WTF levregion
 data ObjSym = ObjChar Char | RandomObj | RandomObjIndex Int
 type Spe = Int
@@ -103,12 +112,14 @@ instance Save Level where
                      | otherwise   = showString nm . commas save (f lv)
                                      . newline
 
-        sortedObjs = foldr sortObj (replicate objCtorCount []) (levelObjs lv)
-        sortObj o accum = let (bef, (os:aft)) = splitAt (objCtor (fst o)) accum
+        sortedObjs = let os = concat [map ((,) p) ol
+                                      | (p, ol) <- Map.assocs (levelObjs lv)]
+                     in foldr sortObj (replicate objCtorCount []) os
+        sortObj o accum = let (bef, (os:aft)) = splitAt (objCtor (snd o)) accum
                           in bef ++ [o:os] ++ aft
 
-instance Save (Obj, ObjPos) where
-    save (o, p) = case o of
+instance Save (ObjPos, Obj) where
+    save (p, o) = case o of
       Obj sym nm _     -> showString "OBJECT: " . save sym . comma . save nm
                           . comma . save p . newline-- TODO
       Monst sym nm bh  -> showString "MONSTER: " . save sym . comma . save nm

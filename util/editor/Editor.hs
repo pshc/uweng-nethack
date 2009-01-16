@@ -3,6 +3,8 @@ import Control.Monad.State
 import Control.Exception (bracket_)
 import Data.Array
 import Data.Char
+import Data.Map (Map)
+import qualified Data.Map as Map
 import Level
 import UI.HSCurses.Curses
 import UI.HSCurses.CursesHelper
@@ -24,14 +26,18 @@ inDisplay :: IO a -> IO a
 inDisplay f = bracket_ (start >> startColor) end f
 
 renderLevel :: Level -> IO ()
-renderLevel mp = let ts = levelTiles mp in go ts (snd $ bounds ts)
+renderLevel mp = let ts = levelTiles mp
+                     os = levelObjs mp
+                 in go ts os (snd $ bounds ts)
   where
-    go ts (w, h) = renderRow 0
+    go ts os (w, h) = renderRow 0
       where
-        renderRow y | y < h     = do mvWAddStr stdScr y 0
-                                               (map (\x -> ts ! (x,y)) [0..w])
+        renderRow y | y < h     = do mvWAddStr stdScr y 0 (map tile [0..w])
                                      renderRow (y+1)
                     | otherwise = return ()
+          where
+            tile x = maybe (ts ! (x, y)) (objChar . head)
+                           (ObjPos (x, y) `Map.lookup` os)
 
 redraw :: EditorIO ()
 redraw = do mp <- lift get
