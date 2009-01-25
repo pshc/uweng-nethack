@@ -1,6 +1,6 @@
 
 all:
-	ghc --make -o editor Editor.hs
+	ghc -lcurses --make -o editor Editor.hs
 	./editor
 
 %.o: %.hs
