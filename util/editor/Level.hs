@@ -70,7 +70,7 @@ instance Bounded Obj where
 
 objChar (Obj ch _ _)    = case ch of ObjChar c -> c; otherwise -> 'R'
 objChar (Monst sym _ _) = case sym of MonstChar c -> c; otherwise -> 'M'
-objChar (Stair dir)     = case dir of UpStair -> '<'; DownStair -> '>'
+objChar (Stair dir)     = case dir of Up -> '<'; Down -> '>'
 objChar o               = "  ^ ~++{" !! fromEnum o
 
 -- WTF levregion
@@ -80,7 +80,7 @@ data MonstSym = MonstChar Char | RandomMonst | RandomMonstIndex Int
 data Blessing = Blessed | Uncursed | Cursed deriving (Bounded, Enum, Show)
 data Behaviour = Hostile | Peaceful | Asleep deriving (Bounded, Enum, Show)
 data TrapType = TrapDoor | Pit deriving (Bounded, Enum, Show)
-data StairDir = UpStair | DownStair deriving (Bounded, Enum, Show)
+data StairDir = Up | Down deriving (Bounded, Enum, Show)
 data Ink = Burn | Blood deriving (Bounded, Enum, Show)
 data Dir = North | East | South | West deriving (Bounded, Enum, Show)
 data DoorType = Open | Closed | Locked deriving (Bounded, Enum, Show)
@@ -90,7 +90,6 @@ levelSize (Level { levelTiles = ts }) = let (_, (x, y)) = bounds ts
                                         in (x + 1, y + 1)
 
 class Save a where
-    --load :: String -> a
     save :: a -> ShowS
 
 commas f (x:xs) = foldl (\ss y -> ss . comma' . f y) (f x) xs
@@ -173,14 +172,6 @@ loadLevel fp = parseLines initLevel
                         updateState (\l -> l { levelFlags = flags })
         go tok = fail ("Unknown token " ++ tok)
 
-{-data Level = Level { levelName :: String, levelTiles :: Array Pos Char,
-                     prevLevels, nextLevels :: [Level],
-                     levelObjs :: Map ObjPos [Obj],
-                     levelRegions :: [(Region, Rect)],
-                     levelFlags :: [LevelFlag], levelRandomPlaces :: [Pos],
-                     levelRandomObjs, levelRandomMons :: [Char],
-                     levelContainer :: Maybe (Obj, ObjPos) }
--}
     getTokens s = reverse $ go (s, [])
       where
         go (s, ts) | null s    = ts
@@ -263,38 +254,16 @@ instance Save MonstSym where
     save RandomMonst  = showString "random"
     save (RandomMonstIndex i) = showString "monsters[" . shows i . (']':)
 
-instance Save Blessing where
-    save b = let s = case b of Blessed  -> "blessed"
-                               Uncursed -> "uncursed"
-                               Cursed   -> "cursed"   in showString s
+showsLower :: Show a => a -> ShowS
+showsLower = showString . map toLower . show
 
-instance Save Behaviour where
-    save b = let s = case b of Hostile  -> "hostile"
-                               Peaceful -> "peaceful"
-                               Asleep   -> "asleep"   in showString s
-
-instance Save TrapType where
-    save t = let s = case t of TrapDoor -> "trapdoor"
-                               Pit      -> "pit"      in showString s
-
-instance Save StairDir where
-    save t = let s = case t of UpStair   -> "up"
-                               DownStair -> "down" in showString s
-
-instance Save Ink where
-    save i = let s = case i of Burn  -> "burn"
-                               Blood -> "blood" in showString s
-
-instance Save Dir where
-    save d = let s = case d of North -> "north"
-                               South -> "south"
-                               East  -> "east"
-                               West  -> "west"  in showString s
-
-instance Save DoorType where
-    save d = let s = case d of Open   -> "open"
-                               Closed -> "closed"
-                               Locked -> "locked" in showString s
+instance Save Blessing where save = showsLower
+instance Save Behaviour where save = showsLower
+instance Save TrapType where save = showsLower
+instance Save StairDir where save = showsLower
+instance Save Ink where save = showsLower
+instance Save Dir where save = showsLower
+instance Save DoorType where save = showsLower
 
 -- TODO: Not sure if the escaping convention is the same...
 instance Save Pos where save = shows
