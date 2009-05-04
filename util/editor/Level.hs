@@ -47,23 +47,31 @@ data ObjPos = ObjPos Pos | RandomPos | RandomPosIndex Int | Contained
 data Obj = Obj ObjSym (Rand String)
                (Maybe (Rand Blessing, Maybe (Spe, Maybe String)))
            | Monst MonstSym (Rand String) [Behaviour]
-           | Trap (Rand TrapType) | Fountain
+           | Trap (Rand TrapType)
            | Stair StairDir | Engraving Ink String
            | Door (Rand DoorType) | Drawbridge Dir (Rand DoorType)
-objCtor (Obj _ _ _)      = 0
-objCtor (Monst _ _ _)    = 1
-objCtor (Trap _)         = 2
-objCtor Fountain         = 3
-objCtor (Stair _)        = 4
-objCtor (Engraving _ _)  = 5
-objCtor (Door _)         = 6
-objCtor (Drawbridge _ _) = 7
-objCtorCount = 8
+           | Fountain -- Must be last
+
+instance Enum Obj where
+    fromEnum (Obj _ _ _)      = 0
+    fromEnum (Monst _ _ _)    = 1
+    fromEnum (Trap _)         = 2
+    fromEnum (Stair _)        = 3
+    fromEnum (Engraving _ _)  = 4
+    fromEnum (Door _)         = 5
+    fromEnum (Drawbridge _ _) = 6
+    fromEnum Fountain         = 7
+    toEnum 7 = Fountain
+    toEnum _ = error "No Obj toEnum!"
+
+instance Bounded Obj where
+    minBound = error "No Obj minBound!"
+    maxBound = Fountain
 
 objChar (Obj ch _ _)    = case ch of ObjChar c -> c; otherwise -> 'R'
 objChar (Monst sym _ _) = case sym of MonstChar c -> c; otherwise -> 'M'
 objChar (Stair dir)     = case dir of UpStair -> '<'; DownStair -> '>'
-objChar o               = "  ^{ ~++" !! objCtor o
+objChar o               = "  ^ ~++{" !! fromEnum o
 
 -- WTF levregion
 data ObjSym = ObjChar Char | RandomObj | RandomObjIndex Int
@@ -218,11 +226,12 @@ instance Save Level where
         permute nm f | null (f lv) = id
                      | otherwise   = showString nm . commas save (f lv) . nl'
 
-        sortedObjs = let os = concat [map ((,) p) ol
-                                      | (p, ol) <- Map.assocs (levelObjs lv)]
-                     in foldr sortObj (replicate objCtorCount []) os
-        sortObj o accum = let (bef, (os:aft)) = splitAt (objCtor (snd o)) accum
-                          in bef ++ [o:os] ++ aft
+        sortedObjs = let os  = concat [map ((,) p) ol
+                                       | (p, ol) <- Map.assocs (levelObjs lv)]
+                         acc = replicate (fromEnum (maxBound :: Obj) + 1) []
+                     in foldr sortObj acc os
+        sortObj o acc = let (bef, (os:aft)) = splitAt (fromEnum (snd o)) acc
+                        in bef ++ [o:os] ++ aft
 
 instance Save (ObjPos, Obj) where
     save (p, o) = case o of
