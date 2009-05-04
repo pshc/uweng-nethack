@@ -21,16 +21,16 @@ data Level = Level { levelName :: String, levelTiles :: Array Pos Char,
                      levelObjs :: Map ObjPos [Obj],
                      levelRegions :: [(Region, Rect)],
                      levelFlags :: [LevelFlag], levelRandomPlaces :: [Pos],
-                     levelRandomObjs, levelRandomMons :: [Char],
-                     levelContainer :: Maybe (Obj, ObjPos) }
+                     levelRandomObjs, levelRandomMons :: [Char] }
 
 initLevel = Level { levelName = "untitled",
                     levelTiles = listArray ((0, 0), (79, 21)) (repeat ' '),
                     prevLevels = [], nextLevels = [],
                     levelGeometry = (Center, Center),
-                    levelObjs = Map.empty, levelRegions = [], levelFlags = [],
-                    levelRandomPlaces = [], levelRandomObjs = [],
-                    levelRandomMons = [], levelContainer = Nothing }
+                    levelObjs = Map.empty,
+                    levelRegions = [],
+                    levelFlags = [], levelRandomPlaces = [],
+                    levelRandomObjs = [], levelRandomMons = [] }
 
 data Rand a = Random | Fixed a
 
@@ -160,18 +160,24 @@ loadLevel fp = parseLines initLevel
     parseLine lineNum = do srcPos <- getPosition
                            setPosition (setSourceLine srcPos lineNum)
                            whiteSpace
-                           i <- identifier >>= go
+                           i <- identifier >>= got
                            getState
-      where
-        go "MAZE" = do nm <- colon >> stringLiteral
-                       return ()
-                       --ch <- comma >> randChar
-        go "GEOMETRY" = do g1 <- colon >> parseEnum
-                           g2 <- comma >> parseEnum
-                           updateState (\l -> l { levelGeometry = (g1,g2) })
-        go "FLAGS" = do flags <- colon >> parseEnum `sepBy` comma
-                        updateState (\l -> l { levelFlags = flags })
-        go tok = fail ("Unknown token " ++ tok)
+
+    got "MAZE" = do nm <- colon >> stringLiteral
+                    return ()
+                    --ch <- comma >> randChar
+    got "GEOMETRY" = do g1 <- colon >> parseEnum
+                        g2 <- comma >> parseEnum
+                        updateState (\l -> l { levelGeometry = (g1,g2) })
+    got "FLAGS" = do flags <- colon >> parseEnum `sepBy` comma
+                     updateState (\l -> l { levelFlags = flags })
+    got "RANDOM_PLACES" = do ps <- colon >> tuple2 `sepBy` comma
+                             updateState (\l -> l { levelRandomPlaces = ps })
+    got "RANDOM_MONSTERS" = do ms <- colon >> charLiteral `sepBy` comma
+                               updateState (\l -> l { levelRandomMons = ms })
+    got "RANDOM_OBJECTS" = do objs <- colon >> charLiteral `sepBy` comma
+                              updateState (\l -> l { levelRandomObjs = objs })
+    got tok = fail ("Unknown token " ++ tok)
 
     getTokens s = reverse $ go (s, [])
       where
@@ -194,6 +200,10 @@ stringLiteral = P.stringLiteral lexer
 decimal = P.decimal lexer
 identifier = P.identifier lexer
 
+tuple2 = parens $ do a <- decimal
+                     b <- comma >> decimal
+                     return (fromIntegral a, fromIntegral b)
+
 instance Save Level where
     save lv = showString "MAZE: " . save (levelName lv)
               . (if null (levelFlags lv) then id else
@@ -204,7 +214,6 @@ instance Save Level where
               . permute "RANDOM_PLACES: " levelRandomPlaces
               . permute "RANDOM_MONSTERS: " levelRandomMons
               . permute "RANDOM_OBJECTS: " levelRandomObjs
-              . maybe id (\(o, p) -> ("CONTAINER: " ++)) (levelContainer lv)
               . foldl (\ss o -> ss . save o) (showString "# Objects\n")
                       (concat sortedObjs)
       where
