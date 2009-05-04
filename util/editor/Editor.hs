@@ -71,13 +71,21 @@ editLevel = do k <- liftIO $ refresh >> getKey refresh
                  if quit then put $ ed { edRunning = False }
                          else drawStatus
     cmd 'S' = do ed <- get
-                 fnm <- liftIO $ prompt "Filename: " (edFilename ed)
+                 fnm <- liftIO $ prompt "Save as: " (edFilename ed)
                  unless (null fnm) $ do
-                     b <- lift $ saveLevel fnm
+                     lev <- lift get
+                     b <- liftIO (saveLevels fnm lev)
                      if b then put (ed { edFilename = fnm, edSaved = True })
-                          else liftIO (promptChar "Unable to save!")
-                               >> return ()
+                          else do liftIO (promptChar "Unable to save!")
+                                  return ()
                  drawStatus
+    cmd 'L' = do fnm <- gets edFilename >>= liftIO . prompt "Load file: "
+                 if null fnm then drawStatus else do
+                   l <- liftIO $ loadLevels fnm
+                   case l of Left msg  -> do liftIO (promptChar msg)
+                                             drawStatus
+                             Right lev -> do liftIO (promptChar "Loaded!")
+                                             doLoad fnm lev
     cmd 'z' = do ed <- get
                  let (hist, futr) = (edHistory ed, edFuture ed)
                  unless (null hist) $ do
@@ -105,6 +113,12 @@ editLevel = do k <- liftIO $ refresh >> getKey refresh
                                     Just dir -> moveCursor dir
                                     Nothing  -> return ()
 
+    doLoad fnm lev = do lift (put lev)
+                        ed <- get
+                        put (ed { edFilename = fnm, edSaved = True,
+                                  edHistory = [], edFuture = [] })
+                        redraw
+
 moveCursor :: Pos -> EditorIO ()
 moveCursor (dx, dy) = do ed <- get
                          (w, h) <- lift $ gets levelSize
@@ -127,11 +141,6 @@ modifying = do ed <- get
                let now = (lev, edCursor ed)
                put $ ed { edHistory = take 20 (now : edHistory ed),
                           edSaved = False, edFuture = [] }
-
-saveLevel :: String -> LevelIO Bool
-saveLevel f = do lev <- get
-                 liftIO $ catch (writeFile f (saveLevels lev) >> return True)
-                                (const $ return False)
 
 promptChar :: String -> IO Char
 promptChar msg = do (y, x) <- getYX stdScr
