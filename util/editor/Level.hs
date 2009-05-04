@@ -117,10 +117,11 @@ loadLevels fp = flip catch (return . Left . show) $ do
                              Right []     -> return (Left "No levels loaded")
                              Left err     -> return (Left err)
   where
-    go n ls = case snd $ break (isFirstToken "MAZE") ls of
+    go n ls = let (skip, start) = break (isFirstToken "MAZE") ls
+              in case start of
         []     -> return []
         (m:ms) -> do let (this, next) = break (isFirstToken "MAZE") ms
-                     (lev, n') <- loadLevel fp n (m : this)
+                     (lev, n') <- loadLevel fp (n + length skip) (m : this)
                      rest <- go n' next
                      return (lev : rest)
 
@@ -141,7 +142,7 @@ loadLevel fp = parseLines initLevel
     parseLines lev n (l:ls) = let ts = getTokens l
       in if null ts then parseLines lev (n + 1) ls else case head ts of
         "MAP" -> do let (tiles, ls') = break (isFirstToken "ENDMAP") ls
-                        n'           = n + length tiles
+                        n'           = n + length tiles + 2
                     tileArray <- readTiles tiles
                     parseLines (lev { levelTiles = tileArray }) n' (tail ls')
         t     -> case runParser (parseLine n) lev fp l of
