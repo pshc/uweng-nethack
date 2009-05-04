@@ -80,7 +80,7 @@ editLevel = do k <- liftIO $ refresh >> getKey refresh
                           else do liftIO (promptChar "Unable to save!")
                                   return ()
                  drawStatus
-    cmd 'L' = do fnm <- gets edFilename >>= liftIO . prompt "Load file: "
+    cmd 'L' = do fnm <- liftIO $ prompt "Load file: " ""
                  if null fnm then drawStatus else do
                    let fnm' = if '.' `elem` fnm then fnm else fnm ++ ".des"
                    l <- liftIO $ loadLevels fnm'
