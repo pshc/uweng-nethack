@@ -73,19 +73,21 @@ editLevel = do k <- liftIO $ refresh >> getKey refresh
     cmd 'S' = do ed <- get
                  fnm <- liftIO $ prompt "Save as: " (edFilename ed)
                  unless (null fnm) $ do
+                     let fnm' = if '.' `elem` fnm then fnm else fnm ++ ".des"
                      lev <- lift get
-                     b <- liftIO (saveLevels fnm lev)
-                     if b then put (ed { edFilename = fnm, edSaved = True })
+                     b <- liftIO (saveLevels fnm' lev)
+                     if b then put (ed { edFilename = fnm', edSaved = True })
                           else do liftIO (promptChar "Unable to save!")
                                   return ()
                  drawStatus
     cmd 'L' = do fnm <- gets edFilename >>= liftIO . prompt "Load file: "
                  if null fnm then drawStatus else do
-                   l <- liftIO $ loadLevels fnm
+                   let fnm' = if '.' `elem` fnm then fnm else fnm ++ ".des"
+                   l <- liftIO $ loadLevels fnm'
                    case l of Left msg  -> do liftIO (promptChar msg)
                                              drawStatus
                              Right lev -> do liftIO (promptChar "Loaded!")
-                                             doLoad fnm lev
+                                             doLoad fnm' lev
     cmd 'z' = do ed <- get
                  let (hist, futr) = (edHistory ed, edFuture ed)
                  unless (null hist) $ do
