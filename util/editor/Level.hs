@@ -1,4 +1,5 @@
-{-# OPTIONS_GHC -XFlexibleInstances -XTypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances, TypeSynonymInstances,
+             NoMonomorphismRestriction, RelaxedPolyRec #-}
 module Level where
 
 import Control.Monad
@@ -130,10 +131,8 @@ isFirstToken tok = (== tok) . fst . head . lex
 type LevelParser = GenParser Char Level
 
 parseEnum :: (Bounded a, Enum a, Show a) => LevelParser a
-parseEnum = choice [try (identifier >>= guard . equals ctor >> return ctor)
-                    | ctor <- [minBound .. maxBound]]
-  where
-    a `equals` b = map toLower (show a) == map toLower b
+parseEnum = choice [reserved e >> return c | c <- [minBound .. maxBound],
+                                             let e = map toLower (show c)]
 
 loadLevel :: (Monad m) => FilePath -> Int -> [String] -> m (Level, Int)
 loadLevel fp = parseLines initLevel
@@ -149,6 +148,12 @@ loadLevel fp = parseLines initLevel
                      Left err   -> fail (show err)
                      Right lev' -> parseLines lev' (n + 1) ls
 
+    getTokens s = reverse $ go (s, [])
+      where
+        go ([], ts) = ts
+        go (s, ts)  = let (t, s') = head (lex s)
+                      in if "#" `isPrefixOf` t then ts else go (s', t:ts)
+
     readTiles ls = let w = length (head ls)
                        h = length ls
                        b = ((0, 0), (w - 1, h - 1))
@@ -156,39 +161,33 @@ loadLevel fp = parseLines initLevel
                                                      ++ show (w, h))
                       else return (listArray b (concat (transpose ls)))
 
-    parseLine :: Int -> LevelParser Level
     parseLine lineNum = do srcPos <- getPosition
                            setPosition (setSourceLine srcPos lineNum)
                            whiteSpace
-                           i <- identifier >>= got
+                           choice [reserved r >> colon >> f
+                                   | (r, f) <- reservedParsers]
                            getState
 
-    got "MAZE" = do nm <- colon >> stringLiteral
-                    return ()
-                    --ch <- comma >> randChar
-    got "GEOMETRY" = do g1 <- colon >> parseEnum
-                        g2 <- comma >> parseEnum
-                        updateState (\l -> l { levelGeometry = (g1,g2) })
-    got "FLAGS" = do flags <- colon >> parseEnum `sepBy` comma
-                     updateState (\l -> l { levelFlags = flags })
-    got "RANDOM_PLACES" = do ps <- colon >> tuple2 `sepBy` comma
-                             updateState (\l -> l { levelRandomPlaces = ps })
-    got "RANDOM_MONSTERS" = do ms <- colon >> charLiteral `sepBy` comma
-                               updateState (\l -> l { levelRandomMons = ms })
-    got "RANDOM_OBJECTS" = do objs <- colon >> charLiteral `sepBy` comma
-                              updateState (\l -> l { levelRandomObjs = objs })
-    got tok = fail ("Unknown token " ++ tok)
+reservedParsers :: [(String, LevelParser ())]
+reservedParsers = [
+    ("MAZE", do nm <- stringLiteral
+                updateState (\l -> l { levelName = nm })),
+    ("GEOMETRY", do g1 <- parseEnum; comma; g2 <- parseEnum
+                    updateState (\l -> l { levelGeometry = (g1, g2) })),
+    ("FLAGS", do flags <- parseEnum `sepBy` comma
+                 updateState (\l -> l { levelFlags = flags })),
+    ("RANDOM_PLACES", do ps <- tuple2 `sepBy` comma
+                         updateState (\l -> l { levelRandomPlaces = ps })),
+    ("RANDOM_MONSTERS", do ms <- charLiteral `sepBy` comma
+                           updateState (\l -> l { levelRandomMons = ms })),
+    ("RANDOM_OBJECTS", do os <- charLiteral `sepBy` comma
+                          updateState (\l -> l { levelRandomObjs = os }))]
 
-    getTokens s = reverse $ go (s, [])
-      where
-        go (s, ts) | null s    = ts
-                   | otherwise = let (t, s') = head (lex s)
-                                 in if "#" `isPrefixOf` t then ts
-                                                          else go (s', t:ts)
-
+reservedNames = "MAP" : map fst reservedParsers
 
 lexer = P.makeTokenParser $ emptyDef { P.commentLine = "#",
-                                       P.caseSensitive = False }
+                                       P.caseSensitive = False,
+                                       P.reservedNames = reservedNames }
 
 whiteSpace = P.whiteSpace lexer
 parens = P.parens lexer
@@ -199,6 +198,7 @@ charLiteral = P.charLiteral lexer
 stringLiteral = P.stringLiteral lexer
 decimal = P.decimal lexer
 identifier = P.identifier lexer
+reserved = P.reserved lexer
 
 tuple2 = parens $ do a <- decimal
                      b <- comma >> decimal
