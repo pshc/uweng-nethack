@@ -22,6 +22,7 @@ data Level = Level { levelName :: String, levelTiles :: Array Pos Char,
                      levelGeometry :: (Geometry, Geometry),
                      levelObjs :: Map ObjPos [Obj],
                      levelRegions :: [(Region, Rect)],
+                     levelTeleRegions :: [(LevRegion, LevRegion, StairDir)],
                      levelFlags :: [LevelFlag], levelRandomPlaces :: [Pos],
                      levelRandomObjs, levelRandomMons :: [Char] }
 
@@ -30,11 +31,12 @@ initLevel = Level { levelName = "untitled",
                     prevLevels = [], nextLevels = [],
                     levelGeometry = (Center, Center),
                     levelObjs = Map.empty,
-                    levelRegions = [],
+                    levelRegions = [], levelTeleRegions = [],
                     levelFlags = [], levelRandomPlaces = [],
                     levelRandomObjs = [], levelRandomMons = [] }
 
 data Rand a = Random | Fixed a
+data LevRegion = Rect Rect | LevRegion Rect
 
 data LevelFlag = NoTeleport | HardFloor deriving (Bounded, Enum, Show)
 data Region = Region (Rand Lighting) RegionType (Maybe (Fill, Maybe Bool))
@@ -75,7 +77,6 @@ objChar (Monst sym _ _) = case sym of MonstChar c -> c; otherwise -> 'M'
 objChar (Stair dir)     = case dir of Up -> '<'; Down -> '>'
 objChar o               = "  ^ ~++{" !! fromEnum o
 
--- WTF levregion
 data ObjSym = ObjChar Char | RandomObj | RandomObjIndex Int
 type Spe = Int
 data MonstSym = MonstChar Char | RandomMonst | RandomMonstIndex Int
@@ -167,7 +168,11 @@ reservedParsers = [
     ("RANDOM_MONSTERS", do ms <- charLiteral `sepBy` comma
                            putLevel (\l -> l { levelRandomMons = ms })),
     ("RANDOM_OBJECTS", do os <- charLiteral `sepBy` comma
-                          putLevel (\l -> l { levelRandomObjs = os }))]
+                          putLevel (\l -> l { levelRandomObjs = os })),
+    ("TELEPORT_REGION", do r1 <- levRegion; comma; r2 <- levRegion; comma
+                           dir <- parseEnum
+                           putLevel (\l -> l { levelTeleRegions = (r1,r2,dir)
+                                                   : levelTeleRegions l }))]
 
 reservedNames = "MAZE" : "MAP" : "ENDMAP" : "random" : map fst reservedParsers
 
@@ -189,6 +194,14 @@ reserved = P.reserved lexer
 tuple2 = parens $ do a <- decimal
                      b <- comma >> decimal
                      return (fromIntegral a, fromIntegral b)
+
+tuple4 = parens $ do a <- decimal
+                     [b, c, d] <- count 3 (comma >> decimal)
+                     let f = fromIntegral
+                     return (f a, f b, f c, f d)
+
+levRegion = (reserved "levregion" >> tuple4 >>= return . LevRegion)
+            <|> (tuple4 >>= return . Rect)
 
 rand c = (reserved "random" >> return Random) <|> (c >>= return . Fixed)
 
