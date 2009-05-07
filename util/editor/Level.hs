@@ -8,6 +8,7 @@ import Data.Char
 import Data.List
 import qualified Data.Map as Map
 import Data.Map (Map)
+import Data.Maybe
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Language (emptyDef)
 import qualified Text.ParserCombinators.Parsec.Token as P
@@ -110,80 +111,65 @@ instance Monad (Either String) where
     (Left s)  >>= _ = Left s
     return          = Right
 
-loadLevels :: FilePath -> IO (Either String Level)
-loadLevels fp = flip catch (return . Left . show) $ do
-                   r <- readFile fp >>= return . go 1 . lines
-                   case r of Right (l:ls) -> let l' = l { nextLevels = ls }
-                                             in return (Right l')
-                             Right []     -> return (Left "No levels loaded")
-                             Left err     -> return (Left err)
-  where
-    go n ls = let (skip, start) = break (isFirstToken "MAZE") ls
-              in case start of
-        []     -> return []
-        (m:ms) -> do let (this, next) = break (isFirstToken "MAZE") ms
-                     (lev, n') <- loadLevel fp (n + length skip) (m : this)
-                     rest <- go n' next
-                     return (lev : rest)
+data LoadState = NoState | LoadState Level
+type LevelParser = GenParser Char LoadState
 
-isFirstToken tok = (== tok) . fst . head . lex
-
-type LevelParser = GenParser Char Level
+putLevel f = updateState (\(LoadState lev) -> LoadState (f lev))
 
 parseEnum :: (Bounded a, Enum a, Show a) => LevelParser a
-parseEnum = choice [reserved e >> return c | c <- [minBound .. maxBound],
-                                             let e = map toLower (show c)]
-
-loadLevel :: (Monad m) => FilePath -> Int -> [String] -> m (Level, Int)
-loadLevel fp = parseLines initLevel
+parseEnum = do e <- identifier
+               return $ fromJust $ find (equals e) [minBound .. maxBound]
   where
-    parseLines lev n []     = return (lev, n)
-    parseLines lev n (l:ls) = let ts = getTokens l
-      in if null ts then parseLines lev (n + 1) ls else case head ts of
-        "MAP" -> do let (tiles, ls') = break (isFirstToken "ENDMAP") ls
-                        n'           = n + length tiles + 2
-                    tileArray <- readTiles tiles
-                    parseLines (lev { levelTiles = tileArray }) n' (tail ls')
-        t     -> case runParser (parseLine n) lev fp l of
-                     Left err   -> fail (show err)
-                     Right lev' -> parseLines lev' (n + 1) ls
+    a `equals` b = map toLower a == map toLower (show b)
 
-    getTokens s = reverse $ go (s, [])
-      where
-        go ([], ts) = ts
-        go (s, ts)  = let (t, s') = head (lex s)
-                      in if "#" `isPrefixOf` t then ts else go (s', t:ts)
 
-    readTiles ls = let w = length (head ls)
-                       h = length ls
-                       b = ((0, 0), (w - 1, h - 1))
-                   in if w > 80 || h > 22 then fail ("Map is too large: "
-                                                     ++ show (w, h))
-                      else return (listArray b (concat (transpose ls)))
+loadLevels :: FilePath -> IO (Either String Level)
+loadLevels fp = catch (runParser parseLevels NoState fp `fmap` readFile fp
+                        >>= return . either (fail . show) return)
+                      (return . fail . show)
+  where
+    parseLevels = do (m:ms) <- whiteSpace >> many readMaze
+                     eof
+                     return $ m { nextLevels = ms }
+    readMaze = do nm <- reserved "MAZE" >> colon >> stringLiteral
+                  c <- comma >> rand charLiteral
+                  whiteSpace
+                  setState $ LoadState $ initLevel { levelName = nm }
+                  many1 $ choice lineParsers
+                  LoadState lev <- getState
+                  return lev
 
-    parseLine lineNum = do srcPos <- getPosition
-                           setPosition (setSourceLine srcPos lineNum)
-                           whiteSpace
-                           choice [reserved r >> colon >> f
-                                   | (r, f) <- reservedParsers]
-                           getState
+    lineParsers = readMap : [reserved r >> colon >> f >> whiteSpace
+                             | (r, f) <- reservedParsers]
+
+readMap = do try (string "MAP" >> newline)
+             (lines, w, h) <- readLines
+             guard (w <= 80 && h <= 22)
+             let m = listArray ((0, 0), (w-1, h-1)) (concat (transpose lines))
+             putLevel (\l -> l { levelTiles = m })
+  where
+    readLines = (reserved "ENDMAP" >> return ([], 0, 0)) <|> do
+                    l <- many (noneOf "\r\n")
+                    (ls, w', h) <- newline >> readLines
+                    let lw = length l
+                        w  = if null ls then lw else if lw == w' then w' else
+                                error "Mismatched tile line length!"
+                    return (l:ls, w, h + 1)
 
 reservedParsers :: [(String, LevelParser ())]
 reservedParsers = [
-    ("MAZE", do nm <- stringLiteral
-                updateState (\l -> l { levelName = nm })),
     ("GEOMETRY", do g1 <- parseEnum; comma; g2 <- parseEnum
-                    updateState (\l -> l { levelGeometry = (g1, g2) })),
+                    putLevel (\l -> l { levelGeometry = (g1, g2) })),
     ("FLAGS", do flags <- parseEnum `sepBy` comma
-                 updateState (\l -> l { levelFlags = flags })),
+                 putLevel (\l -> l { levelFlags = flags })),
     ("RANDOM_PLACES", do ps <- tuple2 `sepBy` comma
-                         updateState (\l -> l { levelRandomPlaces = ps })),
+                         putLevel (\l -> l { levelRandomPlaces = ps })),
     ("RANDOM_MONSTERS", do ms <- charLiteral `sepBy` comma
-                           updateState (\l -> l { levelRandomMons = ms })),
+                           putLevel (\l -> l { levelRandomMons = ms })),
     ("RANDOM_OBJECTS", do os <- charLiteral `sepBy` comma
-                          updateState (\l -> l { levelRandomObjs = os }))]
+                          putLevel (\l -> l { levelRandomObjs = os }))]
 
-reservedNames = "MAP" : map fst reservedParsers
+reservedNames = "MAZE" : "MAP" : "ENDMAP" : "random" : map fst reservedParsers
 
 lexer = P.makeTokenParser $ emptyDef { P.commentLine = "#",
                                        P.caseSensitive = False,
@@ -203,6 +189,8 @@ reserved = P.reserved lexer
 tuple2 = parens $ do a <- decimal
                      b <- comma >> decimal
                      return (fromIntegral a, fromIntegral b)
+
+rand c = (reserved "random" >> return Random) <|> (c >>= return . Fixed)
 
 instance Save Level where
     save lv = showString "MAZE: " . save (levelName lv)
