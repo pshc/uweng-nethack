@@ -122,6 +122,15 @@ parseEnum = do e <- identifier
   where
     a `equals` b = map toLower a == map toLower (show b)
 
+quotedEnum :: (Bounded a, Enum a, Show a) => LevelParser a
+quotedEnum = do e <- stringLiteral
+                return $ fromJust $ find (equals e) [minBound .. maxBound]
+  where
+    (a:as) `equals` b = let (c:cs) = show b in a == toLower c && go as cs
+    go (' ':a:as) (b:bs) | isUpper b = a == toLower b && go as bs
+    go (a:as) (b:bs)     | isLower b = a == b && go as bs
+    go [] [] = True
+    go _  _  = False
 
 loadLevels :: FilePath -> IO (Either String Level)
 loadLevels fp = catch (runParser parseLevels NoState fp `fmap` readFile fp
@@ -131,8 +140,8 @@ loadLevels fp = catch (runParser parseLevels NoState fp `fmap` readFile fp
     parseLevels = do (m:ms) <- whiteSpace >> many readMaze
                      eof
                      return $ m { nextLevels = ms }
-    readMaze = do nm <- reserved "MAZE" >> colon >> stringLiteral
-                  c <- comma >> rand charLiteral
+    readMaze = do nm <- reserved "MAZE" >> colon >> commaed stringLiteral
+                  c <- rand charLiteral
                   whiteSpace
                   setState $ LoadState $ initLevel { levelName = nm }
                   many1 $ choice lineParsers
@@ -158,7 +167,7 @@ readMap = do try (string "MAP" >> newline)
 
 reservedParsers :: [(String, LevelParser ())]
 reservedParsers = [
-    ("GEOMETRY", do g1 <- parseEnum; comma; g2 <- parseEnum
+    ("GEOMETRY", do g1 <- commaed parseEnum; g2 <- parseEnum
                     putLevel (\l -> l { levelGeometry = (g1, g2) })),
     ("FLAGS", do flags <- parseEnum `sepBy` comma
                  putLevel (\l -> l { levelFlags = flags })),
@@ -169,14 +178,31 @@ reservedParsers = [
     ("RANDOM_OBJECTS", do os <- charLiteral `sepBy` comma
                           putLevel (\l -> l { levelRandomObjs = os })),
     ("TELEPORT_REGION", speRegion TeleportRegion),
-    ("STAIR",           speRegion Stair)]
+    ("STAIR",           speRegion Stair),
+    ("FOUNTAIN",   withPos Fountain >>= levelObj),
+    ("DOOR",       commaed (rand parseEnum) >>= withPos . Door >>= levelObj),
+    ("DRAWBRIDGE", do pos <- commaed objPos
+                      dir <- commaed parseEnum
+                      st <- rand parseEnum
+                      levelObj (pos, Drawbridge dir st)),
+    ("TRAP", commaed (rand quotedEnum) >>= withPos . Trap >>= levelObj)]
   where
-    speRegion f = do r1 <- levRegion; comma; r2 <- levRegion; comma
+    speRegion f = do r1 <- commaed levRegion; r2 <- commaed levRegion
                      spe <- f `fmap` parseEnum
                      putLevel (\l -> l { levelSpeRegions = (r1, r2, spe)
                                          : levelSpeRegions l })
 
-reservedNames = "MAZE" : "MAP" : "ENDMAP" : "random" : map fst reservedParsers
+    withPos obj = objPos >>= \pos -> return (pos, obj)
+
+    levelObj (pos, obj) = putLevel (\l -> l { levelObjs = Map.alter addObj pos
+                                                          (levelObjs l) })
+      where
+        addObj = Just . maybe [obj] (obj :)
+
+
+reservedNames = "MAZE" : "MAP" : "ENDMAP"
+                : "random" : "place" : "contained"
+                : map fst reservedParsers
 
 lexer = P.makeTokenParser $ emptyDef { P.commentLine = "#",
                                        P.caseSensitive = False,
@@ -189,18 +215,22 @@ comma = P.comma lexer
 colon = P.colon lexer
 charLiteral = P.charLiteral lexer
 stringLiteral = P.stringLiteral lexer
-decimal = P.decimal lexer
+decimal = fromIntegral `fmap` P.decimal lexer
 identifier = P.identifier lexer
 reserved = P.reserved lexer
 
-tuple2 = parens $ do a <- decimal
-                     b <- comma >> decimal
-                     return (fromIntegral a, fromIntegral b)
+commaed f = f >>= \a -> comma >> return a
 
-tuple4 = parens $ do a <- decimal
-                     [b, c, d] <- count 3 (comma >> decimal)
-                     let f = fromIntegral
-                     return (f a, f b, f c, f d)
+tuple2 = parens $ do a <- commaed decimal; b <- decimal
+                     return (a, b)
+
+objPos = choice [ObjPos `fmap` tuple2,
+                 reserved "random" >> return RandomPos,
+                 RandomPosIndex `fmap` (reserved "place" >> squares decimal),
+                 reserved "contained" >> return Contained]
+
+tuple4 = parens $ do [a, b, c] <- count 3 (commaed decimal); d <- decimal
+                     return (a, b, c, d)
 
 levRegion = (reserved "levregion" >> tuple4 >>= return . LevRegion)
             <|> (tuple4 >>= return . Rect)
@@ -281,9 +311,17 @@ instance Save MonstSym where
 showsLower :: Show a => a -> ShowS
 showsLower = showString . map toLower . show
 
+showsQuoted :: Show a => a -> ShowS
+showsQuoted o = let (s:ss) = show o
+                in (['"', toLower s] ++) . foldr quote ('"':) ss
+  where
+    quote c | c == '"'  = (("\\\"" ++) .)
+            | isUpper c = (([' ', toLower c] ++) .)
+            | otherwise = ((c :) .)
+
 instance Save Blessing where save = showsLower
 instance Save Behaviour where save = showsLower
-instance Save TrapType where save = showsLower
+instance Save TrapType where save = showsQuoted
 instance Save StairDir where save = showsLower
 instance Save Ink where save = showsLower
 instance Save Dir where save = showsLower
