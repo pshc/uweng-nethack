@@ -35,7 +35,7 @@ initLevel = Level { levelName = "untitled",
                     levelFlags = [], levelRandomPlaces = [],
                     levelRandomObjs = [], levelRandomMons = [] }
 
-data Rand a = Random | Fixed a
+data Rand a = Fixed a | Random | RandomIndex Int deriving (Eq, Ord)
 data LevRegion = Rect Rect | LevRegion Rect
 
 data LevelFlag = NoTeleport | HardFloor deriving (Bounded, Enum, Show)
@@ -47,11 +47,10 @@ data RegionType = Ordinary | Morgue | Barracks | Throne
                   deriving (Bounded, Enum, Show)
 data SpeRegion = Stair StairDir | TeleportRegion StairDir
 
-data ObjPos = ObjPos Pos | RandomPos | RandomPosIndex Int | Contained
-              deriving (Eq, Ord)
-data Obj = Obj ObjSym (Rand String)
+type ObjPos = Rand Pos
+data Obj = Obj (Rand Char) (Rand String)
                (Maybe (Rand Blessing, Maybe (Spe, Maybe String)))
-           | Monst MonstSym (Rand String) [Behaviour]
+           | Monst (Rand Char) (Rand String) [Behaviour]
            | Trap (Rand TrapType)
            | Engraving Ink String
            | Door (Rand DoorType) | Drawbridge Dir (Rand DoorType)
@@ -72,13 +71,11 @@ instance Bounded Obj where
     minBound = error "No Obj minBound!"
     maxBound = Fountain
 
-objChar (Obj ch _ _)    = case ch of ObjChar c -> c; otherwise -> 'R'
-objChar (Monst sym _ _) = case sym of MonstChar c -> c; otherwise -> 'M'
+objChar (Obj ch _ _)    = case ch of Fixed c -> c; otherwise -> 'R'
+objChar (Monst sym _ _) = case sym of Fixed c -> c; otherwise -> 'M'
 objChar o               = "  ^ ~++{" !! fromEnum o
 
-data ObjSym = ObjChar Char | RandomObj | RandomObjIndex Int
 type Spe = Int
-data MonstSym = MonstChar Char | RandomMonst | RandomMonstIndex Int
 data Blessing = Blessed | Uncursed | Cursed deriving (Bounded, Enum, Show)
 data Behaviour = Hostile | Peaceful | Asleep deriving (Bounded, Enum, Show)
 data TrapType = TrapDoor | Pit deriving (Bounded, Enum, Show)
@@ -185,7 +182,12 @@ reservedParsers = [
                       dir <- commaed parseEnum
                       st <- rand parseEnum
                       levelObj (pos, Drawbridge dir st)),
-    ("TRAP", commaed (rand quotedEnum) >>= withPos . Trap >>= levelObj)]
+    ("TRAP", commaed (rand quotedEnum) >>= withPos . Trap >>= levelObj),
+    ("OBJECT", do typ <- commaed (randIndex "object" charLiteral)
+                  nm <- commaed (rand stringLiteral)
+                  misc <- maybeBoth (commaed $ rand parseEnum)
+                              (maybeBoth decimal (optionMaybe stringLiteral))
+                  withPos (Obj typ nm misc) >>= levelObj)]
   where
     speRegion f = do r1 <- commaed levRegion; r2 <- commaed levRegion
                      spe <- f `fmap` parseEnum
@@ -199,9 +201,10 @@ reservedParsers = [
       where
         addObj = Just . maybe [obj] (obj :)
 
+    maybeBoth a b = optionMaybe $ a >>= \r -> b >>= \s -> return (r, s)
 
 reservedNames = "MAZE" : "MAP" : "ENDMAP"
-                : "random" : "place" : "contained"
+                : "random" : "place" : "object" : "contained"
                 : map fst reservedParsers
 
 lexer = P.makeTokenParser $ emptyDef { P.commentLine = "#",
@@ -224,10 +227,7 @@ commaed f = f >>= \a -> comma >> return a
 tuple2 = parens $ do a <- commaed decimal; b <- decimal
                      return (a, b)
 
-objPos = choice [ObjPos `fmap` tuple2,
-                 reserved "random" >> return RandomPos,
-                 RandomPosIndex `fmap` (reserved "place" >> squares decimal),
-                 reserved "contained" >> return Contained]
+objPos = (reserved "contained" >> error "TODO") <|> randIndex "place" tuple2
 
 tuple4 = parens $ do [a, b, c] <- count 3 (commaed decimal); d <- decimal
                      return (a, b, c, d)
@@ -236,6 +236,8 @@ levRegion = (reserved "levregion" >> tuple4 >>= return . LevRegion)
             <|> (tuple4 >>= return . Rect)
 
 rand c = (reserved "random" >> return Random) <|> (c >>= return . Fixed)
+randIndex s c = (reserved s >> squares decimal >>= return . RandomIndex)
+                <|> rand c
 
 instance Save Level where
     save lv = showString "MAZE: " . save (levelName lv)
@@ -292,22 +294,6 @@ instance Save (ObjPos, Obj) where
       Drawbridge dir t -> ("DRAWBRIDGE: " ++) . save dir . comma' . save t . q
      where q = comma' . save p . nl'
 
-instance Save ObjPos where
-    save (ObjPos p)         = save p
-    save RandomPos          = showString "random"
-    save (RandomPosIndex i) = showString "places[" . shows i . (']':)
-    save Contained          = showString "contained"
-
-instance Save ObjSym where
-    save (ObjChar c)        = save c
-    save RandomObj          = showString "random"
-    save (RandomObjIndex i) = showString "objects[" . shows i . (']':)
-
-instance Save MonstSym where
-    save (MonstChar c) = save c
-    save RandomMonst  = showString "random"
-    save (RandomMonstIndex i) = showString "monsters[" . shows i . (']':)
-
 showsLower :: Show a => a -> ShowS
 showsLower = showString . map toLower . show
 
@@ -333,9 +319,14 @@ instance Save Rect where save = shows
 instance Save String where save = shows
 instance Save Char where save = shows
 
+saveRandom _ Random          = showString "random"
+saveRandom _ (Fixed x)       = save x
+saveRandom s (RandomIndex i) = showString s . ('[':) . shows i . (']':)
+
 instance Save a => Save (Rand a) where
-    save Random    = showString "random"
-    save (Fixed x) = save x
+    save Random          = showString "random"
+    save (Fixed x)       = save x
+    save (RandomIndex i) = error "Unknown RandomIndex prefix"
 
 instance Save LevelFlag where
     save NoTeleport = showString "noteleport"

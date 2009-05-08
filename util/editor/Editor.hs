@@ -37,7 +37,7 @@ renderLevel mp = let ts = levelTiles mp
                     | otherwise = return ()
           where
             tile x = maybe (ts ! (x, y)) (objChar . head)
-                           (ObjPos (x, y) `Map.lookup` os)
+                           (Fixed (x, y) `Map.lookup` os)
 
 redraw :: EditorIO ()
 redraw = do mp <- lift get
