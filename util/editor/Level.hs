@@ -22,7 +22,7 @@ data Level = Level { levelName :: String, levelTiles :: Array Pos Char,
                      levelGeometry :: (Geometry, Geometry),
                      levelObjs :: Map ObjPos [Obj],
                      levelRegions :: [(Region, Rect)],
-                     levelTeleRegions :: [(LevRegion, LevRegion, StairDir)],
+                     levelSpeRegions :: [(LevRegion, LevRegion, SpeRegion)],
                      levelFlags :: [LevelFlag], levelRandomPlaces :: [Pos],
                      levelRandomObjs, levelRandomMons :: [Char] }
 
@@ -31,7 +31,7 @@ initLevel = Level { levelName = "untitled",
                     prevLevels = [], nextLevels = [],
                     levelGeometry = (Center, Center),
                     levelObjs = Map.empty,
-                    levelRegions = [], levelTeleRegions = [],
+                    levelRegions = [], levelSpeRegions = [],
                     levelFlags = [], levelRandomPlaces = [],
                     levelRandomObjs = [], levelRandomMons = [] }
 
@@ -45,6 +45,7 @@ data Lighting = Lit | Unlit deriving (Bounded, Enum, Show)
 data Fill = Filled | Unfilled deriving (Bounded, Enum, Show)
 data RegionType = Ordinary | Morgue | Barracks | Throne
                   deriving (Bounded, Enum, Show)
+data SpeRegion = Stair StairDir | TeleportRegion StairDir
 
 data ObjPos = ObjPos Pos | RandomPos | RandomPosIndex Int | Contained
               deriving (Eq, Ord)
@@ -52,7 +53,7 @@ data Obj = Obj ObjSym (Rand String)
                (Maybe (Rand Blessing, Maybe (Spe, Maybe String)))
            | Monst MonstSym (Rand String) [Behaviour]
            | Trap (Rand TrapType)
-           | Stair StairDir | Engraving Ink String
+           | Engraving Ink String
            | Door (Rand DoorType) | Drawbridge Dir (Rand DoorType)
            | Fountain -- Must be last
 
@@ -60,12 +61,11 @@ instance Enum Obj where
     fromEnum (Obj _ _ _)      = 0
     fromEnum (Monst _ _ _)    = 1
     fromEnum (Trap _)         = 2
-    fromEnum (Stair _)        = 3
-    fromEnum (Engraving _ _)  = 4
-    fromEnum (Door _)         = 5
-    fromEnum (Drawbridge _ _) = 6
-    fromEnum Fountain         = 7
-    toEnum 7 = Fountain
+    fromEnum (Engraving _ _)  = 3
+    fromEnum (Door _)         = 4
+    fromEnum (Drawbridge _ _) = 5
+    fromEnum Fountain         = 6
+    toEnum 6 = Fountain
     toEnum _ = error "No Obj toEnum!"
 
 instance Bounded Obj where
@@ -74,7 +74,6 @@ instance Bounded Obj where
 
 objChar (Obj ch _ _)    = case ch of ObjChar c -> c; otherwise -> 'R'
 objChar (Monst sym _ _) = case sym of MonstChar c -> c; otherwise -> 'M'
-objChar (Stair dir)     = case dir of Up -> '<'; Down -> '>'
 objChar o               = "  ^ ~++{" !! fromEnum o
 
 data ObjSym = ObjChar Char | RandomObj | RandomObjIndex Int
@@ -169,10 +168,13 @@ reservedParsers = [
                            putLevel (\l -> l { levelRandomMons = ms })),
     ("RANDOM_OBJECTS", do os <- charLiteral `sepBy` comma
                           putLevel (\l -> l { levelRandomObjs = os })),
-    ("TELEPORT_REGION", do r1 <- levRegion; comma; r2 <- levRegion; comma
-                           dir <- parseEnum
-                           putLevel (\l -> l { levelTeleRegions = (r1,r2,dir)
-                                                   : levelTeleRegions l }))]
+    ("TELEPORT_REGION", speRegion TeleportRegion),
+    ("STAIR",           speRegion Stair)]
+  where
+    speRegion f = do r1 <- levRegion; comma; r2 <- levRegion; comma
+                     spe <- f `fmap` parseEnum
+                     putLevel (\l -> l { levelSpeRegions = (r1, r2, spe)
+                                         : levelSpeRegions l })
 
 reservedNames = "MAZE" : "MAP" : "ENDMAP" : "random" : map fst reservedParsers
 
@@ -215,6 +217,7 @@ instance Save Level where
               . permute "RANDOM_PLACES: " levelRandomPlaces
               . permute "RANDOM_MONSTERS: " levelRandomMons
               . permute "RANDOM_OBJECTS: " levelRandomObjs
+              . foldl (\ss r -> ss . save r) ("" ++) (levelSpeRegions lv)
               . foldl (\ss o -> ss . save o) (showString "# Objects\n")
                       (concat sortedObjs)
       where
@@ -235,6 +238,17 @@ instance Save Level where
         sortObj o acc = let (bef, (os:aft)) = splitAt (fromEnum (snd o)) acc
                         in bef ++ [o:os] ++ aft
 
+instance Save (LevRegion, LevRegion, SpeRegion) where
+    save (r1, r2, spe) = let (f, dir) = saveSpe spe
+                         in f . save r1 . comma' . save r2 . comma' . dir . nl'
+      where
+        saveSpe (Stair dir)          = (showString "STAIR: ", save dir)
+        saveSpe (TeleportRegion dir) = (("TELEPORT_REGION: " ++), save dir)
+
+instance Save LevRegion where
+    save (LevRegion reg) = showString "levregion" . save reg
+    save (Rect reg)      = save reg
+
 instance Save (ObjPos, Obj) where
     save (p, o) = case o of
       Obj sym nm _     -> showString "OBJECT: " . save sym . comma' . save nm
@@ -243,7 +257,6 @@ instance Save (ObjPos, Obj) where
                           . comma' . save p . comma' . commas save bh
       Trap typ         -> showString "TRAP: " . save typ . q
       Fountain         -> showString "FOUNTAIN: " . save p . nl'
-      Stair dir        -> showString "STAIR: " . save dir . q
       Engraving ink s  -> ("ENGRAVING: " ++) . save ink . comma' . save s . q
       Door typ         -> showString "DOOR: " . save typ . q
       Drawbridge dir t -> ("DRAWBRIDGE: " ++) . save dir . comma' . save t . q
