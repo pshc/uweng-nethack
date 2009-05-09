@@ -53,7 +53,7 @@ data Obj = Obj (Rand Char) (Rand String)
            | Container (Rand Char) (Rand String) [Obj]
            | Monst (Rand Char) (Rand String) [Behaviour]
            | Trap (Rand TrapType)
-           | Engraving Ink String
+           | Engraving (Rand Ink) String
            | Door (Rand DoorType) | Drawbridge Dir (Rand DoorType)
            | Fountain -- Must be last
 
@@ -191,7 +191,11 @@ reservedParsers = [
                       withPos $ Obj typ nm misc),
     ("CONTAINER",  do typ <- commaed (randIndex "object" charLiteral)
                       nm <- commaed (rand stringLiteral)
-                      withPos $ Container typ nm [])]
+                      withPos $ Container typ nm []),
+    ("ENGRAVING",  do addObj <- commaed objPos
+                      typ <- commaed (rand parseEnum)
+                      text <- stringLiteral
+                      addObj (Engraving typ text))]
   where
     speRegion f = do r1 <- commaed levRegion; r2 <- commaed levRegion
                      spe <- f `fmap` parseEnum
