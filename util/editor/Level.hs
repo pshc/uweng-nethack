@@ -49,7 +49,7 @@ data SpeRegion = Stair StairDir | TeleportRegion StairDir
 
 type ObjPos = Rand Pos
 data Obj = Obj (Rand Char) (Rand String)
-               (Maybe (Rand Blessing, Maybe (Spe, Maybe String)))
+               (Maybe (Maybe (Rand Blessing), Maybe String, Spe, Maybe String))
            | Container (Rand Char) (Rand String) [Obj]
            | Monst (Rand Char) (Rand String) [Behaviour]
            | Trap (Rand TrapType)
@@ -185,9 +185,12 @@ reservedParsers = [
     ("TRAP",       commaed (rand quotedEnum) >>= withPos . Trap),
     ("OBJECT",     do typ <- commaed (randIndex "object" charLiteral)
                       nm <- commaed (rand stringLiteral)
-                      misc <- maybeBoth (commaed (rand parseEnum))
-                              $ maybeBoth (commaed decimal)
-                                          (optionMaybe (commaed stringLiteral))
+                      misc <- optionMaybe $ do
+                          curs <- optionMaybe (commaed (rand parseEnum))
+                          mon <- optionMaybe (commaed stringLiteral)
+                          spe <- commaed decimal
+                          nm <- optionMaybe (commaed stringLiteral)
+                          return (curs, mon, spe, nm)
                       withPos $ Obj typ nm misc),
     ("CONTAINER",  do typ <- commaed (randIndex "object" charLiteral)
                       nm <- commaed (rand stringLiteral)
@@ -308,8 +311,8 @@ instance Save LevRegion where
 
 instance Save (ObjPos, Obj) where
     save (p, o) = case o of
-      Obj sym nm _     -> showString "OBJECT: " . save sym . comma' . save nm
-                          . comma' . save p . nl' -- TODO
+      Obj sym nm misc  -> showString "OBJECT: " . save sym . comma' . save nm
+                          . comma' . save p . maybe id objMisc misc . nl'
       Monst sym nm bh  -> showString "MONSTER: " . save sym . comma' . save nm
                           . comma' . save p . comma' . commas save bh
       Trap typ         -> showString "TRAP: " . save typ . q
@@ -317,7 +320,12 @@ instance Save (ObjPos, Obj) where
       Engraving ink s  -> ("ENGRAVING: " ++) . save ink . comma' . save s . q
       Door typ         -> showString "DOOR: " . save typ . q
       Drawbridge dir t -> ("DRAWBRIDGE: " ++) . save dir . comma' . save t . q
-     where q = comma' . save p . nl'
+     where
+      q = comma' . save p . nl'
+      objMisc (curs, mon, spe, nm) = maybe id ((comma' .) . save) curs
+                                     . maybe id ((comma' .) . save) mon
+                                     . comma' . save spe
+                                     . maybe id ((comma' .) . save) nm
 
 showsLower :: Show a => a -> ShowS
 showsLower = showString . map toLower . show
@@ -338,11 +346,11 @@ instance Save Ink where save = showsLower
 instance Save Dir where save = showsLower
 instance Save DoorType where save = showsLower
 
--- TODO: Not sure if the escaping convention is the same...
 instance Save Pos where save = shows
 instance Save Rect where save = shows
 instance Save String where save = shows
 instance Save Char where save = shows
+instance Save Spe where save = shows
 
 saveRandom _ Random          = showString "random"
 saveRandom _ (Fixed x)       = save x
