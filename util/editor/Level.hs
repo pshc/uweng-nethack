@@ -50,6 +50,7 @@ data SpeRegion = Stair StairDir | TeleportRegion StairDir
 type ObjPos = Rand Pos
 data Obj = Obj (Rand Char) (Rand String)
                (Maybe (Rand Blessing, Maybe (Spe, Maybe String)))
+           | Container (Rand Char) (Rand String) [Obj]
            | Monst (Rand Char) (Rand String) [Behaviour]
            | Trap (Rand TrapType)
            | Engraving Ink String
@@ -108,20 +109,19 @@ instance Monad (Either String) where
     (Left s)  >>= _ = Left s
     return          = Right
 
-data LoadState = NoState | LoadState Level
+data LoadState = NoState | LoadState Level (Maybe ContainerIndex)
 type LevelParser = GenParser Char LoadState
+type ContainerIndex = (ObjPos, Int)
 
-putLevel f = updateState (\(LoadState lev) -> LoadState (f lev))
+putLevel f = updateState $ \(LoadState lev c) -> LoadState (f lev) c
 
 parseEnum :: (Bounded a, Enum a, Show a) => LevelParser a
-parseEnum = do e <- identifier
-               return $ fromJust $ find (equals e) [minBound .. maxBound]
-  where
-    a `equals` b = map toLower a == map toLower (show b)
+parseEnum = choice [reserved (show c) >> return c | c <- [minBound..maxBound]]
 
 quotedEnum :: (Bounded a, Enum a, Show a) => LevelParser a
 quotedEnum = do e <- stringLiteral
-                return $ fromJust $ find (equals e) [minBound .. maxBound]
+                maybe (error $ "Unexpected " ++ show e) return
+                      (find (equals e) [minBound .. maxBound])
   where
     (a:as) `equals` b = let (c:cs) = show b in a == toLower c && go as cs
     go (' ':a:as) (b:bs) | isUpper b = a == toLower b && go as bs
@@ -140,9 +140,9 @@ loadLevels fp = catch (runParser parseLevels NoState fp `fmap` readFile fp
     readMaze = do nm <- reserved "MAZE" >> colon >> commaed stringLiteral
                   c <- rand charLiteral
                   whiteSpace
-                  setState $ LoadState $ initLevel { levelName = nm }
+                  setState $ LoadState (initLevel { levelName = nm }) Nothing
                   many1 $ choice lineParsers
-                  LoadState lev <- getState
+                  LoadState lev _ <- getState
                   return lev
 
     lineParsers = readMap : [reserved r >> colon >> f >> whiteSpace
@@ -176,32 +176,34 @@ reservedParsers = [
                           putLevel (\l -> l { levelRandomObjs = os })),
     ("TELEPORT_REGION", speRegion TeleportRegion),
     ("STAIR",           speRegion Stair),
-    ("FOUNTAIN",   withPos Fountain >>= levelObj),
-    ("DOOR",       commaed (rand parseEnum) >>= withPos . Door >>= levelObj),
-    ("DRAWBRIDGE", do pos <- commaed objPos
+    ("FOUNTAIN",   withPos Fountain),
+    ("DOOR",       commaed (rand parseEnum) >>= withPos . Door),
+    ("DRAWBRIDGE", do addObj <- commaed objPos
                       dir <- commaed parseEnum
                       st <- rand parseEnum
-                      levelObj (pos, Drawbridge dir st)),
-    ("TRAP", commaed (rand quotedEnum) >>= withPos . Trap >>= levelObj),
-    ("OBJECT", do typ <- commaed (randIndex "object" charLiteral)
-                  nm <- commaed (rand stringLiteral)
-                  misc <- maybeBoth (commaed $ rand parseEnum)
-                              (maybeBoth decimal (optionMaybe stringLiteral))
-                  withPos (Obj typ nm misc) >>= levelObj)]
+                      addObj (Drawbridge dir st)),
+    ("TRAP",       commaed (rand quotedEnum) >>= withPos . Trap),
+    ("OBJECT",     do typ <- commaed (randIndex "object" charLiteral)
+                      nm <- commaed (rand stringLiteral)
+                      misc <- maybeBoth (commaed (rand parseEnum))
+                              $ maybeBoth (commaed decimal)
+                                          (optionMaybe (commaed stringLiteral))
+                      withPos $ Obj typ nm misc),
+    ("CONTAINER",  do typ <- commaed (randIndex "object" charLiteral)
+                      nm <- commaed (rand stringLiteral)
+                      withPos $ Container typ nm [])]
   where
     speRegion f = do r1 <- commaed levRegion; r2 <- commaed levRegion
                      spe <- f `fmap` parseEnum
                      putLevel (\l -> l { levelSpeRegions = (r1, r2, spe)
                                          : levelSpeRegions l })
 
-    withPos obj = objPos >>= \pos -> return (pos, obj)
-
-    levelObj (pos, obj) = putLevel (\l -> l { levelObjs = Map.alter addObj pos
-                                                          (levelObjs l) })
-      where
-        addObj = Just . maybe [obj] (obj :)
+    withPos obj = objPos >>= ($ obj)
 
     maybeBoth a b = optionMaybe $ a >>= \r -> b >>= \s -> return (r, s)
+
+    setContainer p (LoadState l _) = let v = Map.lookup p (levelObjs l)
+                                     in LoadState l (Just (p,maybe 0 length v))
 
 reservedNames = "MAZE" : "MAP" : "ENDMAP"
                 : "random" : "place" : "object" : "contained"
@@ -227,7 +229,26 @@ commaed f = f >>= \a -> comma >> return a
 tuple2 = parens $ do a <- commaed decimal; b <- decimal
                      return (a, b)
 
-objPos = (reserved "contained" >> error "TODO") <|> randIndex "place" tuple2
+-- Consumes an object's position and returns a LevelParser that doesn't
+-- parse anything but inserts the given object into the saved position
+objPos :: LevelParser (Obj -> LevelParser ())
+objPos = levelInsert `fmap` randIndex "place" tuple2
+         <|> (reserved "contained" >> return contInsert)
+  where
+    levelInsert p o = do LoadState l c <- getState
+                         let dest = Map.findWithDefault [] p (levelObjs l)
+                             n    = length dest
+                             c'   = case o of Container _ _ _ -> Just (p, n)
+                                              otherwise       -> c
+                             os'  = Map.insert p (o:dest) (levelObjs l)
+                         setState $ LoadState (l { levelObjs = os' }) c'
+
+    contInsert o = do LoadState l (Just (p, n)) <- getState
+                      let os' = Map.adjust (insertAt n o) p (levelObjs l)
+                      putLevel (\l -> l { levelObjs = os' })
+
+    insertAt n o ss = let (bef, (Container a b os):aft) = splitAt n ss
+                      in bef ++ Container a b (o:os) : aft
 
 tuple4 = parens $ do [a, b, c] <- count 3 (commaed decimal); d <- decimal
                      return (a, b, c, d)
