@@ -75,6 +75,7 @@ data Obj = Obj (Maybe Chance) (Rand Char) (Rand String)
            | Altar (Rand Align) (Rand AltarType)
            | Gold (Rand Int)
            | Stair UpDown | Ladder UpDown
+           | MazeWalk Dir
            | Sink | Pool | Fountain -- Must be last
 
 instance Enum Obj where
@@ -89,10 +90,11 @@ instance Enum Obj where
     fromEnum (Gold _)            = 8
     fromEnum (Stair _)           = 9
     fromEnum (Ladder _)          = 10
-    fromEnum Sink                = 11
-    fromEnum Pool                = 12
-    fromEnum Fountain            = 13
-    toEnum 13 = Fountain
+    fromEnum (MazeWalk _)        = 11
+    fromEnum Sink                = 12
+    fromEnum Pool                = 13
+    fromEnum Fountain            = 14
+    toEnum 14 = Fountain
     toEnum _ = error "No Obj toEnum!"
 
 instance Bounded Obj where
@@ -104,7 +106,7 @@ objChar (Container _ c _ _) = maybeRand 'C' id c
 objChar (Mon _ c _ _)       = maybeRand 'M' id c
 objChar (Stair ud)          = dirChar ud
 objChar (Ladder ud)         = dirChar ud
-objChar o                   = "   ^~++_$  #}{" !! fromEnum o
+objChar o                   = "   ^~++_$  .#}{" !! fromEnum o
 
 dirChar Up   = '<'
 dirChar Down = '>'
@@ -239,6 +241,8 @@ reservedParsers = [
                       parseEnum >>= addObj . Stair),
     ("LADDER", do addObj <- commaed objPos
                   parseEnum >>= addObj . Ladder),
+    ("MAZEWALK", do addObj <- commaed objPos
+                    parseEnum >>= addObj . MazeWalk),
     ("SINK",       withPos Sink),
     ("POOL",       withPos Pool),
     ("FOUNTAIN",   withPos Fountain),
@@ -422,18 +426,22 @@ saveObj p o = case o of
                                    id os
     Mon ch c s misc     -> showString "MONSTER" . chance ch
                            . saveRandom shows "monster" c . comma' . save s
-                           . comma' . p . monMisc misc
+                           . comma' . p . monMisc misc . nl'
     Trap ch typ         -> showString "TRAP" . chance ch . save typ . q
-    Stair dir           -> showString "STAIR: " . save dir . q
-    Ladder dir          -> showString "LADDER: " . save dir . q
+    Stair dir           -> showString "STAIR: " . p . comma' . save dir . nl'
+    Ladder dir          -> showString "LADDER: " . p . comma' . save dir . nl'
+    MazeWalk d          -> showString "MAZEWALK: " . p . comma' . save d . nl'
     Sink                -> showString "SINK: " . p . nl'
     Pool                -> showString "POOL: " . p . nl'
     Fountain            -> showString "FOUNTAIN: " . p . nl'
-    Altar a t           -> showString "ALTAR: " . save a . comma' . save t . q
+    Altar a t           -> showString "ALTAR: " . p . comma' . save a . comma'
+                                                . save t . nl'
     Gold n              -> showString "GOLD: " . save n . q
-    Engraving ink s     -> ("ENGRAVING: " ++) . save ink . comma' . save s . q
+    Engraving ink s     -> showString "ENGRAVING: " . p . comma' . save ink
+                                                    . comma' . save s . nl'
     Door typ            -> showString "DOOR: " . save typ . q
-    Drawbridge dir t    -> ("DRAWBRIDGE: " ++) . save dir . comma' . save t . q
+    Drawbridge dir t    -> showString "DRAWBRIDGE: " . p . comma' . save dir
+                                                     . comma' . save t . nl'
   where
     q = comma' . p . nl'
     chance = maybe (": " ++) $ \c -> ('[':) . shows c . ("%]: " ++)
@@ -441,7 +449,7 @@ saveObj p o = case o of
     objMisc (curs, mon, spe, nm) = commaMaybe curs . commaMaybe mon
                                    . comma' . save spe . commaMaybe nm
     monMisc (a, b, c, d, e) = let f = commaMaybe
-                              in f a . f b . f c . f d . f e . nl'
+                              in f a . f b . f c . f d . f e
 
 showsLower :: Show a => a -> ShowS
 showsLower = showString . map toLower . show
