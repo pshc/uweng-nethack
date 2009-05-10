@@ -336,7 +336,7 @@ comma = P.comma lexer
 colon = P.colon lexer
 charLiteral = P.charLiteral lexer
 stringLiteral = P.stringLiteral lexer
-decimal = fromIntegral `fmap` P.decimal lexer
+decimal = fromIntegral `fmap` (optional (char '+') >> P.decimal lexer)
 identifier = P.identifier lexer
 reserved = P.reserved lexer
 
