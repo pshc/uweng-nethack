@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleInstances, TypeSynonymInstances,
              NoMonomorphismRestriction, RelaxedPolyRec,
-             NamedFieldPuns, RecordWildCards #-}
+             NamedFieldPuns, RecordWildCards, OverlappingInstances #-}
 module Level where
 
 import Control.Monad
@@ -22,7 +22,7 @@ data Level = Level { levelName :: String, levelFilling :: Rand Char,
                      levelTiles :: Array Pos Char,
                      prevLevels, nextLevels :: [Level],
                      levelGeometry :: (HJustif, VJustif),
-                     levelObjs :: Map ObjPos [Obj],
+                     levelObjs :: Map (Rand Pos) [Obj],
                      levelRegions :: [(Region, Rect)],
                      levelSpeRegions :: [(LevRegion, LevRegion, SpeRegion)],
                      levelFlags :: [LevelFlag], levelRandomPlaces :: [Pos],
@@ -38,6 +38,7 @@ initLevel = Level { levelName = "untitled", levelFilling = Fixed ' ',
                     levelRandomObjs = [], levelRandomMons = [] }
 
 data Rand a = Fixed a | Random | RandomIndex Int deriving (Eq, Ord)
+
 data LevRegion = Rect Rect | LevRegion Rect
 
 data LevelFlag = NoTeleport | HardFloor | NoMMap | Arboreal | ShortSighted
@@ -62,34 +63,35 @@ instance Show HJustif where
     show HLeft = "left"; show HalfLeft = "half-left"; show HCenter = "center"
     show HalfRight = "right"; show HRight = "right"
 
-type ObjPos = Rand Pos
-data Obj = Obj (Rand Char) (Rand String)
+data Obj = Obj (Maybe Chance) (Rand Char) (Rand String)
                (Maybe (Maybe (Rand Blessing), Maybe String, Spe, Maybe String))
-           | Container (Rand Char) (Rand String) [Obj]
-           | Mon (Maybe Chance) (Rand Char) (Rand String) [Behaviour]
-           | Trap (Rand TrapType)
+           | Container (Maybe Chance) (Rand Char) (Rand String) [Obj]
+           | Mon (Maybe Chance) (Rand Char) (Rand String)
+                 (Maybe String, Maybe Attitude, Maybe Alertness,
+                  Maybe (Rand Align), Maybe (Appearance, String))
+           | Trap (Maybe Chance) (Rand TrapType)
            | Engraving (Rand Ink) String
            | Door (Rand DoorType) | Drawbridge Dir (Rand DoorType)
            | Altar (Rand Align) (Rand AltarType)
            | Gold (Rand Int)
-           | Stair (Rand UpDown) | Ladder (Rand UpDown)
+           | Stair UpDown | Ladder UpDown
            | Sink | Pool | Fountain -- Must be last
 
 instance Enum Obj where
-    fromEnum (Obj _ _ _)       = 0
-    fromEnum (Container _ _ _) = 1
-    fromEnum (Mon _ _ _ _)     = 2
-    fromEnum (Trap _)          = 3
-    fromEnum (Engraving _ _)   = 4
-    fromEnum (Door _)          = 5
-    fromEnum (Drawbridge _ _)  = 6
-    fromEnum (Altar _ _)       = 7
-    fromEnum (Gold _)          = 8
-    fromEnum (Stair _)         = 9
-    fromEnum (Ladder _)        = 10
-    fromEnum Sink              = 11
-    fromEnum Pool              = 12
-    fromEnum Fountain          = 13
+    fromEnum (Obj _ _ _ _)       = 0
+    fromEnum (Container _ _ _ _) = 1
+    fromEnum (Mon _ _ _ _)       = 2
+    fromEnum (Trap _ _)          = 3
+    fromEnum (Engraving _ _)     = 4
+    fromEnum (Door _)            = 5
+    fromEnum (Drawbridge _ _)    = 6
+    fromEnum (Altar _ _)         = 7
+    fromEnum (Gold _)            = 8
+    fromEnum (Stair _)           = 9
+    fromEnum (Ladder _)          = 10
+    fromEnum Sink                = 11
+    fromEnum Pool                = 12
+    fromEnum Fountain            = 13
     toEnum 13 = Fountain
     toEnum _ = error "No Obj toEnum!"
 
@@ -97,15 +99,25 @@ instance Bounded Obj where
     minBound = error "No Obj minBound!"
     maxBound = Fountain
 
-objChar (Obj ch _ _)    = case ch of Fixed c -> c; _ -> 'R'
-objChar (Mon _ sym _ _) = case sym of Fixed c -> c; _ -> 'M'
-objChar o               = "  ^~++{" !! fromEnum o
+objChar (Obj _ c _ _)       = maybeRand 'R' id c
+objChar (Container _ c _ _) = maybeRand 'C' id c
+objChar (Mon _ c _ _)       = maybeRand 'M' id c
+objChar (Stair ud)          = dirChar ud
+objChar (Ladder ud)         = dirChar ud
+objChar o                   = "   ^~++_$  #}{" !! fromEnum o
+
+dirChar Up   = '<'
+dirChar Down = '>'
+
+maybeRand _   f (Fixed x)       = f x
+maybeRand def _ Random          = def
+maybeRand _   _ (RandomIndex _) = undefined
 
 type Spe = Int
 type Chance = Int
 data Blessing = Blessed | Uncursed | Cursed deriving (Bounded, Enum, Show)
-data Behaviour = Peaceful | Hostile | Awake | Asleep
-                 deriving (Bounded, Enum, Show)
+data Attitude = Peaceful | Hostile deriving (Bounded, Enum, Show)
+data Alertness = Awake | Asleep deriving (Bounded, Enum, Show)
 data Appearance = M_Feature | M_Monster | M_Object
                   deriving (Bounded, Enum, Show)
 data TrapType = ArrowTrap | DartTrap | FallingRockTrap | SqueakyBoard
@@ -119,9 +131,8 @@ data Ink = Dust | Engrave | Burn | Mark deriving (Bounded, Enum, Show)
 data Dir = North | East | South | West deriving (Bounded, Enum, Show)
 data DoorType = Open | Closed | Locked | NoDoor | Broken
                 deriving (Bounded, Enum, Show)
-data Align = Alignment Alignment | AlignNum Int
-data Alignment = NoAlign | Law | Neutral | Chaos | Coaligned | NonCoaligned
-                 deriving (Bounded, Enum, Show)
+data Align = NoAlign | Law | Neutral | Chaos | Coaligned | NonCoaligned
+             deriving (Bounded, Enum, Show)
 data AltarType = Sanctum | Shrine | ALTAR deriving (Bounded, Enum, Show)
 
 levelSize (Level {..}) = let (_, (x, y)) = bounds levelTiles
@@ -149,7 +160,7 @@ instance Monad (Either String) where
 
 data LoadState = NoState | LoadState Level (Maybe ContainerIndex)
 type LevelParser = GenParser Char LoadState
-type ContainerIndex = (ObjPos, Int)
+type ContainerIndex = (Rand Pos, Int)
 
 putLevel f = updateState $ \(LoadState lev c) -> LoadState (f lev) c
 
@@ -186,8 +197,12 @@ loadLevels fp = catch (runParser parseLevels NoState fp `fmap` readFile fp
                   LoadState lev _ <- getState
                   return lev
 
-    lineParsers = readMap : [reserved r >> colon >> f >> whiteSpace
-                             | (r, f) <- reservedParsers]
+    lineParsers = readMap : [reserved r >> sep >> f >> whiteSpace
+                             | (r, f) <- reservedParsers,
+                               let sep = if r `elem` chances then return ()
+                                         else colon >> return ()]
+
+    chances = ["MONSTER", "OBJECT", "CONTAINER", "TRAP"]
 
 readMap = do try (string "MAP" >> newline)
              (lines, w, h) <- readLines
@@ -221,16 +236,14 @@ reservedParsers = [
     ("BRANCH", speRegion $ return BranchRegion),
     ("STAIR",  speRegion (comma >> StairRegion `fmap` parseEnum)
                <|> do addObj <- commaed objPos
-                      rand parseEnum >>= addObj . Stair),
+                      parseEnum >>= addObj . Stair),
     ("LADDER", do addObj <- commaed objPos
-                  rand parseEnum >>= addObj . Ladder),
+                  parseEnum >>= addObj . Ladder),
     ("SINK",       withPos Sink),
     ("POOL",       withPos Pool),
     ("FOUNTAIN",   withPos Fountain),
     ("ALTAR",      do addObj <- commaed objPos
-                      align <- commaed $ rand $ Alignment `fmap` parseEnum <|>
-                                                (reserved "align" >> squares
-                                                     (AlignNum `fmap` decimal))
+                      align <- commaed $ randIndex "align" parseEnum
                       typ <- rand parseEnum
                       addObj (Altar align typ)),
     ("GOLD",       commaed (rand decimal) >>= withPos . Gold),
@@ -239,8 +252,10 @@ reservedParsers = [
                       dir <- commaed parseEnum
                       st <- rand parseEnum
                       addObj (Drawbridge dir st)),
-    ("TRAP",       commaed (rand quotedEnum) >>= withPos . Trap),
-    ("OBJECT",     do typ <- commaed (randIndex "object" charLiteral)
+    ("TRAP",       do ch <- chance
+                      commaed (rand quotedEnum) >>= withPos . Trap ch),
+    ("OBJECT",     do ch <- chance
+                      typ <- commaed (randIndex "object" charLiteral)
                       nm <- commaed (rand stringLiteral)
                       addObj <- objPos
                       misc <- optionMaybe $ comma >> do
@@ -251,10 +266,18 @@ reservedParsers = [
                                 (comma >> reserved "none" >> return Nothing)
                                 <|> return Nothing
                           return (curs, mon, spe, nm)
-                      addObj $ Obj typ nm misc),
-    ("CONTAINER",  do typ <- commaed (randIndex "object" charLiteral)
+                      addObj $ Obj ch typ nm misc),
+    ("MONSTER",    do ch <- chance
+                      sym <- commaed (randIndex "monster" charLiteral)
                       nm <- commaed (rand stringLiteral)
-                      withPos $ Container typ nm []),
+                      addObj <- objPos
+                      extras <- monExtras (Nothing, Nothing, Nothing, Nothing,
+                                           Nothing)
+                      addObj (Mon ch sym nm extras)),
+    ("CONTAINER",  do ch <- chance
+                      typ <- commaed (randIndex "object" charLiteral)
+                      nm <- commaed (rand stringLiteral)
+                      withPos $ Container ch typ nm []),
     ("ENGRAVING",  do addObj <- commaed objPos
                       typ <- commaed (rand parseEnum)
                       text <- stringLiteral
@@ -266,6 +289,20 @@ reservedParsers = [
                                          : levelSpeRegions l })
 
     withPos obj = objPos >>= ($ obj)
+
+    monExtras x@(a, b, c, d, e) = (comma >> choice [
+        stringLiteral               >>= \a -> monExtras (Just a, b, c, d, e),
+        parseEnum                   >>= \b -> monExtras (a, Just b, c, d, e),
+        parseEnum                   >>= \c -> monExtras (a, b, Just c, d, e),
+        randIndex "align" parseEnum >>= \d -> monExtras (a, b, c, Just d, e),
+        do e1 <- parseEnum; e2 <- stringLiteral
+           monExtras (a, b, c, d, Just (e1, e2))
+        ]) <|> return x
+
+    chance = do ch <- optionMaybe $ squares $ do d <- decimal; char '%'
+                                                 return d
+                colon
+                return ch
 
 reservedNames = "MAZE" : "MAP" : "ENDMAP" : "random" : "none" : "contained"
                 : "place" : "object" : "monster" : "align"
@@ -300,8 +337,8 @@ objPos = levelInsert `fmap` randIndex "place" tuple2
     levelInsert p o = do LoadState l c <- getState
                          let dest = Map.findWithDefault [] p (levelObjs l)
                              n    = length dest
-                             c'   = case o of Container _ _ _ -> Just (p, n)
-                                              _               -> c
+                             c'   = case o of Container _ _ _ _ -> Just (p, n)
+                                              _                 -> c
                              os'  = Map.insert p (o:dest) (levelObjs l)
                          setState $ LoadState (l { levelObjs = os' }) c'
 
@@ -309,8 +346,8 @@ objPos = levelInsert `fmap` randIndex "place" tuple2
                       let os' = Map.adjust (insertAt n o) p (levelObjs l)
                       putLevel (\l -> l { levelObjs = os' })
 
-    insertAt n o ss = let (bef, (Container a b os):aft) = splitAt n ss
-                      in bef ++ Container a b (o:os) : aft
+    insertAt n o ss = let (bef, (Container c a b os):aft) = splitAt n ss
+                      in bef ++ Container c a b (o:os) : aft
 
 tuple4 = parens $ do [a, b, c] <- count 3 (commaed decimal); d <- decimal
                      return (a, b, c, d)
@@ -373,38 +410,38 @@ instance Save LevRegion where
     save (LevRegion reg) = showString "levregion" . save reg
     save (Rect reg)      = save reg
 
-instance Save (ObjPos, Obj) where save (p, o) = saveObj (save p) o
+instance Save (Rand Pos, Obj) where save (p, o) = saveObj (save p) o
 
 saveObj p o = case o of
-    Obj sym nm misc  -> showString "OBJECT: " . save sym . comma' . save nm
-                        . comma' . p . maybe id objMisc misc . nl'
-    Container c s os -> showString "CONTAINER: " . save c . comma' . save s . q
-                        . foldl (\s o -> s . saveObj ("contained" ++) o) id os
-    Mon c sym nm nfo -> showString "MONSTER" . showsChance c . (": " ++)
-                        . save sym . comma' . save nm . comma' . p
-                        . comma' . commas save nfo
-    Trap typ         -> showString "TRAP: " . save typ . q
-    Stair dir        -> showString "STAIR: " . save dir . q
-    Ladder dir       -> showString "LADDER: " . save dir . q
-    Sink             -> showString "SINK: " . p . nl'
-    Pool             -> showString "POOL: " . p . nl'
-    Fountain         -> showString "FOUNTAIN: " . p . nl'
-    Altar a t        -> showString "ALTAR: " . save a . comma' . save t . q
-    Gold n           -> showString "GOLD: " . save n . q
-    Engraving ink s  -> ("ENGRAVING: " ++) . save ink . comma' . save s . q
-    Door typ         -> showString "DOOR: " . save typ . q
-    Drawbridge dir t -> ("DRAWBRIDGE: " ++) . save dir . comma' . save t . q
+    Obj ch sym nm misc  -> showString "OBJECT" . chance ch
+                           . saveRandom shows "object" sym . comma' . save nm
+                           . comma' . p . maybe id objMisc misc . nl'
+    Container ch c s os -> showString "CONTAINER" . chance ch
+                           . saveRandom shows "object" c . comma' . save s . q
+                           . foldl (\s o -> s . saveObj ("contained" ++) o)
+                                   id os
+    Mon ch c s misc     -> showString "MONSTER" . chance ch
+                           . saveRandom shows "monster" c . comma' . save s
+                           . comma' . p . monMisc misc
+    Trap ch typ         -> showString "TRAP" . chance ch . save typ . q
+    Stair dir           -> showString "STAIR: " . save dir . q
+    Ladder dir          -> showString "LADDER: " . save dir . q
+    Sink                -> showString "SINK: " . p . nl'
+    Pool                -> showString "POOL: " . p . nl'
+    Fountain            -> showString "FOUNTAIN: " . p . nl'
+    Altar a t           -> showString "ALTAR: " . save a . comma' . save t . q
+    Gold n              -> showString "GOLD: " . save n . q
+    Engraving ink s     -> ("ENGRAVING: " ++) . save ink . comma' . save s . q
+    Door typ            -> showString "DOOR: " . save typ . q
+    Drawbridge dir t    -> ("DRAWBRIDGE: " ++) . save dir . comma' . save t . q
   where
     q = comma' . p . nl'
-    showsChance = maybe id $ \c -> ('[':) . shows c . ("%]" ++)
-    objMisc (curs, mon, spe, nm) = maybe id ((comma' .) . save) curs
-                                   . maybe id ((comma' .) . save) mon
-                                   . comma' . save spe
-                                   . maybe id ((comma' .) . save) nm
-
-instance Save Align where
-    save (Alignment a) = save a
-    save (AlignNum n)  = showString "align[" . save n . (']':)
+    chance = maybe (": " ++) $ \c -> ('[':) . shows c . ("%]: " ++)
+    commaMaybe = maybe id ((comma' .) . save)
+    objMisc (curs, mon, spe, nm) = commaMaybe curs . commaMaybe mon
+                                   . comma' . save spe . commaMaybe nm
+    monMisc (a, b, c, d, e) = let f = commaMaybe
+                              in f a . f b . f c . f d . f e . nl'
 
 showsLower :: Show a => a -> ShowS
 showsLower = showString . map toLower . show
@@ -417,18 +454,23 @@ showsQuoted o = let (s:ss) = show o
             | isUpper c = (([' ', toLower c] ++) .)
             | otherwise = ((c :) .)
 
+instance Save (Rand Pos) where save = saveRandom shows "place"
+instance Save (Rand Align) where save = saveRandom showsLower "align"
+instance Save (Rand TrapType) where save = saveRandom showsQuoted "trap"
+
 instance Save Blessing where save = showsLower
-instance Save Behaviour where save = showsLower
-instance Save Appearance where save = showsLower
-instance Save TrapType where save = showsQuoted
+instance Save Attitude where save = showsLower
+instance Save Alertness where save = showsLower
 instance Save RegionType where save = showsQuoted
 instance Save UpDown where save = showsLower
 instance Save Ink where save = showsLower
 instance Save Dir where save = showsLower
 instance Save DoorType where save = showsLower
 instance Save LevelFlag where save = showsLower
-instance Save Alignment where save = showsLower
 instance Save AltarType where save = showsLower
+
+instance Save (Appearance, String) where
+    save (a, s) = showsLower a . (' ':) . save s
 
 instance Save Pos where save = shows
 instance Save Rect where save = shows
@@ -437,13 +479,11 @@ instance Save Char where save = shows
 instance Save Int where save = shows
 instance Save Bool where save = showsLower
 
-saveRandom _ Random          = showString "random"
-saveRandom _ (Fixed x)       = save x
-saveRandom s (RandomIndex i) = showString s . ('[':) . shows i . (']':)
+saveRandom _ _ Random          = showString "random"
+saveRandom f _ (Fixed x)       = f x
+saveRandom _ s (RandomIndex i) = showString s . ('[':) . shows i . (']':)
 
 instance Save a => Save (Rand a) where
-    save Random          = showString "random"
-    save (Fixed x)       = save x
-    save (RandomIndex _) = error "Unknown RandomIndex prefix"
+    save = maybeRand (showString "random") save
 
 -- vi: set sw=4 ts=4 sts=4 tw=79 ai et nocindent:
