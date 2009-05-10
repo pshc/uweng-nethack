@@ -51,7 +51,7 @@ type ObjPos = Rand Pos
 data Obj = Obj (Rand Char) (Rand String)
                (Maybe (Maybe (Rand Blessing), Maybe String, Spe, Maybe String))
            | Container (Rand Char) (Rand String) [Obj]
-           | Monst (Rand Char) (Rand String) [Behaviour]
+           | Mon (Maybe Chance) (Rand Char) (Rand String) [Behaviour]
            | Trap (Rand TrapType)
            | Engraving (Rand Ink) String
            | Door (Rand DoorType) | Drawbridge Dir (Rand DoorType)
@@ -59,7 +59,7 @@ data Obj = Obj (Rand Char) (Rand String)
 
 instance Enum Obj where
     fromEnum (Obj _ _ _)      = 0
-    fromEnum (Monst _ _ _)    = 1
+    fromEnum (Mon _ _ _ _)    = 1
     fromEnum (Trap _)         = 2
     fromEnum (Engraving _ _)  = 3
     fromEnum (Door _)         = 4
@@ -73,10 +73,11 @@ instance Bounded Obj where
     maxBound = Fountain
 
 objChar (Obj ch _ _)    = case ch of Fixed c -> c; otherwise -> 'R'
-objChar (Monst sym _ _) = case sym of Fixed c -> c; otherwise -> 'M'
+objChar (Mon _ sym _ _) = case sym of Fixed c -> c; otherwise -> 'M'
 objChar o               = "  ^ ~++{" !! fromEnum o
 
 type Spe = Int
+type Chance = Int
 data Blessing = Blessed | Uncursed | Cursed deriving (Bounded, Enum, Show)
 data Behaviour = Hostile | Peaceful | Asleep deriving (Bounded, Enum, Show)
 data TrapType = TrapDoor | Pit deriving (Bounded, Enum, Show)
@@ -313,8 +314,9 @@ instance Save (ObjPos, Obj) where
     save (p, o) = case o of
       Obj sym nm misc  -> showString "OBJECT: " . save sym . comma' . save nm
                           . comma' . save p . maybe id objMisc misc . nl'
-      Monst sym nm bh  -> showString "MONSTER: " . save sym . comma' . save nm
-                          . comma' . save p . comma' . commas save bh
+      Mon c sym nm nfo -> showString "MONSTER" . showsChance c . (": " ++)
+                          . save sym . comma' . save nm . comma' . save p
+                          . comma' . commas save nfo
       Trap typ         -> showString "TRAP: " . save typ . q
       Fountain         -> showString "FOUNTAIN: " . save p . nl'
       Engraving ink s  -> ("ENGRAVING: " ++) . save ink . comma' . save s . q
@@ -322,6 +324,7 @@ instance Save (ObjPos, Obj) where
       Drawbridge dir t -> ("DRAWBRIDGE: " ++) . save dir . comma' . save t . q
      where
       q = comma' . save p . nl'
+      showsChance = maybe id $ \c -> ('[':) . shows c . (']':)
       objMisc (curs, mon, spe, nm) = maybe id ((comma' .) . save) curs
                                      . maybe id ((comma' .) . save) mon
                                      . comma' . save spe
@@ -350,7 +353,7 @@ instance Save Pos where save = shows
 instance Save Rect where save = shows
 instance Save String where save = shows
 instance Save Char where save = shows
-instance Save Spe where save = shows
+instance Save Int where save = shows
 
 saveRandom _ Random          = showString "random"
 saveRandom _ (Fixed x)       = save x
