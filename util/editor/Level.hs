@@ -23,7 +23,7 @@ data Level = Level { levelName :: String, levelFilling :: Rand Char,
                      prevLevels, nextLevels :: [Level],
                      levelGeometry :: (HJustif, VJustif),
                      levelObjs :: Map (Rand Pos) [Obj],
-                     levelRegions :: [(Region, Rect)],
+                     levelRegions :: [(Rect, Region)],
                      levelSpeRegions :: [(LevRegion, LevRegion, SpeRegion)],
                      levelFlags :: [LevelFlag], levelRandomPlaces :: [Pos],
                      levelRandomObjs, levelRandomMons :: [Char] }
@@ -285,8 +285,21 @@ reservedParsers = [
     ("ENGRAVING",  do addObj <- commaed objPos
                       typ <- commaed (rand parseEnum)
                       text <- stringLiteral
-                      addObj (Engraving typ text))]
+                      addObj (Engraving typ text)),
+    ("REGION", region $ do light <- comma >> rand parseEnum
+                           typ <- comma >> quotedEnum
+                           pre <- optionMaybe $ do f <- comma >> parseEnum
+                                                   b <- optionMaybe
+                                                        (comma >> parseEnum)
+                                                   return (f, b)
+                           return $ Region light typ pre),
+    ("NON_DIGGABLE", region $ return NonDiggable),
+    ("NON_PASSWALL", region $ return NonPassWall)]
   where
+    region f = do r <- tuple4
+                  i <- f
+                  putLevel (\l -> l { levelRegions = (r, i) : levelRegions l })
+
     speRegion f = do r1 <- commaed levRegion; r2 <- levRegion
                      spe <- f
                      putLevel (\l -> l { levelSpeRegions = (r1, r2, spe)
@@ -374,7 +387,7 @@ instance Save Level where
               . permute "RANDOM_PLACES: " levelRandomPlaces
               . permute "RANDOM_MONSTERS: " levelRandomMons
               . permute "RANDOM_OBJECTS: " levelRandomObjs
-              -- TODO: Regions
+              . foldl (\ss r -> ss . save r) id levelRegions
               . foldl (\ss r -> ss . save r) id levelSpeRegions
               . foldl (\ss o -> ss . save o) (showString "# Objects\n")
                       (concat sortedObjs)
@@ -398,6 +411,13 @@ instance Save Level where
 
 instance Save (HJustif, VJustif) where
     save (h, v) = shows h . comma' . showsLower v
+
+instance Save (Rect, Region) where
+    save (r, Region l t f) = showString "REGION: " . save l . comma' . save t
+                             . maybe id (\(f, b) -> comma' . save f . maybe id
+                                         ((comma' .) . save) b) f . nl'
+    save (r, NonDiggable)  = showString "NON_DIGGABLE: " . save r . nl'
+    save (r, NonPassWall)  = showString "NON_PASSWALL: " . save r . nl'
 
 instance Save (LevRegion, LevRegion, SpeRegion) where
     save (r1, r2, spe) = let (r, f) = saveSpe spe
@@ -476,6 +496,8 @@ instance Save Dir where save = showsLower
 instance Save DoorType where save = showsLower
 instance Save LevelFlag where save = showsLower
 instance Save AltarType where save = showsLower
+instance Save Fill where save = showsLower
+instance Save Lighting where save = showsLower
 
 instance Save (Appearance, String) where
     save (a, s) = showsLower a . (' ':) . save s
