@@ -145,15 +145,14 @@ modifying = do ed <- get
                           edSaved = False, edFuture = [] }
 
 promptChar :: String -> IO Char
-promptChar msg = do (y, x) <- getYX stdScr
-                    statusLine1 (msg ++ repeat ' ')
+promptChar msg = do statusLine1 (msg ++ repeat ' ')
                     drawCursor (22, length msg) (0, 0)
                     refresh
                     go
   where
     go = do k <- getKey refresh
             case k of KeyChar c -> return c
-                      otherwise -> go
+                      _         -> go
 
 prompt :: String -> String -> IO String
 prompt q initial = do statusLine1 (q ++ initial ++ repeat ' ')
@@ -176,7 +175,7 @@ prompt q initial = do statusLine1 (q ++ initial ++ repeat ' ')
                            | c >= ' ' &&
                              c <= '~'        = do waddch stdScr (toChType c)
                                                   next (c:s)
-        gotKey otherwise                     = next s
+        gotKey _                             = next s
 
         next = getChars nq
 
