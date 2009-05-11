@@ -26,18 +26,13 @@ inDisplay :: IO a -> IO a
 inDisplay f = bracket_ (start >> startColor) end f
 
 renderLevel :: Level -> IO ()
-renderLevel mp = let ts = levelTiles mp
-                     os = levelObjs mp
-                 in go ts os (snd $ bounds ts)
-  where
-    go ts os (w, h) = renderRow 0
-      where
-        renderRow y | y < h     = do mvWAddStr stdScr y 0 (map tile [0..w])
-                                     renderRow (y+1)
-                    | otherwise = return ()
-          where
-            tile x = maybe (ts ! (x, y)) (objChar . head)
-                           (Fixed (x, y) `Map.lookup` os)
+renderLevel mp = let ts               = levelTiles mp
+                     os               = levelObjs mp
+                     ((l, t), (r, b)) = bounds ts
+                 in forM_ [t..b] $ \y -> mvWAddStr stdScr y l
+                                         [maybe (ts ! pos) (objChar . head)
+                                                (Fixed pos `Map.lookup` os)
+                                          | x <- [l..r], let pos = (x, y)]
 
 redraw :: EditorIO ()
 redraw = do mp <- lift get
@@ -67,7 +62,7 @@ editLevel = do k <- liftIO $ refresh >> getKey refresh
                  quit <- if edSaved ed then return True
                          else fmap (== 'y') $ liftIO $ promptChar $
                               "You have not saved! "
-                              ++ "Are you sure you want to quit?"
+                              ++ "Are you sure you want to quit? "
                  if quit then put $ ed { edRunning = False }
                          else drawStatus
     cmd 'S' = do ed <- get
