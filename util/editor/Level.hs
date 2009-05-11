@@ -101,19 +101,19 @@ instance Bounded Obj where
     minBound = error "No Obj minBound!"
     maxBound = Fountain
 
-objChar (Obj _ c _ _)       = maybeRand 'R' id c
-objChar (Container _ c _ _) = maybeRand 'C' id c
-objChar (Mon _ c _ _)       = maybeRand 'M' id c
+objChar (Obj _ c _ _)       = maybeRand (last . show) 'R' id c
+objChar (Container _ c _ _) = maybeRand (last . show) 'C' id c
+objChar (Mon _ c _ _)       = maybeRand (last . show) 'M' id c
 objChar (Stair ud)          = dirChar ud
 objChar (Ladder ud)         = dirChar ud
-objChar o                   = "   ^~++_$  .#}{" !! fromEnum o
+objChar o                   = "   ^~++_$  *#}{" !! fromEnum o
 
 dirChar Up   = '<'
 dirChar Down = '>'
 
-maybeRand _   f (Fixed x)       = f x
-maybeRand def _ Random          = def
-maybeRand _   _ (RandomIndex _) = undefined
+maybeRand _ _   f (Fixed x)       = f x
+maybeRand _ def _ Random          = def
+maybeRand g def _ (RandomIndex n) = g n
 
 type Spe = Int
 type Chance = Int
@@ -363,7 +363,8 @@ objPos = levelInsert `fmap` randIndex "place" tuple2
                       let os' = Map.adjust (insertAt n o) p (levelObjs l)
                       putLevel (\l -> l { levelObjs = os' })
 
-    insertAt n o ss = let (bef, (Container c a b os):aft) = splitAt n ss
+    insertAt n o ss = let n'                              = length ss - n - 1
+                          (bef, (Container c a b os):aft) = splitAt n' ss
                       in bef ++ Container c a b (o:os) : aft
 
 tuple4 = parens $ do [a, b, c] <- count 3 (commaed decimal); d <- decimal
@@ -413,9 +414,9 @@ instance Save (HJustif, VJustif) where
     save (h, v) = shows h . comma' . showsLower v
 
 instance Save (Rect, Region) where
-    save (r, Region l t f) = showString "REGION: " . save l . comma' . save t
-                             . maybe id (\(f, b) -> comma' . save f . maybe id
-                                         ((comma' .) . save) b) f . nl'
+    save (r, Region l t f) = showString "REGION: " . save r . comma' . save l
+                             . comma' . save t . maybe id saveMisc f . nl'
+      where saveMisc (f, b) = comma' . save f . maybe id ((comma' .) . save) b
     save (r, NonDiggable)  = showString "NON_DIGGABLE: " . save r . nl'
     save (r, NonPassWall)  = showString "NON_PASSWALL: " . save r . nl'
 
@@ -514,6 +515,7 @@ saveRandom f _ (Fixed x)       = f x
 saveRandom _ s (RandomIndex i) = showString s . ('[':) . shows i . (']':)
 
 instance Save a => Save (Rand a) where
-    save = maybeRand (showString "random") save
+    save = maybeRand (error "Can't save Rand by itself")
+                     (showString "random") save
 
 -- vi: set sw=4 ts=4 sts=4 tw=79 ai et nocindent:
