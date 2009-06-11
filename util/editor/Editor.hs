@@ -1,4 +1,5 @@
-{-# LANGUAGE FlexibleInstances, TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances, TypeSynonymInstances,
+             NamedFieldPuns, RecordWildCards #-}
 import Control.Monad.State
 import Control.Exception (bracket_)
 import Data.Array
@@ -106,8 +107,10 @@ editLevel = do k <- liftIO $ refresh >> getKey refresh
     cmd c | c `elem` tileKeys = do modifying
                                    gets edCursor >>= lift . flip setTile c
                                    moveCursor (1, 0)
+                                   drawStatus
           | otherwise         = case lookup c movementKeys of
-                                    Just dir -> moveCursor dir
+                                    Just dir -> do moveCursor dir
+                                                   drawStatus
                                     Nothing  -> return ()
 
     doLoad fnm lev = do lift (put lev)
@@ -175,11 +178,18 @@ prompt q initial = do statusLine1 (q ++ initial ++ repeat ' ')
         next = getChars nq
 
 drawStatus :: EditorIO ()
-drawStatus = do nm <- lift $ gets levelName
-                fnm <- ((" (" ++) . (++ ")")) `fmap` gets edFilename
-                (x, y) <- gets edCursor
-                liftIO $ do statusLine1 $ "Level \"" ++ nm ++ "\""
-                                          ++ fnm ++ repeat '-'
+drawStatus = do Level {..} <- lift get
+                Editor {..} <- get
+                let (x,y) = edCursor
+                    i     = length prevLevels + 1
+                    n     = i + length nextLevels
+                    fnm   = if null edFilename then "<untitled>"
+                                               else edFilename
+                    finfo = "Level \"" ++ levelName ++ "\" (" ++ fnm ++ ", "
+                            ++ show i ++ "/" ++ show n ++ ")" ++ repeat '-'
+                    os    = maybe [] id (Fixed edCursor `Map.lookup` levelObjs)
+                liftIO $ do statusLine1 $ take (79 - length os) finfo
+                                          ++ " " ++ map objChar os
                             wMove stdScr y x
 
 statusLine1 = mvWAddStr stdScr 22 0 . take 80
